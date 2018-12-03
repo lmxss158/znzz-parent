@@ -1,0 +1,231 @@
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="${AppName!}">
+  <meta name="keywords" content="智能楼宇">
+  <title>${AppName!}</title>
+  <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <!--表单验证-->
+  <link rel="stylesheet" href="${base!}/assets/dist/css/bootstrapValidator.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="${base!}/assets/dist/css/AdminLTE.css">
+  <link rel="stylesheet" href="${base!}/assets/plugins/iCheck/square/blue.css">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="hold-transition login-page" style="background: url(${base!}/assets/dist/img/login-bg.jpg) no-repeat fixed;background-size: cover;width: 100%;height: 100%;overflow: hidden">
+<div class="login-box">
+  <div class="login-logo">
+    <b>${AppName!}</b></a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">登录</p>
+
+     <form id="loginForm" action="${base!}/platform/login/doLogin" data-parsley-validate="" novalidate="" role="form" method="post">
+      <input type="hidden" id="platformCaptcha" name="platformCaptcha">
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" placeholder=" ${msg['login.username']}" id="username" name="username">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" placeholder=" ${msg['login.password']}" id="password" name="password">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <p id="tip" class="bg-danger p15" style="display:none"></p>
+      <div class="row">
+        <div class="col-xs-8" style="left:22px">
+          <div class="checkbox icheck">
+            <label>
+              <input type="checkbox"> 下次自动登录
+            </label>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button id="login" type="submit" class="btn btn-primary btn-block btn-flat btn-login" name="signup" value="Sign up"> ${msg['login.submit']}</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+<!-- 验证码 -->
+<div id="dialogVeryCode" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:black;">
+                    ${msg['login.error.verifycode']}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="f2" onsubmit="return false;" data-parsley-validate="" novalidate="">
+                    <div class="row">
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-6">
+                            <input type="text" id="verifycode" required class="form-control input-lg"
+                                   placeholder="${msg['login.captcha']}">
+                        </div>
+                        <div class="col-xs-4">
+                            <img id="captcha_img" src="${base!}/platform/login/captcha" style="height:46px;cursor: pointer;"
+                                 onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.submit']}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery 2.2.3 -->
+<script src="${base!}/assets/plugins/jQuery/jquery.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="${base!}/assets/bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="${base!}/assets/plugins/iCheck/icheck.min.js"></script>
+<!--表单验证-->
+<script src="${base!}/assets/dist/js/bootstrapValidator.js"></script>
+<script src="${base!}/assets/js/sso/RSA.js"></script>
+<script src="${base!}/assets/js/sso/BigInt.js"></script>	
+<script src="${base!}/assets/js/sso/Barrett.js"></script>
+<script src="${base!}/assets/js/jquery.pjax.js"></script>
+<script src="${base!}/assets/plugins/jquery.form.js"></script>
+<script src="${base!}/assets/plugins/modernizr.js"></script>
+<script src="${base!}/assets/plugins/parsley.min.js"></script>
+<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
+
+<script>
+function bodyRSA()
+{
+    setMaxDigits(200);
+    return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
+}
+var key =  bodyRSA();
+var temp;
+$(document).ready(function () {
+	logi();
+    $("#ok").on("click", function () {
+        if ($("#verifycode").val() == "") {
+            $("#f2").submit();
+            return false;
+        }
+        $("#platformCaptcha").val($("#verifycode").val());
+        alert($("#verifycode").val())
+        logi();
+    });
+    $("#dialogVeryCode").on("keypress", function (event) {
+        var key = event.which;
+        if (key == 13) {
+            $("#ok").trigger("click");
+        }
+    });
+    $("#username").focus();
+});
+
+function logi(){
+	$("#login").on("click",function () {
+		check();
+		alert(message)
+        temp=$("#password").val();
+        $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
+        $("#loginForm").submit();
+});
+$("#loginForm").ajaxForm({
+    dataType: 'json',
+    beforeSubmit: function (arr, form, options) {
+        form.find("button:submit").text("${msg['login.load']}");
+        form.find("button:submit").attr("disabled", "disabled");
+    },
+    success: function (data, statusText, xhr, form) {
+        if (data.code == 0) {
+            $("#tip").hide();
+            form.find("button:submit").text("${msg['login.success']}");
+            window.location.href = "${base!}/platform/home";
+        } else if (data.code == 2) {
+        	alert(2)
+            $("#verifycode").val("");
+            $("#password").val(temp);
+            $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
+            return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
+        } else {
+        	alert(222)
+            $("#platformCaptcha").val("");
+            $("#password").val("").focus();
+            $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
+            $("#tip").html(data.msg);
+            $("#tip").fadeIn();
+            form.find("button:submit").text("${msg['login.submit']}");
+            form.find("button:submit").removeAttr("disabled")
+        }
+    }
+}); 
+}
+function check(){
+	$('input').iCheck({
+	      checkboxClass: 'icheckbox_square-blue',
+	      radioClass: 'iradio_square-blue',
+	      increaseArea: '20%' // optional
+	    });
+	      $('#loginForm').bootstrapValidator({
+	          message: 'This value is not valid',
+	          excluded: ':disabled',
+	          feedbackIcons: {
+	              valid: 'glyphicon glyphicon-ok',
+	              invalid: 'glyphicon glyphicon-remove',
+	              validating: 'glyphicon glyphicon-refresh'
+	          },
+	          fields: {
+	              username: {
+	                  validators: {
+	                      notEmpty: {
+	                          message: '用户名不能为空'
+	                      },
+	                      stringLength: {
+	                          min: 1,
+	                          max: 50,
+	                          message: '用户名必须是1-50个字符长'
+	                      },
+	                  }
+	              },
+	              password: {
+	                  validators: {
+	                      notEmpty: {
+	                          message: '密码不能为空'
+	                      },
+	                      stringLength: {
+	                          min: 5,
+	                          max: 20000,
+	                          message: '密码必须超过5,小于20000个字符长'
+	                      }
+	                  }
+	              }
+	          }
+	      }).on('success.form.bv', function(e) {
+	          // 阻止表单提交【submit】【必须有】
+	          e.preventDefault();
+	          // 获取表单实例【可以没有】
+	          var $form = $(e.target);
+	          // 获取 BootstrapValidator 实例【可以没有】
+	          var bv = $form.data('bootstrapValidator');     
+	      });
+}
+</script>
+</body>
+</html>

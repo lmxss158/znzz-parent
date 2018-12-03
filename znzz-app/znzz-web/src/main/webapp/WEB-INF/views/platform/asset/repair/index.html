@@ -1,0 +1,292 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+	<h1>
+		维修申请
+		<!--<small>Control panel</small>-->
+	</h1>
+
+	<ol class="breadcrumb pull-left">
+		<!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+		<li class="active"><a href="${base}/repair/add#">设备维修管理</a></li>
+		<li class="active">维修申请</li>
+	</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	<!-- 维修申请 -->
+	<div class="row">
+		<div style="padding: 15px 15px -10;">
+			<div class="box">
+				<div class="box-body" style="padding: 0 15px auto;">
+					<div role="form" class="form-horizontal parsley-form"
+						data-parsley-validate>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="assetCode" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">统一编号：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="assetCode"
+										placeholder="请选择">
+								</div>
+							</div>
+
+
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="deviceCode" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">资产类型：</label>
+								<div class="col-sm-9">
+									<select class="form-control" id="assetType" disabled="disabled">
+										<option value=""></option>
+										<option value="1">设备</option>
+										<option value="2">仪器</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-6">
+								<label for="assetName" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">资产名称：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="assetName"
+										disabled="disabled">
+								</div>
+							</div>
+
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="serialNumber" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">出厂编号：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="serialNumber"
+										disabled="disabled">
+								</div>
+							</div>
+
+							<div class="col-sm-6">
+								<label for="deviceVersion" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">型号规格：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="deviceVersion"
+										disabled="disabled">
+								</div>
+							</div>
+
+						</div>
+
+						<!--   <div class="form-group">
+                                	<label for="borrowDepart" class="col-sm-2 control-label">申办单位：</label>
+                                    <div class="col-sm-3">
+                                    	<input type="text" class="form-control" id="borrowDepart" value="${@shiro.getPrincipalProperty('unitid')}">
+                                    </div>
+                                    
+                                    <label for="chargePerson" class="col-sm-1 control-label">申办人：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="chargePerson" value="${@shiro.getPrincipalProperty('username')}" disabled="disabled">
+                                    </div>
+                                </div> -->
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="linkMan" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">联系人：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="linkMan">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<label for="linkPhone" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">联系电话：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="linkPhone"
+										onkeyup="value=value.replace(/[^\d()\-]/g,'')" maxlength="20">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="remark" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">故障现象：</label>
+								<div class="col-sm-9">
+									<textarea class="form-control" id="remark"></textarea>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<label for="remark" class="col-sm-3 control-label"
+									style="padding-left: 0; padding-right: 0;">附件：</label>
+								<div class="col-sm-9">
+									<textarea class="form-control" id="attachment"></textarea>
+								</div>
+							</div>
+						</div>
+						<!-- 获取用户所有权限 -->
+						<% var
+						userPermissionData=@shiro.getPrincipalProperty('userPermissionData');
+						%>
+						<!-- /.box-body -->
+						<div class="box-footer">
+							<%if(@userPermissionData.indexOf("sys.manager.repair.addbtn")!=-1){%>
+							<button id="repairBtn" class="btn btn-primary pull-right"
+								data-loading-text="维修申请..." style="width: 80px;">维修申请</button>
+							<%}else{%>
+							<button id="repairBtn2" class="btn btn-primary pull-right"
+								data-loading-text="维修申请..." style="width: 80px;">维修申请</button>
+							<%}%>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(function() {
+
+			$("#repairBtn").on('click', function() {
+				addRepairInfo();
+			});
+
+			$("#repairBtn2").on('click', function() {
+				Toast.warning(NOPERMISSION);
+			});
+			initAssetCodeSelectpage();
+
+		});
+		//初始化统一编号选择下拉
+		function initAssetCodeSelectpage() {
+			var list = '${obj.assetCodelist}';
+			var l = JSON.parse(list);
+
+			$("#assetCode").selectPage({
+				showField : 'assetCode',
+				keyField : 'assetCode',
+				pageSize : 5,
+				data : l,
+				autoFillResult : false,
+				eSelect : function(data) {
+					getInfo();
+				},
+				eClear : function() {
+					$("#assetType").val("");
+					$("#assetName").val("");
+					$("#serialNumber").val("");
+					$("#deviceVersion").val("");
+				}
+			});
+		}
+
+		//获取资产信息
+		function getInfo() {
+
+			var flag = validateIsRepairing();
+			if (flag == 1) {//在流程中
+				return;
+			}
+
+			$.ajax({
+				type : "post",
+				url : "${base}/repair/getinfo",
+				data : {
+					assetCode : $("#assetCode").val()
+				},
+				success : function(data) {
+					console.log(data);
+					$("#assetName").val(data.assetName);
+					$("#assetType").val(data.assetType);
+					$("#deviceVersion").val(data.deviceVersion);
+					$("#serialNumber").val(data.serialNumber);
+				},
+				error : function(data) {
+					Toast.error("网络异常");
+				}
+			});
+
+		}
+
+		//校验是否在流程中
+		function validateIsRepairing() {
+			var e = $("#assetCode").val();
+			var flag = 1;
+			$.ajax({
+				type : "post",
+				url : "${base}/repair/isRepairing",
+				async : false,
+				data : {
+					assetCode : e
+				},
+				success : function(data) {
+					if (data.code == 0) {
+						flag = 0;
+					} else {
+						Toast.error(data.msg);
+					}
+				},
+				error : function(data) {
+					Toast.error("网络异常");
+				}
+			});
+
+			return flag;
+		}
+
+		//添加维修申请
+		function addRepairInfo() {
+
+			var a = $("#assetName").val();
+			var b = $("#assetType").val();
+			var c = $("#deviceVersion").val();
+			var d = $("#serialNumber").val();
+			var e = $("#assetCode").val();
+			var f = $("#linkMan").val();
+			var g = $("#linkPhone").val();
+			var h = $("#remark").val();
+			var i = $("#attachment").val();
+			/* if (!(a && b && e && f && g && h)) {//为空则弹窗
+				return Toast.error("请检查各项参数是否为空");
+			} */
+			if (!(e && f && g && h)) {//为空则弹窗
+				return Toast.error("请检查各项参数是否为空");
+			}
+
+			$.ajax({
+				type : "post",
+				url : "${base}/repair/addInfo",
+				data : {
+					assetCode : e,
+					linkMan : f,
+					linkPhone : g,
+					remark : h,
+					ext2 : i
+				},
+				success : function(data) {
+					if (data.code == 0) {
+						Toast.success(data.msg);
+						clearAll();
+					} else {
+						Toast.error(data.msg);
+					}
+				},
+				error : function(data) {
+					Toast.error("网络异常");
+				}
+			});
+		}
+
+		//清除所有框框
+		function clearAll() {
+			$("#assetName").val("");
+			$("#assetType").val("");
+			$("#deviceVersion").val("");
+			$("#serialNumber").val("");
+			$("#linkMan").val("");
+			$("#linkPhone").val("");
+			$("#remark").val("");
+			$('#assetCode').selectPageClear();
+		}
+	</script>
+
+	<%}%>

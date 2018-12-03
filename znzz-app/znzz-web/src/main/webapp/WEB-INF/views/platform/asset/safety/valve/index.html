@@ -1,0 +1,493 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header" xmlns:margin="http://www.w3.org/1999/xhtml">
+            <h1> 安全阀设备 </h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/asset/inventory/#">安全生产设备检定</a></li>
+                <li class="active">安全阀设备</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- 查询条件内容 -->
+            <div class="row" style="padding:0; vertical-align: middle; text-align: center;">
+                <div style="padding: 15px 15px;">
+                    <div class="box">
+                        <div class="box-body" style="padding-top: 21px; padding-bottom:0px;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+								<form id="InspectionCycleSearch">
+									<div class="form-group">
+										<div class="col-sm-5">
+											<label for="checkNo" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">检测号：</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="checkNo" placeholder="请输入检测号">
+											</div>
+										</div>
+										<div class="col-sm-5" style="padding-left: 0; padding-left: 25px;">
+											<label for="chargePerson" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0; width: 153px">负责人：</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="chargePerson" name="chargePerson" placeholder="请输入负责人">
+											</div>
+										</div>
+										<div class="col-sm-2" style="padding-left: 110px; height: 30px;">
+											<input id="clearSearchReload" type="reset" style="width:60px" value="清空" onclick="clearSearch();" class="btn btn btn-warning pull-left"/>
+										</div>
+
+									</div>
+								</form>
+                                <div class="form-group">
+									<!--<div class="col-sm-5">
+										<label for="safetyValveCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">统一编号：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" id="safetyValveCode" placeholder="请输入统一编号">
+										</div>
+									</div>-->
+									<div class="col-sm-5">
+										<label for="safetyValveSite" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">安全阀位置：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" id="safetyValveSite" placeholder="请输入安全阀位置">
+										</div>
+									</div>
+
+									<div class="form-group col-sm-5" style="padding-left: 110px; padding-right: 0;">
+										<label for="inspectionCycleBeginTime" class="col-sm-1 control-label" style="padding-right: 63px;white-space: nowrap;">年检日期 : </label>
+										<div class="col-sm-2" style="padding-left: 23px; height: 30px;width:226px;">
+											<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inspectionCycleBeginTime" id="inspectionCycleBeginTime" placeholder="请输入年检日期开始时间">
+										</div>
+										<label for="inspectionCycleEndTime" class="col-sm-1 control-label" style="width:auto">至</label>
+										<div class="col-sm-2" style="height: 30px; width:226px;">
+											<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inspectionCycleEndTime" id="inspectionCycleEndTime"  placeholder="请输入年检日期结束时间">
+										</div>
+									</div>
+
+
+									<div class="col-sm-2" style="padding-left: 77px; height: 30px;">
+										<button id="searchBtn" class="btn btn-primary" data-loading-text="搜索..." style="width:60px">搜索</button>
+									</div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<a id="add" class="btn btn-md btn-success" href="${base}/asset/safety/valve/add" data-pjax><i class="fa fa-fw fa-plus"></i> 新增记录</a>
+                        <a class="btn btn-primary" data-loading-text="下载中..." href="${base}/asset/safety/valve/templateDownload">
+                            <span class="glyphicon glyphicon-download-alt"></span> 模板下载
+                        </a>
+				        <a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('inspectionCycleFile').click();">
+                          	<span class="glyphicon glyphicon-arrow-down"></span> 批量导入
+                        </a>
+                        <a class="btn btn-primary" id="exportInspectionCycleInfo" data-loading-text="导出中..." onclick="exportInspectionCycleInfo()">
+                          	<span class="glyphicon glyphicon-open"></span> 批量导出
+                        </a>
+						<input type="file" style="display:none;" id="inspectionCycleFile" name="inspectionCycleFile" onchange="submitImportFile();" />
+						<button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+					</div>
+					
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="inspectionValveTable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th>检测号</th>
+									<th>统一编号</th>
+									<th>安全阀位置</th>
+									<th>负责人</th>
+									<th>介质</th>
+									<th>属性</th>
+									<th>口径</th>
+									<th>整定压力</th>
+									<th>年检日期</th>
+									<th>下次年检日期</th>
+									<th>提前提醒天数</th>
+									<th style="width:40px;">操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除安全阀年检记录</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除安全阀年检记录信息后无法恢复 , 请谨慎操作 ! <br/>确定要删除吗?
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogInspectionCycleDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+</div>
+
+<div class="modal fade" id="loading-export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-backdrop='static'>
+    <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+        <div class="modal-content" style="background:transparent;">
+            <div class="modal-body">
+                <div class="loading-box">
+                    <div class="sk-fading-circle">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                    <div class="text-center" style="padding-bottom:5px;">正在导出资产信息，请稍后...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script>
+var datatable;
+function initDatatable() {
+
+    datatable = $('#inspectionValveTable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/asset/safety/valve/data",
+            "type": "post",
+            "data": function (d) {
+            	d.checkNo = $("#checkNo").val();
+                d.safetyValveSite=$("#safetyValveSite").val();
+                d.chargePerson=$("#chargePerson").val();
+                d.inspectionCycleBeginTime=$("#inspectionCycleBeginTime").val();
+                d.inspectionCycleEndTime=$("#inspectionCycleEndTime").val();
+            }
+        },
+        "order": [[9, "desc"]],
+        "columns": [
+                {"data": "checkno", "bSortable": true},
+                {"data": "safetyvalvecode", "bSortable": true},
+                {"data": "safetyvalvesite", "bSortable": true},
+                {"data": "chargeperson", "bSortable": true},
+                {"data": "medium", "bSortable": true},
+                {"data": "attribute", "bSortable": true},
+                {"data": "caliber", "bSortable": true},
+                {"data": "setpressure", "bSortable": true},
+                {"data": "annualinspectiondate", "bSortable": true},
+                {"data": "nextannualinspectiondate", "bSortable": true},
+                {"data": "daysnotice", "bSortable": true}
+        ],
+        
+        "columnDefs": [	
+						{
+							"render": function (data, type, row) {
+                                return '&nbsp;&nbsp;<a class="btn btn-xs btn-success" href="${base}/asset/safety/valve/edit/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';
+							},
+							"targets": 11
+						},
+						{
+							"render": function (data, type, row) {
+								var str ="" ;
+								if(data!=null){
+									var day = data.split(" ")[0] ;
+									var yearM = day.split("-") ;
+									str=yearM[0]+"-"+yearM[1]+"-"+yearM[2];
+								}
+								return str ;
+							},
+							"targets": [8,9]
+						},
+       				 ]
+        
+    });
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+    
+}
+
+//对查询清空操作
+function clearSearch() {
+    $("#checkNo").val("");
+    $("#safetyValveSite").val("");
+    $("#chargePerson").val("");
+    $("#inspectionCycleBeginTime").val("");
+    $("#inspectionCycleEndTime").val("");
+    datatable.ajax.reload();
+}
+
+function delCheck() {
+	var chks = datatable.rows('.selected').data();
+	if (chks.length > 0){
+	    var ids = [];
+	    $.each(datatable.rows('.selected').data(),function (i, n) {
+			ids.push(n.id);
+        });
+		    var dialog = $("#dialogDelete");
+		    dialog.modal("show");
+		    dialog.find("#okDel").unbind("click");
+		    dialog.find("#okDel").bind("click",function (event) {
+				var btn = $(this);
+				btn.button("loading");
+				$.post("${base}/asset/safety/valve/delete",{ids:ids.toString()},function (data) {
+                    if (data == 1) {
+                        datatable.ajax.reload(null,false);
+                        Toast.success("操作成功");
+                    }else if(data.code == 1){
+                        if("没有权限"!=data.msg){
+                            Toast.error(data.msg);
+                        }
+                    }else if(data.code == 0){
+                        Toast.success(data.msg);
+                        console.info(data.msg)
+                        datatable.ajax.reload(null,false);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+    } else {
+        Toast.warning("请先选择要删除的项！");
+    }
+}
+
+/* 导入 */
+function submitImportFile(){
+    if($("#inspectionCycleFile").val()!= null){
+        if(!/.(xls|xlsx)$/.test($("#inspectionCycleFile").val())){
+            Toast.error("文件类型必须是.xls,.xlsx中的一种");
+            return false;
+        }
+    }
+    $("#loading").modal("show");
+    $.ajaxFileUpload({
+        url:"${base}/asset/safety/valve/upload",
+        type:"POST",
+        secureuri:false,
+        fileElementId:'inspectionCycleFile',
+        dataType:'JSON',
+        success:function(data,status,xhr){
+            $("#inspectionCycleFile").val("");
+            var obj = $.parseJSON(data);
+            if(obj.code == 0){
+                $("#loading").modal("hide");
+                Toast.success("导入成功");
+                $("#ladda-btn").button("reset");
+                setTimeout(function(){
+                    datatable.ajax.reload();
+                },500);
+            }else{
+                $("#loading").modal("hide");
+                showCheckExcel(obj.msg);
+            }
+        },
+        error:function(data,status,e){
+            var obj = $.parseJSON(data);
+            Toast.error(obj.msg);
+            $('#loading').modal('hide');
+        }
+    });
+}
+
+function showCheckExcel(msg) {
+    var excel = $("#checkExcel");
+    excel.modal("show");
+    excel.find("#inputText").html("").append(msg)
+}
+
+//导出
+function exportInspectionCycleInfo() {
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "post",
+                    data: {
+                        "checkNo": $("#checkNo").val(),
+                        "safetyValveSite": $("#safetyValveSite").val(),
+                        "chargePerson": $("#chargePerson").val(),
+                        "inspectionCycleBeginTime": $("#inspectionCycleBeginTime").val(),
+                        "inspectionCycleEndTime": $("#inspectionCycleEndTime").val(),
+                    },
+                    dataType: "JSON",
+                    url: "${base}/asset/safety/valve/exportInspectionCycleInfo/",
+                    async: false,
+                    success: function (data) {
+                        if ("error" == data) {
+                            Toast.error("导出失败");
+                            $('#loading-export').modal('hide');
+                            return;
+                        }
+                        exportInspectionCycleInfoByUrl(data);
+                        //Toast.info("返回成功")
+                        $('#loading-export').modal('hide');
+                    }
+                });
+            }, 500);
+
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    });
+}
+
+// 导出资产信息列表根据URL
+function exportInspectionCycleInfoByUrl(urlData) {
+    var url = "${base}/asset/safety/valve/exportInspectionCycleInfoByUrl";
+    var form = $("<form></form>").attr("action", url).attr("method", "post");
+    form.append($("<input></input>").attr("type", "hidden").attr("name", "url").attr("value", urlData));
+    form.appendTo('body').submit().remove();
+}
+
+
+function showCheckExcel(msg){
+	//alert(msg)
+	var excel = $("#checkExcel");
+	excel.modal("show");
+	excel.find("#inputText").html(msg)
+}
+
+//资产祥情页面
+var showInspectionCycleDetail = function (assetCode) {
+    $("#homeDetail").modal('show');
+    $("#homeDetail").load('${base}/asset/info/detail/' + assetCode);
+}
+
+$(function () {
+    initDatatable();
+    //加载使用单位和责任人
+    loadUnitAndUser(null, "chargePerson", null);
+    $("#dialogInspectionCycleDetail").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+});
+
+</script>
+
+<script>
+   $(function() {
+       //日期控件
+       $('#inspectionCycleBeginTime').datetimepicker({
+           language : 'zh-CN',//显示中文
+           format : 'yyyy-mm-dd',//显示格式
+           minView : "month",//设置显示到天
+           initialDate : new Date(),//初始化当前日期
+           autoclose : true,//选中自动关闭
+           todayBtn : true
+           //显示今日按钮
+       }).on("changeDate",function(){
+           $("#inspectionCycleEndTime").datetimepicker("setStartDate",$("#inspectionCycleBeginTime").val());
+       });
+       $('#inspectionCycleEndTime').datetimepicker({
+           language : 'zh-CN',//显示中文
+           format : 'yyyy-mm-dd',//显示格式
+           minView : "month",//设置显示到天
+           initialDate : new Date(),//初始化当前日期
+           autoclose : true,//选中自动关闭
+           todayBtn : true//显示今日按钮
+       }).on("changeDate",function(){
+           $("#inspectionCycleBeginTime").datetimepicker("setEndDate",$("#inspectionCycleEndTime").val());
+       });
+
+   });
+</script>
+<%}%>
+

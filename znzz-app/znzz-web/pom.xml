@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.znzz</groupId>
+    <artifactId>znzz-app</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>znzz-web</artifactId>
+  <packaging>war</packaging>
+  
+  <!-- 依赖znzz-framework-->
+  <dependencies>
+  	<dependency>
+  		<groupId>com.znzz</groupId>
+  		<artifactId>znzz-framework</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
+  
+  	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources${package.environment}</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<finalName>znzz</finalName>
+		<plugins>
+			<plugin>
+				<groupId> org.codehaus.mojo</groupId>
+				<artifactId> tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<url> http://127.0.0.1:8080/manager/html </url>
+					<server>tomcat8</server>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<excludes>
+								<exclude>src/main/resources/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
+					<packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+					<warSourceExcludes>WEB-INF/classes/com/**</warSourceExcludes>
+					<webResources>
+						<resource>
+							<directory>src/main/resources${package.environment}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>**</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			
+			<!-- jetty容器,暂时用不着 -->
+			<!-- <plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty-version}</version>
+				<configuration>
+					<httpConnector>
+						<port>8080</port>
+					</httpConnector>
+					<stopKey>shutdown</stopKey>
+					<stopPort>9966</stopPort>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<dumpOnStart>true</dumpOnStart>
+					<webApp>
+						<contextPath>/</contextPath>
+						<resourceBases> <resourceBase>${project.basedir}/src/main/webapp</resourceBase> 
+							<resourceBase>${project.basedir}/commons</resourceBase> </resourceBases>
+					</webApp>
+					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+						<filename>target/access-yyyy_mm_dd.log</filename>
+						<filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+						<logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+						<logTimeZone>GMT+8:00</logTimeZone>
+						<append>true</append>
+						<logServer>true</logServer>
+						<retainDays>120</retainDays>
+						<logCookies>true</logCookies>
+					</requestLog>
+				</configuration>
+			</plugin>
+			 -->
+		</plugins>
+	</build>
+	
+	
+</project>

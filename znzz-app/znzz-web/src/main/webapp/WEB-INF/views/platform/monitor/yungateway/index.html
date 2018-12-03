@@ -1,0 +1,479 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1> 配置信息 </h1>
+            <ol class="breadcrumb pull-left">
+               <!-- <li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+				<li class="active"><a href="${base}/yun/configure/yungateway#">云网管理</a></li>
+                <li class="active">配置信息</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <div class="row">
+                <div style="padding: 15px 15px ;">
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="device_code" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">统一编号：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="device_code"  id="device_code" placeholder="统一编号/设备名称/设备型号">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="gateway_name" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">网关名称：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="gateway_name" id="gateway_name" placeholder="请输入网关名称">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="device_id" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">设备ID：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control"  name="device_id" id="device_id"   placeholder="请输入设备ID">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="gateway_id" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">网关ID：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control"  name="gateway_id" id="gateway_id"   placeholder="请输入网关ID">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="accesskey" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">ACCESSKEY：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control"  name="accesskey" id="accesskey"   placeholder="请输入accesskey">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">录入时间：</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control pull-right" name="createTime" id="timeRange" readonly="readonly" style="background-color: white;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="borrowDepart" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">使用单位：</label>
+                                        <div class="col-sm-9">
+                                            <!-- <select name="borrowDepart" id="borrowDepart" class="form-control select1"
+                                                    data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                            </select> -->
+                                            <input type="text" name="borrowDepart" id="borrowDepart" style="width:100%;" placeholder="请选择">
+                                            <!-- <input type="text" name="chargePerson" id="chargePerson" placeholder="请选择" style="width:100%;"> -->
+                                        </div>
+                                    </div>
+
+                                 </div>
+                                <div class="box-footer" style="height: 30px;">
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<!-- 添加  删除 -->
+					<div class="box-header">
+						<!-- 添加 -->
+						<a id="add" class="btn btn-md btn-success" href="${base}/yun/configure/yungateway/add" data-pjax><i class="fa fa-fw fa-plus"></i> 添加</a>
+						<!-- 删除 -->
+						<button id="delete" class="btn btn-danger" onclick="delCheck()">
+						    <i class="glyphicon glyphicon-trash"></i> 批量删除
+						</button>
+						<!-- 导入 -->
+                        <!-- <button class="btn btn-primary">
+                            <span class="glyphicon glyphicon-arrow-down"></span>导入
+                        </button> -->
+                        <a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('jsonFile').click();">
+                            	<span class="glyphicon glyphicon-arrow-down"></span> 导入云网数据
+                        </a>
+                        <input type="file" style="display:none;" id="jsonFile" name="jsonFile" onchange="submitImportFile();" />
+                        <!-- 模板下载 -->
+                        <!-- <button class="btn btn-primary">
+                            <span class="glyphicon glyphicon-arrow-down"></span>模板下载
+                        </button> -->
+					</div>
+					
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="unittable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<!-- <th>
+                                        <input type="checkbox" class="minimal" checked="">
+                                    </th>  -->
+								 	<th>序号</th> 
+									<th>统一编号</th>
+									<th>设备名称</th>
+									<th>设备型号</th>
+									<th>使用单位</th>
+									<th>设备ID</th>
+									<th>网关ID</th>
+									<th>网关名称</th>
+									<th>ACCESSKEY</th>
+									<th>录入时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>	
+	
+	
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除后无法恢复； <br /> 请谨慎操作！ <br />确定要删除吗？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+<!-- 导入错误 -->
+ <div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                 <div class="modal-header">
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                </div> 
+            </div>
+        </div>
+</div> 
+
+<script>
+var datatable;
+function initDatatable() {
+    datatable = $('#unittable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/yun/configure/yungateway/data",
+            "type": "post",
+            "data": function (d) {        
+            	d.device_code = $('#device_code').val();
+                d.device_id=$('#device_id').val();
+                d.gateway_id=$('#gateway_id').val();
+                d.gateway_name=$('#gateway_name').val();
+                d.accesskey=$('#accesskey').val();
+                d.createTime=$('#timeRange').val();
+                d.borrowDepart=$('#borrowDepart').val();
+            }
+        },
+        "order": [[9, "desc"]],
+        "columns": [
+				{"data":null,"width":"30px"},
+                {"data": "device_code", "bSortable": true},
+                {"data": "devicename", "bSortable": true},
+                {"data": "deviceversion", "bSortable": true},
+                {"data": "name", "bSortable": true},
+                {"data": "device_id", "bSortable": true},
+                {"data": "gateway_id", "bSortable": true},
+                {"data": "gateway_name", "bSortable": true},
+                {"data": "accesskey", "bSortable": true},
+                {"data": "createTime", "bSortable": true}
+                
+        ],
+        
+        "columnDefs": [	
+				{
+    				"searchable": false,
+    				"orderable": false,
+    				"targets": 0
+				},
+            	{
+                "render": function (data, type, row) {
+                 	return     '<a class="btn btn-xs btn-success" href="${base}/yun/configure/yungateway/edit/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>'+
+		                       '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="del(\'' + row.id + '\')"><i class="glyphicon glyphicon-trash"></i> 删除</a>';
+                 
+                },
+                "targets": 10
+            },{
+				"render": function(data, type, row){
+					 return   data==''||data==null?"---":data;
+				},
+          			 "targets": [2,3,4,5,6,7,8,9]
+          		}
+            	
+            	
+        ]
+        
+    });
+    
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+    	 //datatable.fnDraw();
+        datatable.ajax.reload();
+    }); 
+    
+}
+
+function delCheck() {
+    var chks = datatable.rows('.selected').data();
+    if (chks.length > 0) {
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/yun/configure/yungateway/delete", {ids: ids.toString()}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                    Toast.success(data.msg);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    } else {
+        Toast.warning("请先选择要删除的项！");
+    }
+}
+function del(id) {
+    var dialog = $("#dialogDelete");
+    dialog.modal("show");
+    dialog.find("#okDel").unbind("click");
+    dialog.find("#okDel").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/yun/configure/yungateway/delete/"+id,{},function(data){
+            if (data.code == 0) {
+                datatable.ajax.reload(null,false);
+                Toast.success(data.msg);
+            } else {
+            	if("没有权限"!=data.msg){
+            		Toast.error(data.msg);
+            	}
+            }
+            //重置按钮状态，关闭提示框
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+    });
+}
+
+$(function () {
+    initDatatable();
+    $("#dialogGatewayDetail").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+    //getUnitList();
+    datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+    loadUnitAndUser();
+});
+    function submitImportFile(){
+//    	if($("#jsonFile").val()!=null){
+//    		if(!/.(json)$/.test($("#jsonFile").val())){
+//    			Toast.error("请上传.json文件");	
+//    			return false;
+//    		}
+//    	}
+    		$('#loading').modal('show');
+    		$.ajaxFileUpload({  
+    		url:"${base}/yun/configure/yungateway/importJson",
+            type:'POST',
+            secureuri : false,  
+            fileElementId : 'jsonFile',
+            dataType : 'JSON', 
+            success : function (data, status){
+            	$("#jsonFile").val('');
+            	$('#loading').modal('hide');
+            	var obj = $.parseJSON(data);
+            	if(obj.code == 0){
+           			loading(false);
+            		Toast.success("导入成功")
+           			$("#ladda-btn").button("reset");
+            		setTimeout(function(){
+            			datatable.ajax.reload();
+            		},1000);
+            	}else {
+            		var obj = $.parseJSON(data);
+                	loading(false);
+            		//Toast.error(obj.msg)
+            		showCheckExcel(obj.msg);
+            	}
+            },
+            error: function(data, status, e){
+            	$('#loading').modal('hide');
+            	alert(error)
+            }
+        });
+    }
+    
+    function showCheckExcel(msg){
+     	var excel = $("#checkExcel");
+    	excel.modal("show");
+    	excel.find("#inputText").html('').append(msg); 
+    }
+    
+    
+
+</script>
+<script>
+    $(function () {
+        var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        $('#timeRange').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker":true,
+           // "timePicker24Hour": true
+            "timePickerSeconds": true
+        });
+        $("#timeRange").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+        
+        $("#timeRange").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange").val('')
+        })
+    });
+</script>
+<%}%>
+

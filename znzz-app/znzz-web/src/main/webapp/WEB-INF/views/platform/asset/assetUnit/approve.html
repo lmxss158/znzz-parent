@@ -1,0 +1,152 @@
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+            	     ${obj.infoTitle}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <div class="form-horizontal" id="defaultForm" >
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="facility-form">
+                                <div class="facility-from-col">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                    <label for="assetCode" class="col-sm-2 control-label">统一编号：</label>
+                                   	<div class="col-sm-3">
+                                    	<input type="text" class="form-control" id="assetCode" value="${obj.assetCode}" disabled="disabled">
+                                    </div>
+
+                                 </div>
+                                <div class="form-group">
+
+                                    <label for="assetName" class="col-sm-2 control-label">资产名称：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="assetName" disabled="disabled" value="${obj.assetName}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label for="deviceVersion" class="col-sm-2 control-label">型号规格：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="deviceVersion" disabled="disabled" value="${obj.deviceVersion}">
+                                    </div>
+                                </div>
+                                <%var unit=@shiro.getPrincipalProperty('unit');%>
+
+                                <div class="form-group">
+                               		 <label for="linkMan" class="col-sm-2 control-label">现属单位：</label>
+	                                    <div class="col-sm-3">
+	                                        <input type="text" class="form-control" id="curDepart" value="${obj.name}" disabled="disabled">
+	                                    </div>
+	                                 <%if(obj.infoType!=0){%>
+	                                 <label for="targetDepart" class="col-sm-2 control-label"><%if(obj.infoType==1){%>调入单位：<%}else{%>归还单位<%}%></label>
+
+
+                                        <div class="col-sm-3">
+                                        <%if(obj.infoType==1){%>
+                                            <!-- <select name="targetDepart" id="targetDepart" class="form-control "
+                                                    data-placeholder="请选择" >
+                                            </select> -->
+                                         <input type="text" class="form-control" id="targetDepartName" value="${unit.name}" disabled="disabled">
+                                         <input type="hidden" class="form-control" id="targetDepart" value="${unit.id}" >
+
+
+                                           <%}else{%>
+
+                             					<input type="text" class="form-control" id="targetDepart2" value="${obj.chargeDepartName}" disabled="disabled">
+                                          <%}%>
+
+
+                                        </div>
+                                     <%}%>
+                                </div>
+                                  <div class="form-group">
+                               		 <label for="linkMan" class="col-sm-2 control-label">当前位置：</label>
+	                                    <div class="col-sm-3">
+	                                        <input type="text" class="form-control" id="linkMan" title="${obj.position}" value="${obj.position}" disabled="disabled">
+	                                    </div>
+
+	                                   <label for="linkPhone" class="col-sm-2 control-label">调入位置：</label>
+	                                    <div class="col-sm-3">
+	                                        <input type="text" class="form-control" id="targetPosition" >
+	                                    </div>
+
+                                </div>
+
+
+                                 <div class="form-group">
+                                	<label for="remark" class="col-sm-2 control-label">备注：</label>
+                                    <div class="col-sm-8">
+                                    	<textarea class="form-control" id="remark" ></textarea>
+                                    </div>
+
+                                </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+             <button class="btn btn-default" data-dismiss="modal"  type="button">关闭</button>
+                <button type="button" onclick="approveSubmit(${obj.id})" class="btn btn-primary facilityadd-btn"  style="margin-right: 383px;" >确定</button>
+            </div>
+
+            <input type="hidden" value="${obj.infoType}" id="infoType">
+
+
+        </div>
+    </div>
+</div>
+<script>
+	function approveSubmit(id){
+		if(!$("#targetPosition").val()){//为空
+		  return	Toast.error("请输入位置信息.");
+		}
+
+
+		$.ajax({
+			type:"post",
+			url:"${base}/assetUnit/doApprove",
+			data:{id:id,type:$("#infoType").val(),remark:$("#remark").val(),targetDepart:$("#targetDepart").val(),targetPosition:$("#targetPosition").val()},
+			success:function(data){
+				if (data.code == 0) {
+	                Toast.success(data.msg);
+				    $("#myModal2").modal('hide');
+	            } else {
+	                Toast.error(data.msg);
+	            }
+				datatable.ajax.reload();
+			},
+			error:function(data){
+				Toast.error("网络异常.");
+			}
+		});
+	}
+
+	$(function(){
+		/* getUnitList("targetDepart");
+		unitListchange("targetDepart","notexist");
+		$('#targetDepart').select2({
+			allowClear: true,
+			 width: "100%"
+		});
+		//加入这个防止弹窗 无法输入
+		$.fn.modal.Constructor.prototype.enforceFocus = function () {};  */
+	});
+
+
+</script>

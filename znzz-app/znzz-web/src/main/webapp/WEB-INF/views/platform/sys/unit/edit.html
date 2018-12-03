@@ -1,0 +1,180 @@
+<% layout("/layouts/platform.html"){ %>
+<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title" id="myModalLabel">修改单位</h4>
+		</div>
+		<form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/platform/sys/unit/editDo" method="post">
+			<input name="id" type="hidden" value="${obj.id!}">
+        	<input type="hidden" id="hasChildren" name="hasChildren" value="${obj.hasChildren!}">
+		<div class="modal-body">
+			<div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="parentId" class="col-sm-2 control-label">上级单位</label>
+                            <div class="col-sm-8">
+                            <div class="input-group">
+                                    <input id="parentId" type="text" class="form-control" placeholder="不选择默认为顶级单位" disabled
+                                           value="<%if(!isEmpty(parentUnit)){%>${parentUnit.name}<%}%>">
+			                             		<span class="input-group-btn">
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal"
+                                                            data-target="#dialogSelectParentUnit"><i class="ti-plus"></i>选择
+                                                    </button>
+			                             		</span>
+                                </div>
+                                <input type="hidden" name="parentId" value="<%if(!isEmpty(parentUnit)){%>${parentUnit.id}<%}%>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">单位名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="单位名称" value="${obj.name!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="unitcode" class="col-sm-2 control-label">机构代码</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="unitcode" class="form-control" name="unitcode" data-parsley-required="true" readonly="true" placeholder="机构代码" value="${obj.unitcode!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="note" class="col-sm-2 control-label">单位介绍</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="note" class="form-control" name="note" data-parsley-required="true" placeholder="单位介绍" value="${obj.note!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="col-sm-2 control-label">单位地址</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="address" name="address" class="form-control" placeholder="单位地址" value="${obj.address!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone" class="col-sm-2 control-label">联系电话</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="telephone" name="telephone" class="form-control" placeholder="联系电话" value="${obj.telephone!}" onkeyup="value=value.replace(/[^\d()\-]/g,'')">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">单位邮箱</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="email" class="form-control" name="email" data-parsley-required="true" placeholder="单位邮箱" value="${obj.email!}">
+                            </div>
+                        </div>   
+                    </div>
+                </div>
+			</div>
+			</div>
+		<div class="modal-footer" style="text-align: center;">
+			 <a href="${base}/platform/sys/unit" id="goback" data-pjax>
+			 	<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+			 </a>
+			<button  class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">提交</button>
+		</div>
+		</form>
+	</div>
+<!-- 选择上级单位 -->
+<div id="dialogSelectParentUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">选择上级单位</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<div id="jsTreeParentUnit" class="demo"></div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="pull-left">
+					<button type="button" class="btn btn-success" data-dismiss="modal" onclick="selectFirstMenu()">设为顶级单位</button>
+				</div>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button type="button" class="btn btn-primary" onclick="selectParentMenu()">确认选择</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script language="JavaScript">
+
+    function initTreeView() {
+        $("#jsTreeParentUnit").jstree({
+            plugins: ["wholerow", "json_data"],
+            core: {
+                data: {
+                    dataType: "json",
+                    url: function (node) {
+                        return node.id === "#" ? "${base}/platform/sys/unit/tree" : "${base}/platform/sys/unit/tree?pid=" + node.id
+                    }
+                },
+                multiple: false
+            }
+        }).on("dblclick.jstree", function (node) {
+            selectParentMenu();
+        });
+    }
+    //选择父菜单
+    function selectParentMenu() {
+        var tree = $.jstree.reference("#jsTreeParentUnit");
+        var node = tree.get_selected(true);
+        $("#unitAddForm #parentId").val(node[0].text);
+        $("#unitAddForm input[name='parentId']").val(node[0].id);
+        $("#dialogSelectParentUnit").modal("hide");
+    }
+    function selectFirstMenu() {
+        $("#unitAddForm #parentId").val("顶级单位");
+        $("#unitAddForm input[name='parentId']").val("");
+        $("#dialogSelectParentUnit").modal("hide");
+    }
+    $(document).ready(function () {
+        initTreeView();
+        var telre = /^1\d{10}$/;
+        var phore = /^0\d{2,3}-?\d{7,8}$/;
+        var emare = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/
+        $('#unitAddForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+            	if($("#name").val()==""){
+            		Toast.error("单位名称不能为空");
+            		return false;
+            	}
+            	if($("#unitcode").val()==""){
+            		Toast.error("机构代码不能为空");
+            		return false;
+            	}
+            	/* if($("#telphone").val()!="" && !telre.test($("#telephone").val()) && !phore.test($("#telephone").val())){
+            		Toast.error("请输入正确的联系方式");
+            		return false;
+            	} */
+            	if($("#email").val()!=""&&!emare.test($("#email").val())){
+            		Toast.error("请输入正确的邮箱");
+            		return false;
+            	}
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code==0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //$.jstree.reference("#jsTreeParentUnit").refresh();
+                    //var parentName = $("#unitAddForm #parentId").val();
+                    //form.resetForm();
+                    //$("#unitAddForm #parentId").val(parentName);
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 1000);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+
+<%}%>

@@ -1,0 +1,35 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">&nbsp;&nbsp;${obj.collectName!}</a>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <a href="javascript:;" class="list-group-item" title="采集器编号">
+                        <i class="ti-comment mr10 text-muted"></i>&nbsp;&nbsp;${obj.collectCode!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="统一编号">
+                        <i class="ti-link mr10 text-muted"></i>&nbsp;&nbsp;${obj.deviceCode!}
+                    </a>
+                   
+                     <a href="javascript:;" id="remark" class="list-group-item" title="备注">
+                        <i class="ti-comment mr10 text-muted"></i>&nbsp;&nbsp;${obj.remark!}
+                    </a>
+                 
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>
+<script>
+ function reset(){
+	
+	 $("#remark").text("");
+ }
+</script>

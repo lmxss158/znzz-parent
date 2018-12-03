@@ -1,0 +1,382 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+    <h1>资产信息</h1>
+    <ol class="breadcrumb pull-left">
+        <li><a href="#">资产预约</a></li>
+        <li class="active">预约登记</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-body">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <label for="assetInfo" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">资产信息：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="assetInfo"
+                                       placeholder="统一编号/资产名称/资产型号/出厂编号">
+                            </div>
+
+                            <label for="assetState" class="col-sm-2 control-label"
+                                   style="padding-left: 0; padding-right: 0;">资产状态：</label>
+                            <div class="col-sm-3">
+                                <select id="assetState" class="form-control">
+                                    <option value="">全部</option>
+                                    <option value="0">可预约</option>
+                                    <option value="1">不可预约</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">责任人：</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="chargePerson" id="chargePerson" style="width: 100%;"
+                                       placeholder="姓名/科室">
+                            </div>
+
+                            <div class="col-sm-8 control-label">
+                                <button class="btn btn_All btn-primary pull-right" id="searchBtn"
+                                        data-loading-text="搜索..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">搜索
+                                </button>
+                                <button class="btn btn_All btn-danger ml_20 pull-right" id="exportBtn"
+                                        onclick="doClear()" data-loading-text="清空..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">清空
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="box-header">
+                        <button id="add" class="btn btn-primary" onclick="addApply()" data-pjax><i
+                                class="fa fa-fw fa-plus"></i> 新建申请
+                        </button>
+                        <button class="btn btn-yahoo" onclick="assetManage()" data-pjax><i
+                                class="ti-settings"></i> 资产管理
+                        </button>
+                    </div>
+                    <table id="applyTable" class="table table-bordered table-striped table-hover"
+                           style="table-layout:fixed">
+                        <thead>
+                        <tr>
+                            <th>统一编号</th>
+                            <th>资产名称</th>
+                            <th>资产型号</th>
+                            <th>出厂编号</th>
+                            <th>规格</th>
+                            <th>离线日期</th>
+                            <th>归还日期</th>
+                            <th>单位</th>
+                            <th>责任人</th>
+                            <th>联系方式</th>
+                            <th>资产状态</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--逾期未还提醒-->
+    <div id="delayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">提醒您:</h4>
+                    <h3 style="text-align: center">您有逾期未归还的资产</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 mb10">
+                            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;逾期不还设备会影响其他人的正常使用，请您及时归还或填写延用流程。</h4>
+                        </div>
+                        <div class="col-xs-12">
+                            <table id="delayTable" class="table table-bordered table-striped mg-t datatable"
+                                   style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>资产名称</th>
+                                    <th>统一编号</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="${base}/asset/apply/mine" data-pjax>
+                        <button type="button" class="btn btn-default btn_All"
+                                data-dismiss="modal" onclick="javascript:window.location='${base}/asset/apply/mine'"
+                                style="width:120px">查看
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<script>
+    var delay = "${delay}";
+    var delayDataTable;
+    var applyDatatable;
+
+    function initApplyTable() {
+        applyDatatable = $('#applyTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "stateSave": true,
+            "destroy": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "fnDrawCallback": function (oSettings) {
+                // var oTable = $('#applyTable').dataTable();
+                // var x = 2;
+                // oTable.fnPageChange(x);
+                //alert(ot);
+            },
+            "ajax":
+                {
+                    "url": "${base}/asset/apply/sign/data",
+                    "type": "post",
+                    "data": function (d) {
+                        d.assetInfo = $("#assetInfo").val().trim();
+                        d.assetState = $("#assetState").val().trim();
+                        d.chargeMan = $("#chargePerson").val().trim();
+                    }
+                }
+            ,
+            "order": [[10, "asc"]],
+            "columns":
+                [
+                    {"data": "assetcode"},
+                    {"data": "assetname"},
+                    {"data": "deviceversion"},
+                    {"data": "serialnumber"},
+                    {"data": "ggname"},
+                    {"data": "powerofftime"},
+                    {"data": "returndate"},
+                    {"data": "lenderunit"},
+                    {"data": "proposers"},
+                    {"data": "number"},
+                    {"data": "assetstate"}
+                ],
+            "columnDefs":
+                [
+                    {
+                        "render": function (data, type, row) {
+                            return '<a href="${base}/asset/apply/sign/detail/' + data + '" >' + data + '</a>';
+                        },
+                        "targets": 0
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            var str = "--";
+                            if (data) {
+                                str = subStrCustomNew(data, 5);
+                            }
+                            return str;
+                        },
+                        "targets": [1, 2, 3, 4, 5, 7]
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            var str = "--";
+                            if (data) {
+                                str = data;
+                            }
+                            return str;
+                        },
+                        "targets": [8, 9]
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            var str = "--";
+                            if (data) {
+                                str = data.split(" ")[0];
+                            }
+                            return str;
+                        },
+                        "targets": [6]
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            if (data == 0) {
+                                return "可预约";
+                            } else {
+                                return "不可预约";
+                            }
+                        },
+                        "targets": [10]
+                    }
+                ]
+        });
+
+        applyDatatable.on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                applyDatatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#searchBtn").on('click', function () {
+            applyDatatable.ajax.reload();
+        });
+    }
+
+    $(function () {
+        var table = $('#applyTable').dataTable().api();
+        // 记录分页
+        if (typeof ($.cookie('apply')) == "undefined") {
+            table.state.clear();
+        } else {
+            // 清理cookie
+            $.cookie("apply", "", {expires: -1, path: '/'});
+        }
+        initApplyTable();
+        loadUnitAndUser();
+        var dialog = $("#delayDetail");
+        // 逾期提醒
+        if (delay == "1") {
+            // console.log($.cookie().open);
+            if (typeof ($.cookie().open) == "undefined") {
+                $.cookie('open', '1', {expires: 30, path: '/'});
+                dialog.modal("show");
+                initDelayTable();
+            }
+        }
+    });
+
+    // 延期提醒table
+    function initDelayTable() {
+        delayDataTable = $('#delayTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/apply/sign/delay",
+                "type": "post",
+                "data": function (d) {
+
+                }
+            },
+            //"order": [[1, "desc"]],
+            "columns": [
+                {"data": "assetName", "bSortable": false},
+                {"data": "assetCode", "bSortable": false}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = subStrCustomNew(data, 5);
+                        }
+                        return str;
+                    },
+                    "targets": [0, 1]
+                }
+            ]
+        });
+    }
+
+    // 清空操作
+    function doClear() {
+        $("#assetInfo").val("");
+        $("#assetState").val("");
+        $("#chargePerson").val("");
+        $("#chargePerson_text").val("");
+        applyDatatable.ajax.reload();
+        $("#assetState > option:first").attr("selected", true);
+    }
+
+    // 新建申请
+    function addApply() {
+        var chks = applyDatatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            var states = "";
+            $.each(chks, function (i, n) {
+                ids.push(n.assetcode);
+                states = n.assetstate;
+            });
+            var btn = $(this);
+            if (states == "1") {
+                Toast.warning("当前选择的资产不可预约！");
+            } else {
+                btn.button("loading");
+                window.location.href = "${base}/asset/apply/sign/addApply/" + ids.toString();
+            }
+            btn.button("reset");
+        } else {
+            Toast.warning("请先选择要申请预约的资产！");
+        }
+    }
+
+    // 资产管理
+    function assetManage() {
+        var chks = applyDatatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(chks, function (i, n) {
+                ids.push(n.assetcode);
+            });
+            var btn = $(this);
+            btn.button("loading");
+            window.location.href = "${base}/asset/apply/sign/assetManage/" + ids.toString();
+            btn.button("reset");
+        } else {
+            Toast.warning("请先选择要管理的资产！");
+        }
+    }
+
+</script>
+
+<%}%>

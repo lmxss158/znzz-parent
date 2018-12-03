@@ -1,0 +1,151 @@
+@media (min-width: 368px) {
+    .imgContainer {
+        max-width: 50px !important;
+    }
+}
+
+.example img {
+    width: 30%;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.flex-row-center {
+    display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+    display: -moz-box; /* Firefox 17- */
+    display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+    display: -moz-flex; /* Firefox 18+ */
+    display: -ms-flexbox; /* IE 10 */
+    display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+    align-items: center;
+    flex-direction: row;
+}
+
+.flex-row-center .sp_container {
+    width: 100% !important;
+}
+
+.flex-row-center .sp_container .sp_input {
+    border-radius: 0 !important;
+}
+
+#goback {
+    text-decoration: none;
+}
+
+.asset-style-basic {
+    width: 24%;
+    margin-left: 12px;
+    margin-top: 1px;
+
+}
+
+.asset-style-flex {
+    width: 150px;
+    flex: 0 0 185px;
+    margin-right: 5px;
+}
+
+.asset-style-flex-low {
+    width: 150px;
+    flex: 0 0 130px;
+    margin-right: 5px;
+}
+
+.asset-style-sen-row {
+    flex: 0 0 60px;
+    width: 125px;
+    margin-right: 5px;
+    margin-left: 12px;
+}
+
+.div-shade{
+    z-index: 3;
+}
+
+.asset-style-width {
+    width: 240px;
+}
+
+.asset-style-width-sen {
+    width: 233px;
+}
+
+.asset-style-width-label {
+    width: 90px;
+}
+
+.asset-style-width-originValue {
+    width: 112px;
+    z-index: 1;
+}
+
+.margin-width-self {
+    margin-right: 5px;
+}
+
+.margin-top-self {
+    margin-top: 3px;
+}
+
+.font-red {
+    color: red;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    z-index: 2;
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 122px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-content a {
+    color: gray;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #beebff 0px, #a8e4ff 100%) repeat scroll 0 0
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+.my-glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    height: 34px;margin-bottom: 2px;
+}
+

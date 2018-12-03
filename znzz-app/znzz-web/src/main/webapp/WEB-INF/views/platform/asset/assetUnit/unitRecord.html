@@ -1,0 +1,237 @@
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+                查看
+            	     
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <div class="form-horizontal" id="defaultForm" >
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="facility-form">
+                                <div class="facility-from-col">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                    <label for="assetCode" class="col-sm-2 control-label">统一编号：</label>
+                                   	<div class="col-sm-3">
+                                    	<input type="text" class="form-control" id="assetCode" value="${obj.assetCode}" disabled="disabled">
+                                    </div>
+                                      <label for="assetName" class="col-sm-2 control-label">资产名称：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="assetName" disabled="disabled" value="${obj.assetName}">
+                                    </div>  
+                                 </div>
+                                
+                                <div class="form-group">
+                                	<label for="serialNumber" class="col-sm-2 control-label">责任单位：</label>
+                                    <div class="col-sm-3">
+                                    	<input type="text" class="form-control" id="serialNumber" disabled="disabled" value="${obj.chargeDepartName}">
+                                    </div>
+                                    
+                                    <label for="deviceVersion" class="col-sm-2 control-label">责任人：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="deviceVersion" disabled="disabled" value="${obj.chargeManName}">
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            <input type="hidden" id="assetCodetem" value="${obj.assetCode}">
+            
+            <!-- 列表 -->
+            <div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					
+					<div class="box-body">
+					<%if(obj.operateTypeTemp!="0"){%>
+						<table id="unitRecordTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+							<thead>
+								<tr>
+									<th>统一编码</th>
+									<th>责任单位</th>
+									<th>责任人</th>
+									<th>使用单位</th>
+									<th>使用人</th>
+									<th>状态</th>
+									<th>操作时间</th>
+								</tr>
+							</thead>
+							
+						</table>
+						<%}else{%>
+						<table id="unitRecordPositionTable" class="table table-bordered table-striped table-hover" style="width: 100%;table-layout:fixed" >
+							 <colgroup>
+									<col style="width:60%">
+									<col style="width:20%">
+									<col  style="width:20%">
+							</colgroup>
+							
+							
+							<thead>
+								<tr>
+									<th>位置</th>
+									<th>操作人</th>
+									<th>操作时间</th>
+								</tr>
+							</thead>
+							
+						</table>
+						<%}%>
+						
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	<input type="hidden" id="operateTypeTemp" value="${obj.operateTypeTemp}">            
+            
+        </div>
+    </div>
+</div>
+
+<script>
+	
+var unitRecordTable;
+var unitRecordPositionTable;
+function initAssetUnitDatatable() {
+	unitRecordTable = $('#unitRecordTable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/assetUnit/getRecordList",
+            "type": "post",
+            "data": function (d) {   
+            	d.assetCode = $("#assetCodetem").val();
+            	d.operateType = $("#operateTypeTemp").val() ;
+            }
+        },
+          "order": [[6, "desc"]],
+           "columns": [
+                {"data": "assetcode"},
+                {"data": "chargedepartname"},
+                {"data": "chargemanname"},
+                {"data": "name"},
+                {"data": "loginname"},
+                {"data": "status"},
+                {"data": "operatetime"}
+            ],
+            "columnDefs": [	
+				{
+			      "render": function (data, type, row) {
+			    	  var str ="" ;
+			    	  if(row.operatetype==0){
+			    		  str = "位置变更" 
+			    	  }else if(row.operatetype==1&& row.status==1){
+			    		  str="借入审批通过" ;
+			    	  }else if(row.operatetype==1&& row.status==2){
+			    		  str="借入审批驳回" ;
+			    	  }else if(row.operatetype==2&& row.status==1){
+			    		  str="归还审批通过" ;
+			    	  }else if(row.operatetype==2&& row.status==2){
+			    		  str="归还审批驳回" ;
+			    	  }
+			    	  
+			    	return str ;
+			    },
+			    	"targets":5
+			    } 	    
+	         ]
+	         
+       
+        
+    });
+    
+}
+
+function initAssetUnitPositionDatatable() {
+	unitRecordPositionTable = $('#unitRecordPositionTable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/assetUnit/getRecordList",
+            "type": "post",
+            "data": function (d) {   
+            	d.assetCode = $("#assetCodetem").val();
+            	d.operateType = $("#operateTypeTemp").val() ;
+            }
+        },
+          "order": [[2, "desc"]],
+           "columns": [
+                {"data": "position"},
+                {"data": "loginname"},
+                {"data": "operatetime"}
+            ],
+            "columnDefs": [
+				{
+      		 		"render": function (data, type, row) {
+       				var str="--" ;
+       				if(data){
+       					str =subStrCustomNew(data,5);
+       				}
+       				return str;
+      			 }	,
+      			 "targets": [0,1,2]
+  				 }
+	         ]
+	         
+       
+        
+    });
+    
+}
+
+
+
+	$(function(){
+		var temp = $("#operateTypeTemp").val();
+		if(temp==0){
+			initAssetUnitPositionDatatable() ;
+		}else{
+			initAssetUnitDatatable();
+		}
+		
+	})	;
+	</script>

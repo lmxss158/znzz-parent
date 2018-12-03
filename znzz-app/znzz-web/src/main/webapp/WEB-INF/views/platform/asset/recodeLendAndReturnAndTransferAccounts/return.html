@@ -1,0 +1,499 @@
+<div class="modal-dialog" style="width:1210px;">
+    <div class="modal-content">
+        <form class="form-horizontal" id="returnForm" method="post" data-parsley-validate
+              action="${base}/asset/recode/addReturnRecode">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">资产归还</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+
+                    <div class="row">
+                        <input type="hidden" id="assetCodeArray" value="${obj.assetCodeArray}"/>
+                      <div class="col-md-12">
+                            <!-- Date -->
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-center">统一编号</label>
+                                <div class="col-sm-7">
+                                    <input type="text" id="add_asset_code_rentrun" name="assetCode" style="width:270px;"
+                                           class="form-control" name="num" data-parsley-required="true"
+                                           autofocus="autofocus" placeholder="请输入统一编号">
+                                </div>
+                                <div class="col-sm-1 col-md-offset-2" style="padding-left:102px;">
+                                    <a href="javascript:void(0);" id="del" onclick="del()"
+                                       class="btn btn-default pull-left" style="width: 90px;">批量删除</a>
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="width:1200px;  margin-bottom: 10px; ">
+
+                            <table id="unittable2" style="width:1180px;" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+
+                                    <th>统一编号</th>
+                                    <th>资产名称</th>
+                                    <th>出厂编号</th>
+                                    <th>型号</th>
+                                    <th>规格</th>
+                                    <th>备注</th>
+                                    <th>附件</th>
+
+                                </tr>
+                                </thead>
+
+
+                            </table>
+
+
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:30.3%">使用单位</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" name="applyDepart" id="add_apply_depart_rentrun"
+                                           placeholder="请选择" style="width: 100%;">
+                                    <!--    <input type="text" name="applyDepart" id="applyDepart" placeholder="请选择" style="width: 230px;"> -->
+                                    <!-- 		 <select class="form-control select2" name="applyDepart" id="applyDepart" data-placeholder="请选择"style="width: 100%;" data-tags="true"  data-allow-clear="true"	>
+
+                                                    </select> -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="worker">使用人</label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" name="applyPerson" id="add_apply_person_rentrun"
+                                           placeholder="请选择" style="width: 100%;">
+                                    <!-- 	 <select class="form-control select2" name="applyPerson" id="add_apply_person_rentrun" data-placeholder="请选择" style="width: 100%;"data-tags="true"  data-allow-clear="true"	>
+                                         </select> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="width:30.3%">办理单位</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="add_original_depart_rentrun"
+                                           name="originalDepart" class="form-control" data-parsley-required="true"
+                                           style="width: 100%;"
+                                           placeholder="请输入受理单位" value="${obj.unit.name!}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" style="text-align:center">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="worker">办理人</label>
+
+                                <div class="col-sm-9">
+                                    <input type="text" id="add_handle_person_rentrun" name="handlePerson"
+                                           value="${obj.username!}"
+                                           class="form-control" data-parsley-required="true" style="width: 100%;"
+                                           placeholder="请输入办理人">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="worker" style="width:30.3%">归还时间</label>
+
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control pull-right"
+                                               name="oprateTime" id="recordReturnTime">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label style="width:10.2%;margin-left:-9px;padding:10px 5px 5px 70px;"
+                                       class="col-sm-1 control-label" for="worker">备注</label>
+                                <div class="col-sm-8" style=" padding:10px 5px 5px 53px;">
+                                    <textarea class="form-control" name="remark" rows="3"
+                                              style="width:97%;resize:none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group" hidden="true">
+
+                                <div class="col-sm-8">
+
+                                    <input type="text" class="form-control pull-right" id="code_return_list"
+                                           hidden="true"
+                                           name="code_return_list">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group" hidden="true">
+                                <label class="col-sm-4 control-label" for="person">类型</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control pull-right" value="1" hidden="true"
+                                           name="actionType" id="add_action_type">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 		<div class="row">
+
+
+
+                            </div> -->
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="formreset()" data-dismiss="modal"
+                        style="width:100px">关闭
+                </button>
+                <button class="btn btn-primary" onclick="addListCode1()" data-loading-text="正在提交..."
+                        style="width:100px">确定
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    var datatable_return;
+
+    function initDatatable() {
+        datatable_return = $('#unittable2').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": false,
+            "paging": false,
+            "select": false,
+            "ordering": false,
+            "sScrollY": "200px",
+            "destroy": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/recode/showRecode1",
+                "type": "post",
+                "data": function (d) {
+                    d.assetCode = $('#add_asset_code_rentrun').val().trim();
+                    d.assetCodeArray = $('#assetCodeArray').val().trim();
+                }
+            },
+//        "order": [[0, "desc"]],
+            "columns": [
+                {"data": "assetCode", "bSortable": true},
+                {"data": "assetName", "bSortable": true},
+                {"data": "serialNumber", "bSortable": true},
+                {"data": "deviceVersion", "bSortable": true},
+                {"data": "ggName", "bSortable": true},
+                {"data": "remark", "bSortable": true},
+                {"data": "str1", "bSortable": true}
+
+
+            ],
+
+            "columnDefs": [
+
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [0, 1, 2, 3, 4, 5,6]
+                }
+
+            ]
+
+            /*         "columnDefs": [
+
+
+
+                                   {
+                                   "render": function (data, type, row) {
+                                       return '<a class="btn btn-xs btn-danger" href="javascript:;" onclick="delTr()"><i class="glyphicon glyphicon-trash"></i> 删除</a>';
+                                   },
+                                   "targets": 5
+                               }
+
+                           ]
+                     */
+        });
+
+        /* 点击选中 */
+        datatable_return.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+    }
+
+    //批量赋值仪器编码
+    function addListCode1() {
+
+        var code_return_arr = [];
+        $("#unittable2").find("tr").each(function () {
+            var assetCode_check = $(this).children('td:eq(0)').text();
+            code_return_arr.push(assetCode_check)
+            document.getElementById("code_return_list").value = code_return_arr;
+        });
+
+
+        $('#returnForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                if ($("#code_return_list").val() == ",表中数据为空" || $("#code_return_list").val() == "") {
+                    Toast.error("归还设备不能为空");
+                    return false;
+                }
+                if ($("#add_apply_depart_rentrun").val() == "") {
+                    Toast.error("使用单位不能为空");
+                    return false;
+                }
+                /*if ($("#add_apply_person_rentrun").val() == "") {
+                    Toast.error("使用人不能为空");
+                    return false;
+                }*/
+                if ($("#add_original_depart_rentrun").val() == "") {
+                    Toast.error("办理单位不能为空");
+                    return false;
+                }
+                if ($("#add_handle_person_rentrun").val() == "") {
+                    Toast.error("办理人不能为空");
+                    return false;
+                }
+                if ($("#recordReturnTime").val() == "") {
+                    Toast.error("时间不能为空");
+                    return false;
+                }
+
+
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //清空table
+                    //document.getElementById("lendForm").reset();
+                    //var table = document.getElementById("unittable2");
+                    //table.innerHTML ="";
+                    //$("#add_asset_code_rentrun").val("");
+                    //document.getElementById('barcon1').innerHTML = "";
+                    // $("#recode_modal").modal('hide');
+                    //刷新父级菜单
+                    datatable.ajax.reload();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+                $("#homeDetail").modal('hide');
+
+            }
+        });
+    }
+
+    //清空form以及表单
+    function formreset() {
+        document.getElementById("returnForm").reset();
+        var table = document.getElementById("unittable2");
+        table.innerHTML = "";
+        $("#add_asset_code_rentrun").val("");
+        document.getElementById('barcon1').innerHTML = "";
+    }
+
+    var table;
+    //回车表格增加一行时间
+    $('#add_asset_code_rentrun').keydown(function (e) {
+        if (e.keyCode == 13) {
+            var assetCode = $("#add_asset_code_rentrun").val().trim();
+            $.ajax({
+                type: "post",
+                data: {assetCode: assetCode},
+                dataType: "json",
+                url: "${base}/asset/recode/showReturnRecode",
+                success: function (data) {
+                    var flag = 1;
+                    if (null != data && data != "") {
+
+                        if (data.actionType == "1") {
+                            Toast.warning("编号为" + data.assetCode + "的仪器已经归还");
+                        } else {
+
+                            $("#unittable2").find("tr").each(function () {
+                                //第二列单元格的值eq(索引)
+                                var assetCode_check = $(this).children('td:eq(0)').text();
+                                var assetCode_checked = data.assetCode;
+                                //alert(assetCode_check+"0"+assetCode_checked);
+                                if (assetCode_checked == assetCode_check) {
+                                    flag = 0;
+                                    return false;
+                                }
+                            });
+                            if (flag == 1) {
+                                table = $('#unittable2').DataTable();
+
+                                table.row.add({
+                                    "assetCode": data.assetCode,
+                                    "assetName": data.assetName,
+                                    "serialNumber": data.serialNumber,
+                                    "deviceVersion": data.deviceVersion,
+                                    "ggName": data.ggName,
+                                    "remark": data.remark,
+                                    "str1": data.str1,
+                                    "returnDate": "--",
+                                    "returnPerson": "--"
+                                }).draw();
+                                $("#add_asset_code_rentrun").val("");
+                                //给使用单位，使用人设值
+                                setValueSelect(data.applyPerson, data.applyDepartment, "add_apply_depart_rentrun", "add_apply_person_rentrun");
+
+
+                            }
+                        }
+
+
+                    } else {
+                        Toast.warning("不存在此编号仪器或编号为空！");
+                    }
+                }
+            });
+        }
+    });
+
+
+    $("#add_asset_code_rentrun").blur(function () {
+
+        var assetCode = $("#add_asset_code_rentrun").val().trim();
+        if (assetCode == "" || assetCode == null) {
+
+        } else {
+            $.ajax({
+                type: "post",
+                data: {assetCode: assetCode,},
+                dataType: "json",
+                url: "${base}/asset/recode/showReturnRecode",
+                success: function (data) {
+                    var flag = 1;
+                    if (null != data && data != "") {
+
+                        if (data.actionType == "1") {
+                            Toast.warning("编号为" + data.assetCode + "的仪器已经归还");
+                        } else {
+
+                            $("#unittable2").find("tr").each(function () {
+                                //第二列单元格的值eq(索引)
+                                var assetCode_check = $(this).children('td:eq(0)').text();
+                                var assetCode_checked = data.assetCode;
+                                //alert(assetCode_check+"0"+assetCode_checked);
+                                if (assetCode_checked == assetCode_check) {
+                                    flag = 0;
+                                    return false;
+                                }
+                            });
+                            if (flag == 1) {
+                                table = $('#unittable2').DataTable();
+
+                                table.row.add({
+                                    "assetCode": data.assetCode,
+                                    "assetName": data.assetName,
+                                    "serialNumber": data.serialNumber,
+                                    "deviceVersion": data.deviceVersion,
+                                    "ggName": data.ggName,
+                                    "remark": data.remark,
+                                    "str1": data.str1,
+                                    "returnDate": "--",
+                                    "returnPerson": "--"
+                                }).draw();
+                                $("#add_asset_code_rentrun").val("");
+                                //给使用单位，使用人设值
+                                setValueSelect(data.applyPerson, data.applyDepartment, "add_apply_depart_rentrun", "add_apply_person_rentrun");
+
+
+                            }
+                        }
+
+
+                    } else {
+                        Toast.warning("不存在此编号仪器或编号为空！");
+                    }
+                }
+            });
+
+        }
+
+
+    });
+
+
+</script>
+<script language="JavaScript">
+    //取消点击确定，默认回车事件
+    $(document).keydown(function (event) {
+        switch (event.keyCode) {
+            case 13:
+                return false;
+        }
+    });
+    $(document).ready(function () {
+
+
+        setTimeout(function () {
+
+            initDatatable();
+            $("#add_asset_code_rentrun").focus();
+        }, 200);
+
+
+        loadUnitAndUserNoKuFang("add_apply_depart_rentrun", "add_apply_person_rentrun");
+        //loadUnitAndUser("add_original_depart_rentrun","add_handle_person_rentrun");
+        setDate("recordReturnTime");
+        //默认当前时间
+        $("#recordReturnTime").val((new Date()).format("yyyy-MM-dd"));
+
+    });
+
+    function del() {
+
+        datatable_return.rows('.selected').remove().draw();
+    }
+
+</script>

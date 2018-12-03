@@ -1,0 +1,304 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+                    <h4 class="modal-title">
+                        ${obj.operating}
+                    	 <input type="hidden"  id="opera" value="${obj.operating!}">
+                    </h4>
+                </div>
+		
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/asset/cyclecheck/savecheck" method="post">
+    	 <input id="id" name="id" type="hidden" value="${obj.id}">
+    	 <input  name="operating" type="hidden" value="${obj.operating}">
+                <div class="modal-body">
+                 <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="assetCode" class="col-sm-2 control-label">统一编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="${obj.assetCode!}" name="assetCode"  placeholder="请输入统一编号" readonly="readonly"> 
+                            </div>
+                        </div>
+                        
+                         <div class="form-group">
+                            <label for="assetName" class="col-sm-2 control-label">资产名称</label>
+                            <div class="col-sm-8">
+                               <input type="text" class="form-control" value="${obj.assetName!}" name="assetName"  placeholder="请输入资产名称" readonly="readonly"> 
+                            </div>
+                        </div> 
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">有效日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                     <input type="text" class="form-control pull-right" name="effectiveDate" value="${@date.formatDate(obj.effectiveDate)}" id="effectiveDate" disabled="disabled"> 
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">送检日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                   <input type="text" class="form-control pull-right" name="sentCheckDate" value="${@date.formatDate(obj.sentCheckDate)}" id="sentCheckDate" readonly="readonly" style="background-color: white;"> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                    	<!-- 检定 -->
+                   		<div id="checkmodal" style="display:none" >
+                    	<div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">检定日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                     <input type="text" class="form-control pull-right" name="checkDate" value="${@date.formatDate(obj.checkDate)}" id="checkDate" readonly="readonly" style="background-color: white;"> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-gateway-desc" class="col-sm-2 control-label">检定结论</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" rows="3" name="testResult" id="testResult" 
+                                          placeholder="${obj.testResult}"></textarea>
+                            </div>
+                        </div> 
+                   		</div>
+                     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                     	<!-- 领取 -->
+                   		<div id="getmodal" style="display:none" >
+                    	<div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">领取日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                     <input type="text" class="form-control pull-right" name="getDate" value="${@date.formatDate(obj.getDate)}" id="getDate" readonly="readonly" style="background-color: white;"> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-gateway-desc" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" rows="3" name="remark" id="remark" 
+                                          placeholder="${obj.remark}"></textarea>
+                            </div>
+                        </div>
+                   		</div>
+                     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                   		<!-- 归档 -->
+                   		<div id="filmodal" style="display:none" >
+                    	<div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">归档日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                     <input type="text" class="form-control pull-right" name="filDate" value="${@date.formatDate(obj.filDate)}" id="filDate" readonly="readonly" style="background-color: white;"> 
+                                </div>
+                            </div>
+                        </div>
+                   		</div>
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/asset/cyclecheck/${obj.module}" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button id="yes" class="btn btn-primary"  data-loading-text="正在提交..." style="width:120px">确定</button>
+                	
+                </div>
+                
+    </form>
+    
+	</div>
+	
+<script language="JavaScript">
+
+    $(document).ready(function () { 
+     	initModal();
+        $("#sentCheckDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",//控制仅显示到日
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy-mm-dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+     	$("#checkDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",//控制仅显示到日
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy-mm-dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+     	$("#getDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",//控制仅显示到日
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy-mm-dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+     	$("#filDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",//控制仅显示到日
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy-mm-dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	var operating = $("#opera").val();
+            	if(operating=="送检"){
+            		if($("#sentCheckDate").val()==""){
+            			Toast.error("送检日期不能为空");
+                		return false;
+            		}
+            	}
+				if(operating=="检定"){
+					var sentCheckDate = $("#sentCheckDate").val();
+					var checkDate = $("#checkDate").val();
+					if($("#checkDate").val()==""){
+            			Toast.error("检定日期不能为空");
+                		return false;
+            		}
+					/* alert(sentCheckDate+"~~"+checkDate);
+					alert(sentCheckDate>checkDate); */
+					if(sentCheckDate>checkDate){
+						Toast.error("检定失败，要求检定日期必须大于等于送检日期");
+						return false;
+					} 
+					
+            	}
+				if(operating=="领取"){
+					var checkDate = $("#checkDate").val();
+					var getDate = $("#getDate").val();
+					if($("#getDate").val()==""){
+            			Toast.error("领取日期不能为空");
+                		return false;
+            		}
+					if(checkDate>getDate){
+						Toast.error("领取失败，要求领取日期必须大于等于检定日期");
+						return false;
+					} 
+            	}
+				if(operating=="归档"){
+					var getDate = $("#getDate").val();
+					var filDate = $("#filDate").val();
+					if($("#filDate").val()==""){
+            			Toast.error("归档日期不能为空");
+                		return false;
+            		}
+					if(getDate>filDate){
+						Toast.error("归档失败，要求归档日期必须大于等于领取日期");
+						return false;
+					}
+				}
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        }); 
+    });
+    
+    function initModal(){
+    	var operating = $("#opera").val();
+    	if("检定"==operating){
+    		$("#checkmodal").show();
+    		$("#sentCheckDate").attr("disabled",true);
+    		$("#sentCheckDate").removeAttr("style");
+    	}
+    	if("领取"==operating){
+    		$("#checkmodal").show();
+    		$("#getmodal").show();
+    		$("#sentCheckDate").attr("disabled",true);
+    		$("#sentCheckDate").removeAttr("style");
+    		$("#checkDate").attr("disabled",true);
+    		$("#checkDate").removeAttr("style");
+    		$("#testResult").attr("disabled",true);
+    		
+    	}
+    	if("归档"==operating){
+    		$("#checkmodal").show();
+    		$("#getmodal").show();
+    		$("#filmodal").show();
+    		$("#sentCheckDate").attr("disabled",true);
+    		$("#sentCheckDate").removeAttr("style");
+    		$("#checkDate").attr("disabled",true);
+    		$("#checkDate").removeAttr("style");
+    		$("#testResult").attr("disabled",true);
+    		$("#getDate").attr("disabled",true);
+    		$("#getDate").removeAttr("style");
+    		$("#remark").attr("disabled",true);
+    	}
+    	if("查看"==operating){
+    		$("#checkmodal").show();
+    		$("#getmodal").show();
+    		$("#filmodal").show();
+    		$("#sentCheckDate").attr("disabled",true);
+    		$("#sentCheckDate").removeAttr("style");
+    		$("#checkDate").attr("disabled",true);
+    		$("#checkDate").removeAttr("style");
+    		$("#testResult").attr("disabled",true);
+    		$("#getDate").attr("disabled",true);
+    		$("#getDate").removeAttr("style");
+    		$("#remark").attr("disabled",true);
+    		$("#filDate").attr("disabled",true);
+    		$("#filDate").removeAttr("style");
+    		$("#yes").attr("style","display:none");
+    	}
+    }
+    
+</script>
+<%}%>
+
+

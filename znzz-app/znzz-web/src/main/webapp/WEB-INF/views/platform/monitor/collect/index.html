@@ -1,0 +1,616 @@
+<%layout("/layouts/platform.html"){
+%>
+        <section class="content-header">
+            <h1> 设备绑定 <!--<small>Control panel</small>-->
+            </h1>
+
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/instrument/monitor/collect#">设备动态管理</a></li>
+                <li class="active">设备绑定</li>
+            </ol>
+</section>
+        
+        <section class="content">
+            <!-- 查询搜索框 -->
+            <div class="row">
+                <div style="padding: 15px 15px;">
+
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                            	<div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="deviceCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">设备信息：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="deviceCode" placeholder="统一编号/设备名称/设备型号">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="collectCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">采集器编号：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="collectCode" placeholder="请输入采集器编号">
+                                        </div>
+                                    </div>
+                                 </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="borrowDepart" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">使用单位：</label>
+                                        <div class="col-sm-9">
+                                            <!-- <select name="borrowDepart" id="borrowDepart" class="form-control select1"
+                                                  data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                          </select> -->
+                                            <input type="text" id="borrowDepart" name="borrowDepart" style="width: 100%;" placeholder="请输入使用单位" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <!--<div class="form-group">-->
+                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">责任人：</label>
+                                        <div class="col-sm-9">
+                                            <!-- <select class="form-control select2" name="chargePerson" id="chargePerson" data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true"	>
+
+                                            </select> -->
+                                            <input type="text" id="chargePerson" name="chargePerson" style="width: 100%;" placeholder="请输入责任人" />
+                                        </div>
+                                    </div>
+                                  </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">录入时间：</label>
+                                        <div class="col-sm-9">
+                                            <div class="form-control">
+                                                <i class="fa fa-calendar"></i>
+                                                <input type="text" id="timeRange2" name="createTime" style="width: 90%; margin-left: 5px;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <!-- /.input group -->
+                                    </div>
+                             </div>
+                                <!-- /.box-body -->
+                                <div class="box-footer">
+                                    <!-- <a href="${base}/instrument/monitor/collect" class="btn btn-default pull-left" style="width: 90px;">重置 / 刷新</a> -->
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                   		</div>
+                    </div>
+                    </div>
+             </div>
+            
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box">
+						<div class="box-header">
+                            <!--<h3 class="box-title">Bordered Table</h3>-->
+                            <!-- 添加 -->
+                            <a id="add" class="btn btn-md btn-success" href="${base}/instrument/monitor/collect/add" data-pjax><i class="fa fa-fw fa-plus"></i>绑定设备</a>
+                            <!-- <button id="add" class="btn btn-md btn-success" data-pjax><i class="fa fa-fw fa-plus"></i>绑定设备</button> -->
+                            <!-- 解绑 -->
+                            <button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 批量解绑</button>
+                            <!-- 模板下载 -->
+                            <a class="btn btn-primary" href="${base}/instrument/monitor/collect/downLoad">
+                            	<span class="glyphicon glyphicon-download-alt"></span> 模板下载
+                            </a>
+                            <!-- 导入 -->
+                            <a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('collectFile').click();">
+                            	<span class="glyphicon glyphicon-arrow-down"></span> 导入
+                            </a>
+                            <input type="file" style="display:none;" id="collectFile" name="collectFile" onchange="submitImportFile();" />
+                            <!-- 导出 -->
+                            <a class="btn btn-primary" href="${base}/instrument/monitor/collect/export">
+                            	<span class="glyphicon glyphicon-open"></span> 导出
+                            </a>
+                            
+                       </div>
+                       
+                    <div class="box-body">
+                            <table id="collectcode" class="table table-bordered table-striped table-hover">
+                            <thead>
+	                                <tr>
+	                                    <th>序号</th>
+	                                    <th>统一编号</th>
+	                                    <th>采集器编号</th>
+	                                    <th>设备名称</th>
+	                                    <th>设备型号</th>
+	                                    
+	                                    <th>使用单位</th>
+	                                    <th>责任人</th>
+	                                    <th>录入时间</th>
+	                                    <th style="width:170px;">操作</th>
+	                                </tr>
+                                </thead>
+                            </table>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    <div class="control-sidebar-bg"></div>
+    
+    <!--查看详情框-->
+    <div class="modal fade bs-example-modal-lg" id="detailFlow" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="margin: 250px auto;width: 53%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">设备详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body table-responsive no-padding">
+                        <table id="deviceDetailTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                          <input type="hidden" id="deviceCodeTemp"></input> 	
+                       <thead style="width: 100%;">
+	                            <tr>
+	                                <th>统一编号</th>
+	                                <th>设备名称</th>
+									<th>设备型号</th>
+									<th>开机时间</th>
+									<th>关机时间</th>
+									<th>离线时间</th>
+									<th>使用时长</th>
+	                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!--解绑框-->
+	<div class="modal fade" id="dialogDelete" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">解绑</h4>
+                </div>
+                <div class="modal-body">
+                    <p>是否确定解绑</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+                    <button id=okDel type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+</div>
+<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                    <!-- <button id="" type="button" class="btn btn-primary">确定</button> -->
+                </div>
+            </div>
+        </div>
+</div>
+<!-- 检测-->
+<div id="checkCard" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">检测</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12" id="checkInfo">
+						确认检测？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+			    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="checkButton" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+        
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading-bind"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>	
+	
+
+
+<script  type="text/javascript">
+/* $("#add").on('click', function() {
+	$("#homeDetail").modal('show');
+	$("#homeDetail").load('${base}/instrument/monitor/collect/add')
+});  */
+    var datatable;
+    var detailtable;
+    function initDatatable() {
+        datatable = $('#collectcode').DataTable({
+        	"dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));           
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));           
+            },
+            
+            "ajax": {
+                "url": "${base}/instrument/monitor/collect/data",
+                "type": "post",
+                "data": function (d) {     
+                	d.deviceCode = $('#deviceCode').val().trim();
+                	d.collectCode = $('#collectCode').val().trim();
+                	d.borrowDepart = $('#borrowDepart').val().trim();
+                	d.chargePerson = $('#chargePerson').val().trim();
+                	d.createTime = $('#timeRange2').val().trim();
+                }
+            },
+            "order": [[7, "desc"]],
+            "columns": [
+                        {"data":null,"width":"30px"},
+                    {"data": "devicecode", "bSortable": true},
+                    {"data": "collectcode", "bSortable": true},
+                    {"data": "devicename", "bSortable": true},
+                    {"data": "deviceversion", "bSortable": true},
+                   
+                    {"data": "borrowdepart", "bSortable": true},
+                    {"data": "chargeperson", "bSortable": true},
+                    {"data": "createtime", "bSortable": true}
+            ],
+            "columnDefs": [
+                       	{
+        				    "searchable": false,
+        				    "orderable": false,
+        				    "targets": 0
+        				},
+                {
+   					 "render": function (data, type, row) {
+   						 if(data == null || "" == data) {return "--"}else {return data};
+   					 },
+   					  "targets": [1,2,3,4,5,6,7]
+                },
+                {
+                    "render": function (data, type, row) {
+                    	return '<a class="btn btn-xs btn-info" href="javascript:void(0);" onclick="checkAcard(\'' + row.devicecode + '\')" ><i class=""></i> 检测</a>'+
+                    	'&nbsp;&nbsp;<a class="btn btn-xs btn-primary " href="javascript:void(0)" onclick="getDeviceDetail(\''+row.devicecode+'\')" data-toggle="modal" data-target="#dialogGatewayDetail"><i class="glyphicon glyphicon-sunglasses"></i> 查看</a>'+
+             		   '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="del(\'' + row.id + '\')"><i class="glyphicon glyphicon-trash"></i> 解绑</a>';
+                    },
+                    "targets": 8
+                }
+            ]
+        });
+        
+        
+        datatable.on('draw.dt',function() {
+        	datatable.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+
+                i = i+1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+                var page = datatable.page.info();
+                //当前第几页，从0开始
+
+                var pageno = page.page;
+                //每页数据
+
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i+pageno*length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+        
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        // 重新加载表数据
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        }); 
+    }
+    function checkAcard (devicecode) {
+    	
+        var dialog = $("#checkCard");
+        dialog.modal("show");
+        dialog.find("#checkButton").unbind("click");
+        dialog.find("#checkButton").bind("click", function(event){
+         var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/instrument/monitor/collect/check", {devicecode: devicecode}, function (data) {
+                if (data == "0") { 
+                	Toast.error("编号为"+devicecode+"检测失败");
+                	
+                } else  if(data == "1"){
+                	Toast.success("编号为"+devicecode+"检测成功");
+                }else{
+                	Toast.error("scada接口错误，检测失败");
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function getDeviceDetail(deviceCode){
+    	$("#deviceCodeTemp").val(deviceCode);
+    	// 查看详情
+    	initTableById(deviceCode);
+        $("#detailFlow").modal('show')
+    };
+    function initTableById(){
+    	if(detailtable){
+    		detailtable.ajax.reload();
+    		//$("#deviceDetailTable").DataTable().draw();//
+    	}else{
+    		detailtable = $('#deviceDetailTable').DataTable({
+    			//"destroy": true,
+    	        //"dom": '<"toolbar">frtip',
+    	        "searching": false,
+    	        "processing": false,
+    	        "serverSide": true,
+    	        "select": false,
+    	        "ordering": false, 
+    	        "language": {
+    	            "url": "${base}/assets/plugins/datatables/cn.json"
+    	        },
+    	        
+    	        "preDrawCallback": function () {
+    	            sublime.showLoadingbar($(".main-content"));           
+    	        },
+    	        "drawCallback": function (settings) {
+    	            sublime.closeLoadingbar($(".main-content"));           
+    	        },
+    	         
+    	        "ajax": {
+    	            "url": "${base}/instrument/monitor/switchingFlow/detail",
+    	            "type": "post",
+    	            "async":"false",
+    	            "data": function (d) { 
+    	            	d.deviceCode = $("#deviceCodeTemp").val();
+    	            }
+    	        },
+    	         // "order": [[0, "desc"]],
+    	           "columns": [
+    	                {"data": "devicecode"},
+    	                {"data": "devicename"},
+    	                {"data": "deviceversion"},
+    	                {"data": "powerontime"},
+    	                {"data": "powerofftime"},
+    	                {"data": "outlinetime"},
+    	                {"data": "usertime"}
+    	            ],
+    	            "columnDefs": [	
+    	           		{
+    	           			"render": function (data, type, row) {
+    	           			 return data==null?"--":data ;
+    	           		},
+    	           			 "targets": [4,5,6]
+    	           		}
+    	           ]
+    	    });
+    	}
+
+    	}
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/instrument/monitor/collect/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                	Toast.success(data.msg);
+                    datatable.ajax.reload(null,false);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/instrument/monitor/collect/delete/", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                    	Toast.success(data.msg);
+                        datatable.ajax.reload(null,false);
+                    } else {
+                    	if("没有权限"!=data.msg){
+                    		Toast.error(data.msg);
+                    	}
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("请先选择要解绑的项！");
+        }
+    }
+ 
+$(function () {
+    initDatatable();
+    loadUnitAndUser();
+    detailtable=null ;//初始化  不能去掉 去掉详情页弹窗加载有问题
+    
+ 
+    
+    $("#dialogCheckBcard").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+    
+    var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        $('#timeRange2').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "timePickerSeconds":true,
+            "locale": locale,
+            "ranges": {
+                // '今日': [moment(), moment()],
+                // '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                // '最近7日': [moment().subtract(6, 'days'), moment()],
+                // '最近30日': [moment().subtract(29, 'days'), moment()],
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker":true,
+            //"timePicker24Hour": true
+            "timePickerSeconds": true
+        });
+        $("#timeRange2").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange2").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+        $("#timeRange2").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange2").val('')
+        });
+    
+    
+});
+/* function initSelect(){
+	
+	$(".select2").select2({
+		allowClear: true,
+	});
+	 $('.select1').select2({
+		 allowClear: true,
+		
+	 });
+} */
+
+function submitImportFile(){
+	if($("#collectFile").val()!=null){
+		if(!/.(xls|xlsx)$/.test($("#collectFile").val())){
+			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+			return false;
+		}
+	}
+		$('#loading-bind').modal('show');
+		$.ajaxFileUpload({  
+		url:"${base}/instrument/monitor/collect/upload",
+        type:'POST',
+        secureuri : false,  
+        fileElementId : 'collectFile',
+        dataType : 'JSON', 
+        success : function (data, status){
+        	$("#collectFile").val("");
+        	var obj = $.parseJSON(data);
+        	if(obj.code == 0){
+        		
+        		Toast.success("导入成功")
+       			$("#ladda-btn").button("reset");
+        		setTimeout(function(){
+        			//location.reload();
+        			datatable.ajax.reload();
+        		},1000);
+        	}else {
+        		var obj = $.parseJSON(data);
+            	loading(false);
+        		// Toast.error(obj.msg)
+        		showCheckExcel(obj.msg);
+        	}
+        	$('#loading-bind').modal('hide');
+        },
+        error: function(data, status, e){
+        	$('#loading-bind').modal('hide');
+        }
+    });
+}
+function reloadWindow(){
+	datatable.ajax.reload();
+}
+function showCheckExcel(msg){
+	//alert(msg)
+	var excel = $("#checkExcel");
+	excel.modal("show");
+	excel.find("#inputText").html(msg)
+}
+</script>
+
+<%}%>

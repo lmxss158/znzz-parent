@@ -1,0 +1,194 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<link type="text/css" rel="stylesheet" href="${base!}/assets/sen/css/mobile_date.css">
+<script type="text/javascript" src="${base!}/assets/sen/js/mobile_date.js"></script>
+<script type="text/javascript" src="${base!}/assets/sen/js/apply_utils.js"></script>
+<div>
+    <section class="content-header">
+        <a href="${base!}/asset/apply/sign" data-pjax>
+            <button type="button" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </a>
+        <h4>资产详情</h4>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-info">
+                    <div class="box-body">
+                        <form id="applyAddModal" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                              action="#" method="post" data-backdrop="static"
+                              data-keyboard="false">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" role="tab" id="headingOne">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                资产信息
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="one" class="panel-collapse" role="tabpanel"
+                                         aria-labelledby="headingFour">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label for="assetCode" class="col-sm-1 control-label">统一编号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="assetCode"
+                                                           value="${obj.assetCode}"
+                                                           disabled>
+                                                    <input type="hidden" name="assetCode" value="${obj.assetCode}">
+                                                </div>
+
+                                                <label for="assetName" class="col-sm-1 control-label">资产名称：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="assetName"
+                                                           value="${obj.assetName}"
+                                                           disabled>
+                                                    <input type="hidden" name="assetName" value="${obj.assetName}">
+                                                </div>
+                                                <label for="deviceVersion" class="col-sm-1 control-label">资产型号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="deviceVersion"
+                                                           value="${obj.deviceVersion}" disabled>
+                                                    <input type="hidden" name="deviceVersion"
+                                                           value="${obj.deviceVersion}">
+                                                </div>
+                                                <label for="serialNumber" class="col-sm-1 control-label">出厂编号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="serialNumber"
+                                                           value="${obj.serialNumber}" disabled>
+                                                    <input type="hidden" name="serialNumber"
+                                                           value="${obj.serialNumber}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="enableTime" class="col-sm-1 control-label">启用日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="enableTime"
+                                                           name="enableTime"
+                                                           value="${@date.formatDate(obj.enableTime)}" disabled>
+                                                </div>
+
+                                                <label for="powerOffTime" class="col-sm-1 control-label">离线日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="powerOffTime"
+                                                           name="powerOffTime"
+                                                           value="${@date.formatDate(obj.powerOffTime)}" disabled>
+                                                </div>
+                                                <label for="ggName" class="col-sm-1 control-label">规格：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="ggName"
+                                                           value="${obj.ggName}"
+                                                           disabled>
+                                                    <input type="hidden" name="specifications" value="${obj.ggName}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" role="tab" id="headingThree">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                月历
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="three" class="panel-collapse" role="tabpanel"
+                                         aria-labelledby="headingFour">
+                                        <div class="panel-body">
+                                            <section class="date">
+                                                <div class="head">
+                                                    <div class="prev">上一月</div>
+                                                    <div class="tomon"><span class="year"></span>年 <span
+                                                            class="month"></span>月
+                                                    </div>
+                                                    <div class="next">下一月</div>
+                                                </div>
+                                                <ol>
+                                                    <li>星期日</li>
+                                                    <li>星期一</li>
+                                                    <li>星期二</li>
+                                                    <li>星期三</li>
+                                                    <li>星期四</li>
+                                                    <li>星期五</li>
+                                                    <li>星期六</li>
+                                                </ol>
+                                                <ul class="tip_trigger">
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                    <li>日期</li>
+                                                </ul>
+                                                <!--图例-->
+                                                <div>
+                                                    <div class="pull-right">
+                                                        <div class="for_symbol"><h4 style="float: left">可以预约:</h4><span
+                                                                class="circlew"></span></div>
+                                                        <div class="for_symbol"><h4 style="float: left">我的预约:</h4><span
+                                                                class="circleg"></span></div>
+                                                        <div class="for_symbol"><h4 style="float: left">他人预约:</h4><span
+                                                                class="circley"></span></div>
+                                                        <div class="for_symbol"><h4 style="float: left">逾期未还:</h4><span
+                                                                class="circler"></span></div>
+                                                        <div class="for_symbol"><h4 style="float: left">不可预约:</h4><span
+                                                                class="circleh"></span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="tip_show">
+                                                    <p id="person">申请人：</p>
+                                                    <p id="num">申请编号；</p>
+                                                    <p id="phone">联系电话；</p>
+                                                    <p id="to">借出日期：</p>
+                                                    <p id="return">归还日期：</p>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<a class="exit-offscreen"></a>
+<script language="JavaScript">
+    var myApps = "${myApply}";
+    var otherApps = "${otherApply}";
+    var forbidApps = "${forbid}";
+    var delayApps = "${delayApply}";
+    var forbidStart = "";
+    var infoUrl = "${base}/asset/apply/sign/getCurrentInfo";
+    $(document).ready(function () {
+        // 设置占用
+        setColor();
+        toolTips();
+        setValue();
+        $(".tomon, .prev, .next").click(function () {
+            setColor();
+            setValue();
+        });
+        // 页码记忆
+        $.cookie('apply', '1', {expires: 30, path: '/'});
+    });
+
+</script>
+
+<%}%>

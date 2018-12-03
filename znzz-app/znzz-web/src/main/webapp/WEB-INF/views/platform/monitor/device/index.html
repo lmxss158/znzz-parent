@@ -1,0 +1,399 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1> 设备监控</h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/instrument/monitor/device#">设备动态管理</a></li>
+                <li class="active">设备监控</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <input type="hidden" id="deviceCodeTemp">
+            <div class="row">
+                <div style="padding: 15px 15px;">
+                    <div class="box" >
+                        <!--<div class="box-header with-border">-->
+                        <!--<h3 class="box-title">Horizontal Form</h3>-->
+                        <!--</div>-->
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <div class="box-body" style="padding: 0 15px auto;">
+                        <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label for="deviceCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">设备：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="deviceCode"  id="deviceCode" placeholder="统一编号/设备名称/设备型号">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="borrowDepart" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">使用单位：</label>
+                                        <div class="col-sm-9">
+                                            <!--  <select name="borrowDepart" id="borrowDepart" class="form-control select1"
+                                                     data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                                 <option value="">全部</option>
+                                                 <option>生产部</option>
+                                                 <option>事业部</option>
+                                                 <option>人事部</option>
+                                             </select> -->
+                                            <input type="text" name="borrowDepart" id="borrowDepart" style="width: 100%;" placeholder="请选择">
+                                        </div>
+                                    </div>
+
+                                   <!--  <label for="borrowDepart" class="col-sm-1 control-label">使用单位：</label>
+                                    <div class="col-sm-1">
+                                        <select name="borrowDepart" id="borrowDepart" style="width: 71px;">
+                                        	<option value="">请选择</option>
+                                        	<option>科室1</option>
+                                        	<option>科室2</option>
+                                        </select>
+                                    </div> -->
+                                    
+
+                                    
+                                    
+                                    
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="col-sm-3 control-label" style="padding-left: 0px; padding-right: 0;">责任人：</label>
+                                        <div class="col-sm-9">
+                                            <!--  <select class="form-control select2" name="chargePerson" id="chargePerson" data-placeholder="请选择" style="width: 100%;"data-tags="true"  data-allow-clear="true"	>
+
+                                             </select> -->
+                                            <input type="text" name="chargePerson" id="chargePerson" style="width: 100%;" placeholder="请选择">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">监控状态：</label>
+                                        <div class="col-sm-9">
+                                            <select id="state" name="state" class="form-control">
+                                                <option value="">请选择</option>
+                                                <option value="0">在线</option>
+                                                <option value="1">离线</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                
+
+                                    
+                                    
+                                   
+                                </div>
+                                <div class="form-group">
+                                	<!--  <label for="outField" class="col-sm-2 control-label">外场：</label>
+                                    <div class="col-sm-3">
+                                        <select id="outField" name="outField" class="form-control">
+                                        	<option value="">请选择</option>
+                                        	<option value="0">否</option>
+                                        	<option value="1">是</option>
+                                        </select>
+                                    </div> -->
+                                    <div class="col-sm-6">
+                                        <label for="powerState" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">开机状态：</label>
+                                        <div class="col-sm-9">
+                                            <select id="powerState" name="powerState" class="form-control">
+                                                <option value="">请选择</option>
+                                                <option value="0">开机</option>
+                                                <option value="1">关机</option>
+                                                <option value="2">未知</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="location" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">位置信息：</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="location"  id="location" placeholder="位置信息">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="box-footer" style="height: 30px;">
+                                    <button class="btn btn-primary pull-right"  id="searchBtn" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					
+					<div class="box-body">
+					
+						<table id="deviceTable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th>统一编号</th>
+									<th>设备名称</th>
+									<th>设备型号</th>
+									<th>监控状态</th>
+									<th>开关机状态</th>
+									<!-- <th>外场</th> -->
+									<th>位置信息</th>
+									<th>使用单位</th>
+									<th>责任人</th>
+									<th>操作</th>
+								</tr>
+								
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+	
+
+<!--查看详情框-->
+    <div class="modal fade bs-example-modal-lg" id="detailModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="margin: 250px auto;width: 62%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">设备详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body table-responsive no-padding">
+                        <table id="deviceDetailTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                           <colgroup>
+									<col style="width:10%">
+									<col style="width:10%">
+									<col  style="width:14%">
+									<col style="width:14%">
+									<col style="width:14%">
+									<col style="width:14%">
+									<col style="width:14%">
+									<col style="width:14%">
+							</colgroup>
+                       <thead style="width: 100%;">
+	                            <tr>
+	                                <th>统一编号</th>
+	                                <th>设备名称</th>
+									<th>设备型号</th>
+									<th>开机时间</th>
+									<th>关机时间</th>
+									<th>离线时间</th>
+									<th>使用时长</th>
+									<th>位置信息</th>
+	                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+	
+
+<script>
+var datatable;
+var detailtable;
+function initDatatable() {
+    datatable = $('#deviceTable').DataTable({
+    	"destroy": true,
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/instrument/monitor/device/list",
+            "type": "post",
+            "data": function (d) {   
+            	d.deviceCode = $("#deviceCode").val();
+            	d.borrowDepart = $("#borrowDepart").val();
+            	d.state = $("#state").val();
+            	d.outField = $("#outField").val();
+            	d.chargePerson = $("#chargePerson").val();
+            	d.powerState = $("#powerState").val();
+            	d.location = $("#location").val();
+            }
+        },
+         // "order": [[0, "desc"]],
+           "columns": [
+                {"data": "devicecode"},
+                {"data": "devicename"},
+                {"data": "deviceversion"},
+                {"data": "state"},
+                {"data": "powerstate"},
+              //  {"data": "outfield"},
+                {"data": "gatewaylocation"},
+                {"data": "name"},
+                {"data": "chargeperson"}
+            ],
+       
+           "columnDefs": [	
+			    {
+			    "render": function (data, type, row) {
+			       return data==0?"<span class='label bg-green'>在线</span>":"<span class='label bg-red'>离线</span>" ;
+			    },
+			    "targets": 3
+			    },
+			    {
+				 "render": function (data, type, row) {
+				       return data==0?"<span class='label bg-green'>开机</span>":(data==null?"<span class='label bg-red'>未知</span>":"<span class='label bg-red'>关机</span>" ) ;
+				 },
+				  "targets": 4
+				 },
+				  {
+					 "render": function (data, type, row) {
+						 var str="--" ;
+						 if(data&&data.length!=0){
+							str = subStrCustom(data,6) ;
+						 }
+						 
+						return str ;
+				},
+					  "targets": [1,5,6,7]
+				},
+				 
+            	{
+                "render": function (data, type, row) {
+                	//var str='<button class="btn btn-xs btn-warning device-move">'+(row.outfield==0?"迁出":"迁入")+'</button>';
+                    return '<button class="btn btn-xs btn-primary search-detail" onclick="getDeviceDetail(\''+row.devicecode+'\')">查看</button>';
+                },
+                "targets": 8
+                }
+            	
+        ]
+        
+    });
+
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+}
+
+
+$(function () {
+    initDatatable();
+    loadUnitAndUser();
+   
+    detailtable=null ;//初始化  不能去掉 去掉详情页弹窗加载有问题
+});
+
+
+function getDeviceDetail(deviceCode){
+	// 查看详情
+	$("#deviceCodeTemp").val(deviceCode);
+	initTableById();
+    $("#detailModal").modal('show')
+}
+
+
+
+function initTableById(){
+	if(detailtable){
+		detailtable.ajax.reload();
+		//$("#deviceDetailTable").DataTable().draw();//
+	}else{
+		detailtable = $('#deviceDetailTable').DataTable({
+			//"destroy": true,
+	        "dom": '<"toolbar">frtip',
+	        "searching": false,
+	        "processing": false,
+	        "serverSide": true,
+	        "select": false,
+	        "ordering": false, 
+	        "language": {
+	            "url": "${base}/assets/plugins/datatables/cn.json"
+	        },
+	        
+	        "preDrawCallback": function () {
+	            sublime.showLoadingbar($(".main-content"));           
+	        },
+	        "drawCallback": function (settings) {
+	            sublime.closeLoadingbar($(".main-content"));           
+	        },
+	         
+	        "ajax": {
+	            "url": "${base}/instrument/monitor/switchingFlow/detail",
+	            "type": "post",
+	            "async":"false",
+	            "data": function (d) { 
+	            	d.deviceCode = $("#deviceCodeTemp").val();
+	            }
+	        },
+	         // "order": [[0, "desc"]],
+	           "columns": [
+	                {"data": "devicecode"},
+	                {"data": "devicename"},
+	                {"data": "deviceversion"},
+	                {"data": "powerontime"},
+	                {"data": "powerofftime"},
+	                {"data": "outlinetime"},
+	                {"data": "usertime"},
+	                {"data": "locationinfo"}
+	            ],
+	            "columnDefs": [	
+	           		{
+	           			"render": function (data, type, row) {
+	           			  return data==null?"--":data ;
+	           		},
+	           			 "targets": [4,5]
+	           		},
+	           		{
+	                    "render": function (data, type, row) {
+	                    	var str="--" ;
+	                    	if(data!=null){
+	                    		str =Math.floor(data/60)+" 小时 "+(data%60)+" 分钟 ";
+	                    	}
+	                    	return str;
+	                    },
+	                    "targets": [6]
+	                },
+	           		{
+	           			"render": function (data, type, row) {
+	           				var str="--" ;
+	           				if(data){
+                                if((data!=null||data!="")&&data.length!=0){
+                                    str = subStrCustom(data,5);
+                                }
+                            }
+	           				return str;
+	           		},
+	           			 "targets": [1,7]
+	           		}
+	           		
+	           		
+	           		
+	           ]
+	    });
+	}
+	
+	
+
+	}
+</script>
+
+<%}%>
+

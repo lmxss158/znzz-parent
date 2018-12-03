@@ -1,0 +1,229 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myModalLabel">设备绑定</h4>
+			</div>
+			<form id="addCollect" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/instrument/monitor/collect/addDo" method="post">
+				<div class="modal-body">
+					<div class="row">
+			                    
+			                        <div class="form-group">
+			                            <label for="collectCode" class="col-sm-2 control-label">采集器编号：</label>
+			                            <div class="col-sm-8">
+			                                <input type="text" class="form-control" id="collectCode" name="collectCode" placeholder="请输入采集器编号">
+			                            </div>
+			                        </div>
+			                       <div class="modal-footer no-padding"></div>
+			                       <div class="modal-header" style="margin-bottom: 20px;">
+									   <h4 class="modal-title">设备信息</h4>
+								   </div>
+			                       	
+			                        <div class="form-group">
+			                            <label for="deviceCode" class="col-sm-2 control-label">统一编号：</label>
+			                            <div class="col-sm-8">
+			                            	<input type="text" class="form-control" onchange="checkDeviceCode();" id="deviceCode" name="deviceCode" placeholder="请输入设备统一编号"/>
+			                            </div>
+			                    	</div>
+			                        <div class="form-group">
+			                            <label for="deviceName" class="col-sm-2 control-label">设备名称：</label>
+			                            <div class="col-sm-8" >
+			                            	<input type="text" class="form-control" id="deviceName" value="" name="deviceName" readonly placeholder="请输入设备名称">
+			                            </div>
+			                        </div>
+			                        <div class="form-group">
+			                            <label for="deviceVersion" class="col-sm-2 control-label">设备型号：</label>
+			                            <div class="col-sm-8">
+			                            	<input type="text" class="form-control" id="deviceVersion"  value="" name="deviceVersison" readonly placeholder="请输入设备型号">
+			                            </div>
+			                        </div>
+			                        <div class="form-group">
+			                            <label for="borrowDepart" class="col-sm-2 control-label">使用单位：</label>
+			                            <div class="col-sm-8">
+			                            	<input type="text" class="form-control" id="borrowDepart"  value="" name="borrowDepart" readonly placeholder="使用单位">
+			                            </div>
+			                        </div>   
+			                        <div class="form-group">
+			                            <label for="chargePerson" class="col-sm-2 control-label">责任人：</label>
+			                            <div class="col-sm-8">
+			                            	<input type="text" class="form-control" id="chargePerson"  value="" name="chargePerson" readonly placeholder="责任人">
+			                            </div>
+			                        </div>   
+			                    <div class="modal-footer" style="text-align: center;">
+						             	<a id="goback" href="${base}/instrument/monitor/collect" data-pjax>
+							 					<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+							 			</a>
+						                 <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+						        </div>
+			         </div>
+		         </div>
+			</form>
+	</div>
+
+<script language="JavaScript">
+$(function(){
+	getCollectCodeInfoList();
+    getDeviceCodeInfoList();
+});
+    $(document).ready(function () {	
+        myForm.init();
+        
+        /* checkCollect();
+        checkDeviceCode(); */
+        $('#addCollect').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#collectCode").val()==""){
+            		Toast.error("采集器编号不能为空");
+            		return false;
+            	}
+            	if($("#collectName").val()==""){
+            		Toast.error("采集器名称不能为空");
+            		return false;
+            	}
+            	if($("#deviceCode").val()==""){
+            		Toast.error("统一编号不能为空");
+            		return false;
+            	}
+            	// 采集器编号和统一编号的校验
+            	/* if(checkCollect()){
+            		return false;
+            	}*/
+            	if(checkDeviceCode()){
+            		return false;
+            	} 
+              form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+            	//console.info(data)
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    setTimeout(function(){
+                    	$("#goback").trigger("click");
+                    }, 500)
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+               form.find("button:submit").button("reset");
+            }
+        });
+        
+    });
+
+    	//获取采集器编号下拉
+    	function getCollectCodeInfoList(id){
+    		var arrs = new Array();
+    		if(!id){
+    			id="#collectCode";
+    		}
+    		if(arrs.length==0){
+    			var arr = new Array() ;
+    			$.ajax({
+    				type:"post",
+    				url:"${base}/instrument/monitor/collect/bcardList",
+    				async:false,
+    				success:function(data){
+    					var re = data.data ;
+    					for(var i=0;i<re.length;i++){
+    						var infos={} ;
+    						var info = re[i];
+    						infos["name"] = info.bcardCode;
+    						arr.push(infos) ;
+    						
+    					}
+    					arrs= arr ;
+    				},
+    				error:function(e){
+    					
+    				}
+    			});
+    		}
+    		$(id).selectPage({
+    	 	    showField : 'name',
+    	 	    keyField : 'name',
+    	 	    pageSize:5,
+    	 	    data : arrs
+    	 	});
+    	}
+    	//获取统一编号下拉
+    	function getDeviceCodeInfoList(id){
+    		var arrs = new Array();
+    		if(!id){
+    			id="#deviceCode";
+    		}
+    		if(arrs.length==0){
+    			var arr = new Array() ;
+    			$.ajax({
+    				type:"post",
+    				url:"${base}/instrument/monitor/collect/deviceCodeListSelect",
+    				async:false,
+    				success:function(data){
+    					var re = data.data ;
+    					//console.info(re)
+    					for(var i=0;i<re.length;i++){
+    						var infos={} ;
+    						var info = re[i] ;
+    						infos["name"] = info.deviceCode;
+    						arr.push(infos) ;
+    						
+    					}
+    					arrs= arr ;
+    				},
+    				error:function(e){
+    					
+    				}
+    			});
+    		}
+    		$(id).selectPage({
+    	 	    showField : 'name',
+    	 	    keyField : 'name',
+    	 	    pageSize:5,
+    	 	    data : arrs
+    	 	});
+    	}
+
+function checkDeviceCode(){
+	var deviceCode = $("#deviceCode").val();
+	if(deviceCode == ''){
+		$("#deviceName").val('');
+       	$("#deviceVersion").val('');
+       	$("#borrowDepart").val('');
+       	$("#chargePerson").val('');
+	}
+    var flag = $.ajax({
+    	type: "post",
+        url: "${base}/instrument/monitor/collect/deviceCodeList/"+deviceCode,
+        dataType: "json",
+        data:deviceCode,
+        async:false,
+        success:function(data){
+        	if(data["code"] != undefined ){
+            	if (data.code != 0) {
+                    return false;
+            	}
+            	if(data.code == 0){
+            		Toast.error(data.msg)
+            		return false;
+            	}
+            }
+            var obj = $.parseJSON(data);
+           	$("#deviceName").val(obj.deviceName);
+           	$("#deviceVersion").val(obj.deviceVersion);
+           	$("#borrowDepart").val(obj.borrowDepart);
+           	$("#chargePerson").val(obj.chargePerson);
+        }
+    });
+    
+    var temp = flag.responseJSON;
+    console.info(temp)
+    if(temp.code != 0 && temp.code != undefined){
+    	return true;
+    }else {
+    	return false;
+    }
+}
+</script>
+<%}%>

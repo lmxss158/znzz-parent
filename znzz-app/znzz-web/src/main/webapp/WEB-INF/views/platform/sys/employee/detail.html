@@ -1,0 +1,46 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">&nbsp;&nbsp;职工明细</a>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <a href="javascript:;" class="list-group-item" title="职工名称">
+                        <i class="ti-comment mr10 text-muted"></i>&nbsp;&nbsp;${obj.username!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="身份证号">
+                        <i class="ti-link mr10 text-muted"></i>&nbsp;&nbsp;${obj.idNumber!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="所在单位">
+                        <i class="ti-link mr10 text-muted"></i>&nbsp;&nbsp;${obj.unit.name}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="出入证号">
+                        <i class="ti-link mr10 text-muted"></i>&nbsp;&nbsp;${obj.entryNumber!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="职工状态">
+                        <i class="ti-home mr10 text-muted"></i>&nbsp;&nbsp;
+                    	<%if(obj.is_service==1){%>出站<%}else if(obj.is_service==2){%>辞职
+                    	<%}else if(obj.is_service==3){%>返聘停聘<%}else if(obj.is_service==4){%>挂职
+                    	<%}else if(obj.is_service==5){%>借调<%}else if(obj.is_service==6){%>进站工作
+                    	<%}else if(obj.is_service==7){%>开始工作<%}else if(obj.is_service==8){%>开始工作借调
+                    	<%}else if(obj.is_service==9){%>开始实习<%}else if(obj.is_service==10){%>死亡
+                    	<%}else if(obj.is_service==11){%>调出<%}else if(obj.is_service==12){%>调入
+                    	<%}else if(obj.is_service==13){%>停聘<%}else if(obj.is_service==14){%>停止挂职
+                    	<%}else if(obj.is_service==15){%>退休<%}else if(obj.is_service==16){%>终止实习
+                    	<%}else if(obj.is_service==17){%>转入<%}else{%>
+                    	<%}%>
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="联系电话">
+                        <i class="ti-comment mr10 text-muted"></i>&nbsp;&nbsp;${obj.telephone!}
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

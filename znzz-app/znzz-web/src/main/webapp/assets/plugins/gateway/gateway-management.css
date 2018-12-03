@@ -1,0 +1,46 @@
+input {
+    border: transparent;
+    outline: none;
+}
+.form-group-right {
+    margin-right: 10px;
+}
+.dis-block{
+    display: block;
+}
+.dis-none{
+    display: none;
+}
+.success-tip {
+    position: absolute;
+    top: 145px;
+    right: 0;
+    animation:myfirst 1s;
+    -moz-animation:myfirst 1s; /* Firefox */
+    -webkit-animation:myfirst 1s; /* Safari and Chrome */
+    -o-animation:myfirst 1s; /* Opera */
+    opacity: 0.8;
+}
+
+@keyframes myfirst
+{
+    from {position: absolute; top: 145px;  right: -400px; opacity: 1;}
+    to {position: absolute; top: 145px; right: 0px; opacity: 0.8}
+}
+@-moz-keyframes myfirst /* Firefox */
+{
+    from {position: absolute; top: 145px;  right: -400px; opacity: 1;}
+    to {position: absolute; top: 145px; right: 0px; opacity: 0.8}
+}
+
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+    from {position: absolute; top: 145px;  right: -400px; opacity: 1;}
+    to {position: absolute; top: 145px; right: 0px; opacity: 0.8}
+}
+
+@-o-keyframes myfirst /* Opera */
+{
+    from {position: absolute; top: 145px;  right: -400px; opacity: 1;}
+    to {position: absolute; top: 145px; right: 0px; opacity: 0.8}
+}

@@ -1,0 +1,758 @@
+<% layout("/layouts/platform.html"){ %>
+
+
+<section class="content-header">
+    <h1>
+        时长分配
+        <!--<small>Control panel</small>-->
+    </h1>
+
+    <ol class="breadcrumb pull-left">
+        <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+        <li class="active"><a href="${base}/instrument/monitor/devicefacility#">项目时长分配</a></li>
+        <li class="active">时长分配</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- 查询搜索框 -->
+    <div class="row">
+        <div style="padding: 15px 15px ;">
+            <div class="box" >
+                <div class="box-body" style="padding: 0 15px auto;">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label for="deviceCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">设备：</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="deviceCode" placeholder="统一编号/设备名称/设备型号">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">月度：</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group date">
+
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control pull-right" name="selectTimeOne" id="selectTimeOne" readonly="readonly" style="background-color: white;" placeholder="请输入时间" value=""/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-body">
+                    <table id="deivceFacility" class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>统一编号</th>
+                            <th>设备名称</th>
+                            <th>设备型号</th>
+                            <th>月度</th>
+                            <th>开机时长(分钟)</th>
+                            <th>离线使用时长(分钟)</th>
+                            <th>未分配(分钟)</th>
+                            <th style="width:100px;">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分配框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        新增
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="form-horizontal" id="defaultForm" >
+                            <div class="row">
+                                <!-- /.col -->
+                                <div class="facility-form">
+                                    <div class="facility-from-col" id="facility_from_col">
+                                        <div class="col-md-4">
+                                            <!-- Date -->
+                                            <div class="form-group" style="padding-left: 12px;">
+                                                <label class="col-sm-2 control-label" style="text-align: left; padding-left: 6px;padding-right: 0;">时间:</label>
+                                                <div class="col-sm-10 no-padding">
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="text" class="form-control pull-right" name="selectTime" id="selectTime" readonly="readonly" style="background-color: white;" placeholder="请输入时间" value=""/>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <!-- /.form group -->
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group" style="padding-left: 11px;">
+                                                <label class="col-sm-5 control-label has-feedback" for="exampleInputtime" style="text-align: left;padding-left: 6px;padding-right: 0;">所用时长(分钟):</label>
+                                                <div class="col-sm-7 no-padding">
+                                                    <input type="text" class="form-control" id="exampleInputtime"  onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入时长(单位:分钟)" name="facilitytime">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" id="projectInfoTemp" style="padding-right: 0;">
+                                            <div class="form-group" style="padding-left: 18px;">
+                                                <label class="col-sm-4 control-label has-feedback" for="exampleInputproject" style="text-align: left;padding-left: 6px;padding-right: 0;">所用项目:</label>
+                                                <div class="col-sm-8 no-padding">
+                                                    <input type="text"  class="form-control" id="exampleInputproject" placeholder="请选择项目"  style="background-color: white;" name="facilityproject">
+                                                    <input type="hidden" id="exampleInputCode"><!-- 存选择项目code -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group" style="margin-left: 0; margin-right: 0;">
+                                                <button type="button" class="btn btn-success btn-flat btn-facility-add" id="btn_facility"><i class="fa fa-fw fa-plus"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary pull-right" onclick="addDeviceFacility();" name="signup" value="Sign up">添加</button>
+                                </div>
+                                <!-- /.col -->
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="box-body">
+                        <table id="childFacilityTable" class="table table-bordered table-striped  table-hover" style="width: 100%;">
+                            <colgroup>
+                                <col style="width:11%">
+                                <col  style="width:24%">
+                                <col style="width:13%">
+                                <col style="width:13%">
+                                <col style="width:12%">
+                                <col style="width:16%">
+                                <col style="width:8%">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>项目编号</th>
+                                <th>项目名称</th>
+                                <th>开始日期</th>
+                                <th>结束日期</th>
+                                <th>分配时长</th>
+                                <!--   <th>总时长</th> -->
+                                <th>操作时间</th>
+                                <th >操作</th>
+                            </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+
+
+    <!-- 删除 -->
+    <div id="assignedDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">删除</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            删除后无法恢复； <br /> 请谨慎操作！ <br />确定要删除吗？
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</section>
+<!-- /.content -->
+<div class="control-sidebar-bg"></div>
+
+
+<script>
+    var datatable;
+    var childtable ;
+    var itemList=new Array();//存储项目id与名称
+    var curWin ;// 当前打开窗口的id
+    var curDeviceCode;//当前打开的deviceCode
+    var curMonth ;//正在分配的当前月份
+
+    function initDeviceFacilityDatatable() {
+        curWin="";
+        curDeviceCode="";
+        curMonth="";
+        datatable = $('#deivceFacility').DataTable({
+            //"destroy": true,
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/instrument/monitor/devicefacility/list",
+                "type": "post",
+                "data": function (d) {
+                    d.deviceCode = $('#deviceCode').val();
+                    d.selectDate = $("#selectTimeOne").val() ;
+                }
+            },
+            "order": [[3, "desc"]],
+            "columns": [
+                {"data": "devicecode", "bSortable": true},
+                {"data": "devicename", "bSortable": true},
+                {"data": "deviceversion", "bSortable": true},
+                {"data": "month", "bSortable": true},
+                {"data": "duration", "bSortable": true},
+                {"data": "offlinetime", "bSortable": true},
+                {"data": "unassigned", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var str="--" ;
+                        if(data!=null){
+                            //str =Math.floor(data/60)+" 小时 "+(data%60)+" 分钟 ";
+                            str=data+"分钟";
+                        }
+                        return str;
+                    },
+                    "targets": [4,5,6]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str ="" ;
+                        if(data!=null){
+                            var day = data.split(" ")[0] ;
+                            var yearM = day.split("-") ;
+                            str=yearM[0]+"-"+yearM[1] ;
+                        }
+                        return str ;
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str ="--" ;
+                        if(data&&data.length!=0){
+                            str = subStrCustom(data,6) ;
+                        }
+                        return str ;
+                    },
+                    "targets": 1
+                },
+
+
+                {
+                    "render": function (data, type, row) {
+                        return '<button type="button" class="btn btn-xs btn-primary" onclick="setCurWinVal('+row.id+',\''+row.devicecode+'\',\''+row.month+'\');" data-toggle="modal" data-target="#myModal"> 分配</button>';
+
+                    },
+                    "targets": 7
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    var htmlTemp ;
+    var cloneTemp ;
+    $(function () {
+        initDeviceFacilityDatatable();
+        //initTimeProject();
+        initTimeOne();
+        facilityaddself('.btn-facility-add');
+        childtable=null;//需要赋值null 不然子弹窗有问题
+        htmlTemp = $("#projectInfoTemp").html() ;
+        cloneTemp = $(".facility-form").html();
+    });
+
+    var locale = {
+        format: 'YYYY/MM/DD ',
+        separator: ' - ',
+        applyLabel: '确认',
+        cancelLabel: '清除',
+        fromLabel: '开始时间',
+        toLabel: '结束时间',
+        customRangeLabel: '自定义',
+        weekLabel: "W",
+        daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+        monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        firstDay: 1
+    }
+    //初始化时间
+    function initTimeProject(){
+
+        $('#selectTime').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')]
+                // '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "maxDate":new Date(),
+            "opens": "right",
+            // "timePicker":true,//设置到秒
+            "timePicker24Hour": true
+        });
+        $('#selectTime').on('apply.daterangepicker', function(ev, picker) {
+            $('#selectTime').val(picker.startDate.format('YYYY/MM/DD ') + ' - ' + picker.endDate.format('YYYY/MM/DD '));
+        });
+
+        $('#selectTime').on('cancel.daterangepicker', function (ev, picker) {
+            $('#selectTime').val('')
+        })
+
+
+    }
+    //设置时间控件只有月份
+    function initTimeOne(){
+        $.fn.datepicker.dates['zh-CN'] = {
+            days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+            daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+            months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            today: "Today",
+            clear: "清除",
+            format: "mm/dd/yyyy",
+            titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+            weekStart: 0
+        };
+        $('#selectTimeOne').datepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            format: 'yyyy-mm',
+            autoclose: true,
+            clearBtn:true,
+            startView: 'months',
+            maxViewMode:'years',
+            minViewMode:'months'
+        });
+    }
+
+
+
+    var inputId ;//设置打开那个 id
+    var facilityJosnArr=new Array() ;
+    function facilityaddself(btn){
+        var oId = 1;
+        $("input[name='facilityproject']").on('click',function(){
+            // openModule("${base}/instrument/monitor/devicefacility/addHtml");
+            var that;
+            that = this;
+            inputId = $(that).attr('id');
+        });
+        $(btn).click(function(){
+            if(!validateCount()){
+                return Toast.error("每次最多添加五个!!");
+            }
+            //克隆并创建新的id
+            //var copy_str = $(this).parents('.facility-from-col').clone().attr('id','facility_from_col'+oId);
+            var copy_str = $(cloneTemp).clone().attr('id','facility_from_col'+oId);
+            copy_str.find('input').each(function(){
+                var newId = $(this).attr('id')+oId;
+
+                $(this).attr('id',newId.replace("_text",""));
+                if($(this).attr('id').substr(0,10) == 'selectTime'){//初始化新添加的时间控件
+                    $(this).val("");
+                    $(this).attr('id',newId).daterangepicker({
+                        "autoUpdateInput": false,
+                        "locale": locale,
+                        "ranges": {
+                            '本月': [moment().startOf('month'), moment().endOf('month')]
+                            //'上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        "opens": "right",
+                        "maxDate":new Date(),
+                        // "timePicker":true,//设置到秒
+                        "timePicker24Hour": true
+                    });
+
+                    $(this).attr('id',newId).on('apply.daterangepicker', function(ev, picker) {
+                        $(this).attr('id',newId).val(picker.startDate.format('YYYY/MM/DD ') + ' - ' + picker.endDate.format('YYYY/MM/DD '));
+                    });
+
+                    $(this).attr('id',newId).on('cancel.daterangepicker', function (ev, picker) {
+                        $(this).attr('id',newId).val('')
+                    })
+
+                }
+
+                if($(this).attr('id').substr(0,19) == 'exampleInputproject'){
+                    $(this).val("");
+                    $(this).on('focus',function(){
+                        // openModule("${base}/instrument/monitor/devicefacility/addHtml");
+                        var that;
+                        that = this;
+                        inputId = $(that).attr('id');
+
+                    });
+                    getProjectInfoList(this);
+                }
+
+
+                if($(this).attr('id').substr(0,16) == 'exampleInputtime'){
+                    $(this).val("");
+                }
+
+            });
+            copy_str.find('button').each(function(){
+                var btnId = $(this).attr('id')+oId;
+                $(this).attr('id',btnId);
+            });
+            oId +=1;
+            //去除class名,避免新增的输入项沿用此添加方法
+            copy_str.find('i').removeClass('fa fa-fw fa-plus').addClass('fa fa-fw fa-times');
+            copy_str.find('button').removeClass('btn-success btn-facility-add').addClass('btn-danger btn-facility-del');
+            //增加点击删除自身触发事件
+            copy_str.find("button").attr("onclick","canelf(this)");
+            $(this).parent().parent().parent().append(copy_str);
+
+        });
+
+    }
+    //增加项，删除方法
+    function canelf(e){
+        $(e).parent().parent().parent().remove();
+    }
+    //存放项目名称的值
+    function chec(submitbtn){
+        var hiddenInputFrCode = "exampleInputCode" ;
+        $(submitbtn).click(function(){
+            var txtalso =$('input:radio:checked').val();
+            $('#'+inputId).val(itemList[txtalso]);
+            var laststr = inputId.substr(19,inputId.length);
+            var tmpstr=hiddenInputFrCode+laststr ;
+            $("#"+tmpstr).val(txtalso) ;
+
+        });
+    }
+
+    function addDeviceFacility(){
+        facilityJosnArr.splice(0,facilityJosnArr.length) ;//清空数组
+        var ids =  $("input[name='facilityproject']");
+
+        for(var i=0;i<ids.length;i++){
+            var id = $(ids[i]).attr("id");
+            var realId = id.substr(19,id.length) ;
+            var ext2 = $("#selectTime"+realId).val() ;
+            var duration=$("#exampleInputtime"+realId).val();
+//	    var projectCode=$("#exampleInputCode"+realId).val() ;
+            var projectCode=$("#exampleInputproject"+realId).val() ;
+            if(!ext2){
+                return Toast.warning("请选择分配日期.");
+            }
+            if(!duration){
+                return Toast.warning("请输入分配时长.");
+            }
+
+            if(duration<=0){
+                return Toast.warning("分配时长请大于0分钟.");
+            }
+
+            if(!projectCode){
+                return Toast.warning("请选择项目.");
+            }
+
+            if(!validateMonth(ext2)){
+                return Toast.warning("时间请选择对应月份.");
+            }
+            if(!validateTimeCorrect(ext2,duration)){
+                return Toast.warning("分配时长超过了开始时间到结束时间的差值.");
+            }
+
+            facilityJosnArr.push({ext2:ext2,duration:duration,projectCode:projectCode,pid:curWin,deviceCode:curDeviceCode}) ;
+        }
+        $.ajax({
+            type:"post",
+            url:"${base}/instrument/monitor/devicefacility/add",
+            data:{list:JSON.stringify(facilityJosnArr)},
+            success:function(data){
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    clearAllInput();
+                    childtable.ajax.reload();
+                    datatable.ajax.reload();
+                } else {
+                    Toast.error(data.msg);
+                }
+            },
+            error:function(data){
+                Toast.error("网络连接异常");
+            }
+
+
+        });
+    }
+    //设置当前窗口的id
+    function setCurWinVal(id,deviceCode,month){
+        $("#projectInfoTemp").html(htmlTemp)
+        curWin =id ;
+        curDeviceCode=deviceCode ;
+        clearAllInput();
+        initChildDatatable();
+        var day = month.split(" ")[0] ;
+        var yearM = day.split("-") ;
+        curMonth=yearM[0]+"-"+yearM[1] ;
+        getProjectInfoList();
+        initTimeProject();
+    }
+    //清除所有框恢复初始化
+    function clearAllInput(){
+        var matchDiv = $("div[id^='facility_from_col']");
+        for(var i=0;i<matchDiv.length;i++){
+            if($(matchDiv[i]).attr("id")!="facility_from_col"){
+                $(matchDiv[i]).remove();
+            }
+        }
+
+        $("#selectTime").val("");
+        $("#exampleInputtime").val("");
+        //$("#exampleInputproject").val("");
+        $('#exampleInputproject').selectPageClear();
+        $(".sp_clear_btn").remove();
+        $("#exampleInputCode").val("");
+    }
+
+
+
+    function initChildDatatable() {
+        if(childtable){
+            childtable.ajax.reload();
+            return ;
+        }
+        childtable = $('#childFacilityTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                //"url": "${base}/instrument/monitor/gateway/data",
+                "url": "${base}/instrument/monitor/devicefacility/findChildList",
+                "type": "post",
+                "async":"false",
+                "data": function (d) {
+                    d.pid = curWin;//当前pid
+                }
+            },
+            "order": [[5, "desc"]],
+            "columns": [
+                {"data": "projectcode", "bSortable": true},
+                {"data": "name", "bSortable": true},
+                {"data": "chtimestart", "bSortable": true},
+                {"data": "chtimeend", "bSortable": true},
+                {"data": "duration", "bSortable": true},
+                {"data": "operatetime", "bSortable": true}
+            ],
+            "columnDefs": [
+
+                {
+                    "render": function (data, type, row) {
+                        var str ="" ;
+                        if(data!=null){
+                            str = data.split(" ")[0] ;
+                        }
+                        return str ;
+                    },
+                    "targets": [2,3]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str ="--" ;
+                        if(data&&data.length!=0){
+                            str = subStrCustom(data,10) ;
+                        }
+                        return str ;
+                    },
+                    "targets": 1
+                },
+
+                {
+                    "render": function (data, type, row) {
+
+                        return data+"分钟" ;
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+
+                        return '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="delAssigned(\'' + row.id + '\')"><i class="glyphicon glyphicon-trash"></i> 删除</a>';
+                    },
+                    "targets": 6
+                }
+
+            ]
+
+        });
+
+
+    }
+
+    //校验生成的框框个数
+    function validateCount(){
+        var matchDiv = $("div[id^='facility_from_col']");
+        if(matchDiv.length>=5){
+            return false ;
+        }
+
+        return true ;
+    }
+
+    function validateMonth(rangeTime){
+        var timeRange = rangeTime.split("-") ;
+        var startT = timeRange[0];
+        var endT = timeRange[1];
+        var ms = startT.split("/")[0]+"-"+startT.split("/")[1] ;
+        var me = endT.split("/")[0]+"-"+endT.split("/")[1] ;
+        ms = ms.replace(/(^\s*)|(\s*$)/g, "") ;
+        me = me.replace(/(^\s*)|(\s*$)/g, "") ;
+        /* console.log(ms);
+        console.log(me);
+        console.log(ms==me);
+        console.log(ms==curMonth); */
+        if((ms==me)&&(ms==curMonth)){
+            return true ;
+        }
+        return false ;
+
+    }
+    //校验分配时间与所选时间段是否在范围内
+    function validateTimeCorrect(rangeTime,duration){
+        var timeRange = rangeTime.split("-") ;
+        var startT = timeRange[0];
+        var endT = timeRange[1];
+        var daycount = datediff(startT ,endT)+1 ;
+        var mincount = daycount*24*60 ;
+        if(duration>mincount){
+            return false ;
+        }
+        return true ;
+    }
+    //计算天数差
+    function datediff(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+        var dateSpan,
+            tempDate,
+            iDays;
+        sDate1 = Date.parse(sDate1);
+        sDate2 = Date.parse(sDate2);
+        dateSpan = sDate2 - sDate1;
+        dateSpan = Math.abs(dateSpan);
+        iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+        return iDays
+    };
+
+
+    //删除方法
+    function delAssigned(id) {
+        var dialog = $("#assignedDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.ajax({
+                type:"post",
+                url:"${base}/instrument/monitor/devicefacility/del",
+                data:{id:id},
+                async:false,
+                success:function(data){
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        childtable.ajax.reload();
+                        datatable.ajax.reload();
+                    } else {
+                        Toast.error(data.msg);
+                    }
+
+                },
+                error:function(data){
+                    Toast.error("网络异常.");
+                }
+            });
+            //重置按钮状态，关闭提示框
+            btn.button("reset");
+            dialog.modal("hide");
+
+
+        });
+    }
+
+
+
+
+</script>
+
+
+<%}%>

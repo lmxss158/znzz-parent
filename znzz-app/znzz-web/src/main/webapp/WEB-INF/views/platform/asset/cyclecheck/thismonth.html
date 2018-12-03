@@ -1,0 +1,775 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1 id="n1">本月计划 </h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+			  <li class="active"><a href="#">周期检定</a></li>
+              <li class="active" id="n2">本月计划</li>
+            </ol>
+</section>
+        
+<section class="content">
+			<input id="n3" type="hidden" value="thismonth"/>
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <div class="row">
+                <div style="padding: 15px 15px ;">
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="headingOne">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    基本信息
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label for="assetCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">资产信息：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" class="form-control" name="assetCode"  id="assetCode" placeholder="统一编号/资产名称/型号/出厂编号">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label for="testDepartment" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">检定部门：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" class="form-control" name="testDepartment"  id="testDepartment" placeholder="请输入检定部门">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label for="respMan" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">责任人：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" class="form-control" name="respMan"  id="respMan" placeholder="请输入责任人">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label for="effectiveDate" class="col-sm-3 control-label" id="mon1" style="padding-left: 0; padding-right: 0;">有效日期：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <div class="input-group date">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" class="form-control pull-right" name="effectiveDate" id="timeRange" readonly="readonly" style="background-color: white;"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">使用部门：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" name="useDepartment" id="useDepartment" placeholder="请输入使用部门" class="form-control pull-right">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">使用人：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" name="userMan" id="userMan" placeholder="请输入使用人" class="form-control pull-right">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                               <!--  <div class="form-group">
+                                                    
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="headingTwo">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    其他信息
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">送检日期：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <div class="input-group date">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" class="form-control pull-right" name="sentCheckDate" id="timeRange2" readonly="readonly" style="background-color: white;"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">检定日期：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <div class="input-group date">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" class="form-control pull-right" name="checkDate" id="timeRange3" readonly="readonly" style="background-color: white;"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">归档日期：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <div class="input-group date">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" class="form-control pull-right" name="filDate" id="timeRange5" readonly="readonly" style="background-color: white;"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">领取日期：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <div class="input-group date">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" class="form-control pull-right" name="getDate" id="timeRange4" readonly="readonly" style="background-color: white;"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">检定结论：</label>
+                                                        <div class="col-sm-9 no-padding">
+                                                            <input type="text" name="testResult" id="testResult" placeholder="请输入检定结果" class="form-control pull-right">
+                                                        </div>
+                                                    </div>
+                                                    
+
+                                                    
+                                                </div>
+
+                                               <!--  <div class="form-group">
+                                                    
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                
+                                <div class="box-footer" style="height: 30px;">
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+
+                    <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.import")!=-1){%>
+                        <!-- 批量导入 -->
+                         <a class="btn btn-primary" style="display:none" id="n4" data-loading-text="导入中..." href="javascript:document.getElementById('examineFile').click();">
+                              <span class="glyphicon glyphicon-arrow-down"></span> 批量导入
+                         </a>
+                         <input type="file" style="display:none;" id="examineFile" name="examineFile" onchange="submitImportFile();" />
+                    <%}%>
+					 <a class="btn btn-primary" style="display:none" id="n5" data-loading-text="下载中..." href="${base}/asset/cyclecheck/downLoad">
+                            	<span class="glyphicon glyphicon-open"></span> 模板下载
+                     </a>
+					</div>
+					<div class="box-body">
+					
+						<table id="unittable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th>序号</th> 
+									<th>统一编号</th>
+									<th>资产名称</th>
+									<th>型号</th>
+									<th>出厂编号</th>
+									<th>检定部门</th>
+									<th>使用部门</th>
+									<th>使用人</th>
+									<th>责任人</th>
+									<th id="mon2">有效日期</th>
+									<!-- ------------检定后才有值--------------- -->
+									<th>送检日期</th>
+									<th>检定日期</th>
+									<th>检定结论</th>
+									<th>领取日期</th>
+									<th>备注</th>
+									<th>归档日期</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>	
+<!-- 导入错误 -->
+ <div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="margin: 250px auto;">
+        <div class="modal-content">
+       		 <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+         </div>
+         <div class="modal-body" id="inputText" 
+         	style="height:280px;overflow-y: auto;">
+         </div>
+            <div class="modal-footer">
+                <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+            </div> 
+        </div>
+    </div>
+</div> 	
+
+<script>
+var datatable;
+function initDatatable() {
+    datatable = $('#unittable').DataTable({
+    	"dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true,
+    	"autoWidth": true,		// 表格是否自动分配
+        "scrollX":true,	//水平滑动
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+        "ajax": {
+            "url": "${base}/asset/cyclecheck/data",
+            "type": "post",
+            "data": function (d) {
+            	//模块名（针对不同模块，本月计划，下月计划，检定履历）
+            	d.module = $('#n3').val();
+            	
+            	d.assetCode=$('#assetCode').val();
+                d.testDepartment=$('#testDepartment').val();
+                d.respMan=$('#respMan').val();
+                d.effectiveDate2=$('#timeRange').val();
+                d.userMan=$('#userMan').val();
+                d.useDepartment=$('#useDepartment').val();
+                d.sentCheckDate2=$('#timeRange2').val();
+                d.checkDate2=$('#timeRange3').val();
+                d.testResult=$('#testResult').val();
+                d.getDate2=$('#timeRange4').val();
+                d.filDate2=$('#timeRange5').val(); 
+            }
+        },
+        "order": [[9, "desc"]],
+        "columns": [
+				{"data": null,"width":"30px"}, 
+                {"data": "assetcode", "bSortable": true,"width":"80px"},
+                {"data": "assetname", "bSortable": true,"width":"80px"},
+                {"data": "assetmodel", "bSortable": true,"width":"80px"}, 
+                {"data": "serialnumber", "bSortable": true,"width":"80px"},
+                {"data": "testdepartment", "bSortable": true,"width":"80px"},
+                {"data": "usedepartment", "bSortable": true,"width":"80px"},
+                {"data": "userman", "bSortable": true,"width":"80px"},
+                {"data": "respman", "bSortable": true,"width":"80px"},
+                {"data": "effectivedate", "bSortable": true,"width":"80px"},
+                {"data": "sentcheckdate", "bSortable": true,"width":"80px"},
+                {"data": "checkdate", "bSortable": true,"width":"80px"},
+                {"data": "testresult", "bSortable": true,"width":"80px"},
+                {"data": "getdate", "bSortable": true,"width":"80px"},
+                {"data": "remark", "bSortable": true,"width":"80px"},
+                {"data": "fildate", "bSortable": true,"width":"80px"},
+                {"data": null, "width":"250px"}
+        ],
+        
+        "columnDefs": [	
+				{
+					"searchable": false,
+					"orderable": false,
+					"targets": 0
+				},
+              
+        		{
+        		"render":function(data, type, row){
+        			if(data!=''&&data!=null){return data.length>10?data.substring(0,10)+"..":data;}else{return "--";};
+        		},
+        		"targets":[1,2,3,4,5,6,7,8]
+        	},
+        	{
+        		"render":function(data, type, row){
+        			if(data!=''&&data!=null){
+        				return data.length>8?data.substring(0,8)+"..":data;
+        			}else{
+        				return "--";
+        			};
+        		},
+        		"targets":[12,14]
+        	},{
+        		"render":function(data, type, row){
+        			
+        			if(data!=''&&data!=null){
+        				if("record"==$("#n3").val()){
+        					return data.substring(0,4)+"-"+data.substring(5,7);
+        				}else{
+        					return data.substring(0,10);
+        				}
+        				
+        			}else{
+        				return "--";
+        			};
+        		},
+        		"targets":9
+        	},
+        		 {
+        		"render":function(data, type, row){
+        			if(data==''|| data==null){
+        				return "--";
+        			}else{
+        				return data.substring(0,10);
+        			};
+        		},
+        		"targets":[10,11,15]
+        	}, {
+        		"render":function(data,type,row){
+        			if(data==''|| data==null || typeof data=='boolean'){
+        				return "--";
+        			}else{
+        				return data.substring(0,10);
+        			};
+        		},
+        		"targets":13
+        		
+        	},
+            	{
+        		"orderable": false,
+                "render": function (data, type, row) {
+                		 var nopermission ='javascript:alertNoPermission();' ;
+                		 if($("#n3").val()=="nextmonth"){
+                			var astr5='' ;
+                 			var astr6='' ;
+                 			var astr7='' ;
+                 			var astr8='' ;
+                 			 <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.sentcheck")!=-1){%>
+                   				astr5='${base}/asset/cyclecheck/test5/' + row.id  ;
+                   			<%}else{%>
+                 			 	astr5= nopermission;
+                   			<%}%>
+                 			   
+                   			<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.check")!=-1){%>
+               					astr6='${base}/asset/cyclecheck/test6/' + row.id   ;
+               				<%}else{%>
+             			 		astr6= nopermission;
+               				<%}%>
+                   			
+               				<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.get")!=-1){%>
+           						astr7='${base}/asset/cyclecheck/test7/' + row.id    ;
+           					<%}else{%>
+         			 			astr7= nopermission;
+           					<%}%>
+               				
+           					<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.fil")!=-1){%>
+       							astr8='${base}/asset/cyclecheck/test8/' + row.id     ;
+       						<%}else{%>
+     			 				astr8= nopermission;
+       						<%}%>
+                			 
+                			 
+                			 var str1='<a class="btn btn-xs btn-primary" #& href="'+astr5+'" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 送检</a>';
+        		             var str2='&nbsp;&nbsp;<a class="btn btn-xs btn-success" #& href="'+astr6+'" data-pjax><i class="glyphicon glyphicon-edit"></i> 检定</a>';
+        		             var str3='&nbsp;&nbsp;<a class="btn btn-xs btn-primary" #& href="'+astr7+'" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 领取</a>';
+        		             var str4='&nbsp;&nbsp;<a class="btn btn-xs btn-success" #& href="'+astr8+'" data-pjax><i class="glyphicon glyphicon-edit"></i> 归档</a>';
+        		             if(row.sentcheckdate==''||row.sentcheckdate==null){
+          		            	 str2 = str2.replace("#&","disabled=disabled");
+         		             	 str2 = str2.replace(/href=\"(.*?)\"/,"");
+         		             	 str3 = str3.replace("#&","disabled=disabled");
+        		             	 str3 = str3.replace(/href=\"(.*?)\"/,"");
+        		             	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               if(row.checkdate==''||row.checkdate==null){
+          		            	 str3 = str3.replace("#&","disabled=disabled");
+        		             	 str3 = str3.replace(/href=\"(.*?)\"/,"");
+        		             	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               if(row.getdate=''||row.getdate==null){
+          		            	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               return str1+str2+str3+str4;
+                		}else if($("#n3").val()=="thismonth"){
+                			
+                			var astr1='' ;
+                			var astr2='' ;
+                			var astr3='' ;
+                			var astr4='' ;
+                			 <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.thismonth.sentcheck")!=-1){%>
+                  				astr1='${base}/asset/cyclecheck/test1/' + row.id  ;
+                  			<%}else{%>
+                			 	astr1= nopermission;
+                  			<%}%>
+                			   
+                  			<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.thismonth.check")!=-1){%>
+              					astr2='${base}/asset/cyclecheck/test2/' + row.id   ;
+              				<%}else{%>
+            			 		astr2= nopermission;
+              				<%}%>
+                  			
+              				<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.thismonth.get")!=-1){%>
+          						astr3='${base}/asset/cyclecheck/test3/' + row.id    ;
+          					<%}else{%>
+        			 			astr3= nopermission;
+          					<%}%>
+              				
+          					<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.thismonth.fil")!=-1){%>
+      							astr4='${base}/asset/cyclecheck/test4/' + row.id     ;
+      						<%}else{%>
+    			 				astr4= nopermission;
+      						<%}%>
+              				
+               			     var str1='<a class="btn btn-xs btn-primary" #& href="'+astr1+'" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 送检</a>';
+        		             var str2='&nbsp;&nbsp;<a class="btn btn-xs btn-success" #& href="'+astr2+'" data-pjax><i class="glyphicon glyphicon-edit"></i> 检定</a>';
+        		             var str3='&nbsp;&nbsp;<a class="btn btn-xs btn-primary" #& href="'+astr3+'" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 领取</a>';
+        		             var str4='&nbsp;&nbsp;<a class="btn btn-xs btn-success" #& href="'+astr4+'" data-pjax><i class="glyphicon glyphicon-edit"></i> 归档</a>';
+        		             if(row.sentcheckdate==''||row.sentcheckdate==null){
+          		            	 str2 = str2.replace("#&","disabled=disabled");
+         		             	 str2 = str2.replace(/href=\"(.*?)\"/,"");
+         		             	 str3 = str3.replace("#&","disabled=disabled");
+        		             	 str3 = str3.replace(/href=\"(.*?)\"/,"");
+        		             	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               if(row.checkdate==''||row.checkdate==null){
+          		            	 str3 = str3.replace("#&","disabled=disabled");
+        		             	 str3 = str3.replace(/href=\"(.*?)\"/,"");
+        		             	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               if(row.getdate=''||row.getdate==null){
+          		            	 str4 = str4.replace("#&","disabled=disabled");
+        		             	 str4 = str4.replace(/href=\"(.*?)\"/,"");
+        		             	 return str1+str2+str3+str4;
+          		               }
+          		               return str1+str2+str3+str4;
+          		               
+                		}else{
+                			 return '<a class="btn btn-xs btn-primary"  href="${base}/asset/cyclecheck/test9/' + row.id + '" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 查看</a>';
+                		}
+                	 
+                  
+                },
+                "targets": 16
+            }
+            	
+        ]
+        
+    });
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+    
+}
+
+$(function () {
+    $('.collapse').collapse({toggle: false});
+    changeView();
+    initDatatable();
+    datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+    
+});
+
+function changeView(){
+	var website = window.location.href;
+	var module = website.substring(website.length-9,website.length);
+		
+	if("nextmonth"==module){
+		$("#n1").html("下月计划");
+		$("#n2").html("下月计划");
+		$("#n3").val("nextmonth");
+		<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.nextmonth.import")!=-1){%>
+			$("#n4").show();
+			$("#n5").show();
+		<%}%>
+		
+	}else if("thismonth"==module){
+		$("#n1").html("本月计划");
+		$("#n2").html("本月计划");
+		$("#n3").val("thismonth");
+	}else{
+		$("#n1").html("检定履历");
+		$("#n2").html("检定履历");
+		$("#n3").val("record");
+		$("#mon1").html("周检月度：");
+		$("#mon2").html("周检月度");
+	}
+}
+
+	 
+</script>
+<script>
+	/* function but(){
+		<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("cycle.check.thismonth.sentcheck")==-1){%>
+			setTimeout(function(){
+				$("#b1").on('click',function(){
+					alert(1);
+					//this.attr('href','#');
+					Toast.warning(NOPERMISSION);			
+				});
+			},1000);		
+		<%}%>
+	} */
+	
+    $(function () {
+        var locale = {
+            format: 'YYYY/MM/DD',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        var website = window.location.href;
+    	var module = website.substring(website.length-9,website.length);
+    	if("thismonth"==module || "nextmonth"==module){
+    		$('#timeRange').daterangepicker({
+                "autoUpdateInput": false,
+                "locale": locale,
+                "ranges": {
+                    '本月': [moment().startOf('month'), moment().endOf('month')],
+                    '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                "opens": "left",
+            }); 
+             $("#timeRange").on('apply.daterangepicker', function(ev, picker) {
+                $("#timeRange").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+            });
+            
+            $("#timeRange").on('cancel.daterangepicker', function (ev, picker) {
+                $("#timeRange").val('')
+            }) 
+    	}else{
+    		//检定履历模块
+    		$.fn.datepicker.dates['zh-CN'] = {
+            		//detepicker中文汉化属性
+        		    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        		    daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        		    daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        		    months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        		    monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        		    today: "Today",
+        		    clear: "清除",
+        		    format: "mm/dd/yyyy",
+        		    titleFormat: "MM yyyy", 
+        		    weekStart: 0
+        	}; 
+              $('#timeRange').datepicker({
+    		 	language: "zh-CN",
+             	todayHighlight: true,
+             	format: 'yyyy-mm',
+             	autoclose: true,
+             	clearBtn:true,
+            	startView: 'months',
+            	maxViewMode:'years',
+            	minViewMode:'months'
+    	    }); 
+    	}
+           
+           
+        $('#timeRange2').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+        }); 
+        $("#timeRange2").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange2").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange2").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange2").val('')
+        })
+        $('#timeRange3').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+        });
+        $("#timeRange3").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange3").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange3").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange3").val('')
+        })
+        $('#timeRange4').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+        });
+        $("#timeRange4").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange4").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange4").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange4").val('')
+        })
+        $('#timeRange5').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+        });
+        $("#timeRange5").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange5").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange5").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange5").val('')
+        })
+    });
+    
+    
+        function submitImportFile(){
+        	if($("#examineFile").val()!=null){
+        		if(!/.(xls|xlsx)$/.test($("#examineFile").val())){
+        			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+        			return false;
+        		}
+        	}
+        		$('#loading').modal('show');
+        		$.ajaxFileUpload({  
+        		url:"${base}/asset/cyclecheck/importfile",
+                type:'POST',
+                secureuri : false,  
+                fileElementId : 'examineFile',
+                dataType : 'JSON', 
+                success : function (data, status){
+                	$("#employeeFile").val('');
+                	$('#loading').modal('hide');
+                	var obj = $.parseJSON(data);
+                	if(obj.code == 0){
+               			loading(false);
+                		Toast.success("导入成功")
+               			$("#ladda-btn").button("reset");
+                		setTimeout(function(){
+                			datatable.ajax.reload();
+                		},1000);
+                	}else {
+                		var obj = $.parseJSON(data);
+                    	loading(false);
+                		//Toast.error(obj.msg)
+                		showCheckExcel(obj.msg);
+                	}
+                },
+                error: function(data, status, e){
+                	$('#loading').modal('hide');
+                }
+            });
+        }
+        function showCheckExcel(msg){
+        	var excel = $("#checkExcel");
+        	excel.modal("show");
+        	excel.find("#inputText").html('').append(msg);
+       }    
+</script>
+<%}%>
+

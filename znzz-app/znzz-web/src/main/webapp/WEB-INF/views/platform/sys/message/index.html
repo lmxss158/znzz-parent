@@ -1,0 +1,337 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1> 消息管理 </h1>
+            <ol class="breadcrumb pull-left">
+                <li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>
+                <li class="active">消息管理</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <div class="row">
+                <div style="padding: 15px 15px ;">
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+                        
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+                                    <label for="projectNum" class="col-sm-2 control-label">项目编号：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="code"  id="code" placeholder="请输入项目编号">
+                                    </div>
+                                    <label for="projectName" class="col-sm-2 control-label">项目名称：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="name" id="name" placeholder="请输入项目名称">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">时间：</label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" class="form-control pull-right" name="createTime" id="timeRange" readonly="readonly" style="background-color: white;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-footer" style="height: 30px;">
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<!-- 添加  删除 -->
+					<div class="box-header">
+						<a id="add" class="btn btn-md btn-success" href="${base}/instrument/monitor/projectinfo/add" data-pjax><i class="fa fa-fw fa-plus"></i>批量已读</a>
+						<button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+					</div>
+					
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="unittable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<!-- <th>
+                                        <input type="checkbox" class="minimal" checked="">
+                                    </th>  -->
+									 <th>序号</th> 
+									<th width="100px">发送人</th>
+									<th width="100px">接收人</th>
+									<th width="300px">内容</th>
+									<th>状态</th>
+									<th>时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+	
+	
+	
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除项目</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除后无法恢复； <br /> 请谨慎操作！ <br />确定要删除吗？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogProjectinfoDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+var datatable;
+var datatable1;
+function initDatatable() {
+    datatable = $('#unittable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+        "ajax": {
+            "url": "${base}/sys/message/info/data",
+            "type": "post",
+            "data": function (d) {        
+            	d.code = $('#code').val();
+                d.name=$('#name').val();
+                d.type=$('#type').val();
+                d.createTime=$('#timeRange').val();
+            }
+        },
+        "order": [[4, "desc"]],
+        "columns": [
+				{"data": null,"width":"30px"},
+                {"data": "sendId", "bSortable": true},
+                {"data": "receiveId", "bSortable": true},
+                {"data": "messageContext", "bSortable": true},
+                {"data": "status", "bSortable": true},
+                {"data": "send_time", "bSortable": true}
+        ],
+        
+        "columnDefs": [	
+				{
+    				"searchable": false,
+    				"orderable": false,
+    				"targets": 0
+				},
+            	{
+                "render": function (data, type, row) {
+                	
+                	return     '<a id="update" class="btn btn-xs btn-success" href="${base}/instrument/monitor/projectinfo/edit/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i>已读</a>'+
+        		               '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="del(\'' + row.id + '\')"><i class="glyphicon glyphicon-trash"></i>删除</a>';
+                },
+                "targets": 6
+            },{
+				"render": function(data, type, row){
+					 return   data==''||data==null?"---":data;
+				},
+         			 "targets": [2,3,4]
+         		}
+            	
+        ]
+        
+    });
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+    	 //datatable.fnDraw();
+        datatable.ajax.reload();
+    }); 
+    
+}
+function datas(){
+	datatable1 = $("#unittable").treetable({
+        expandable: true,
+        onNodeExpand : function(){
+            var node = this;
+            var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+            datatable1.treetable("loadBranch", node, rows);
+            //alert(node+"============="+rows);
+            $.post("${base}/platform/sys/unit/child/"+node.id,{}, function(data){
+            	datatable1.treetable("unloadBranch", node);
+            	datatable1.treetable("loadBranch", node, data);
+            });
+        }
+    });
+}
+function delCheck() {
+    var chks = datatable.rows('.selected').data();
+    if (chks.length > 0) {
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/instrument/monitor/projectinfo/delete", {ids: ids.toString()}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                    Toast.success(data.msg);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    } else {
+        Toast.warning("请先选择要删除的项！");
+    }
+}
+function del(id) {
+    var dialog = $("#dialogDelete");
+    dialog.modal("show");
+    dialog.find("#okDel").unbind("click");
+    dialog.find("#okDel").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/instrument/monitor/projectinfo/delete/"+id,{},function(data){
+            if (data.code == 0) {
+                datatable.ajax.reload(null,false);
+                Toast.success(data.msg);
+            } else {
+            	if("没有权限"!=data.msg){
+            		Toast.error(data.msg);
+            	}
+            }
+            //重置按钮状态，关闭提示框
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+    });
+}
+
+$(function () {
+    initDatatable();
+    $("#dialogProjectinfoDetail").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+    datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+});
+
+
+</script>
+<script>
+    $(function () {
+        var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        $('#timeRange').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                // '今日': [moment(), moment()],
+                // '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                // '最近7日': [moment().subtract(6, 'days'), moment()],
+                // '最近30日': [moment().subtract(29, 'days'), moment()],
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker":true,
+            //"timePicker24Hour": true
+            "timePickerSeconds": true
+        });
+        $("#timeRange").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+        
+        $("#timeRange").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange").val('')
+        })
+
+    });
+</script>
+<%}%>
+

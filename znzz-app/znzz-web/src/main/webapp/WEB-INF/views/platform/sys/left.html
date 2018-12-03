@@ -1,0 +1,48 @@
+<%
+		            	var secondMenus=@shiro.getPrincipalProperty('secondMenus');
+		            	for(firstMenu in @shiro.getPrincipalProperty('firstMenus')){		   
+		           	 %>
+					<li class="treeview">
+				
+					<% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
+						<a href="#"> 
+							<% if(has(firstMenu.icon)){ %>
+							<i class="fa fa-table"></i> 
+							<% } %>
+							<span><%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span>
+							<span class="pull-right-container"> 
+								<i class="fa fa-angle-left pull-right"></i>
+							</span>
+						</a>
+						
+						<%}else{%>
+							<a href="<% if(!isEmpty(firstMenu.href)){ %><%if(@string.startWith(firstMenu.href,'/')){%>${base}${firstMenu.href!}<%}else{%>${firstMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>"
+                     		<%if(@string.startWith(firstMenu.target,'_')){%>target="${firstMenu.target!}"<%}else{%>${firstMenu.target!}<%}%>>
+							<span>
+                        <%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span></a>
+                    	<%}%>
+							
+						<% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>	
+						<ul class="treeview-menu">
+							<% for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
+								<li>
+								 <a href="<% if(!isEmpty(secondMenu.href)){ %><%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%>>
+                            <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %><i class="fa fa-circle-o"></i><%}%>
+								 <%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%>
+								 <span class="pull-right-container"> 
+								<i class="fa fa-angle-left pull-right"></i>
+								</span>
+								 </a>								
+								<% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %>
+                        <ul class="treeview-menu" style="margin-left:25px;">
+                            <% for(thMenu in @secondMenus.get(secondMenu.path)){ %>
+                            <li>
+                                <a <% if(!isEmpty(thMenu.href)){ %>href="<%if(@string.startWith(thMenu.href,'/')){%>${base}${thMenu.href!}<%}else{%>${thMenu.href!}<%}%>" <% }else{ %>href="javascript:;"<% } %> <%if(@string.startWith(thMenu.target,'_')){%>target="${thMenu.target!}"<%}else{%>${thMenu.target!}<%}%>>
+                                <span><%if(lang=="zh_CN"){%>${thMenu.name}<%}else{%>${thMenu.aliasName}<%}%></span>
+                                </a>
+                            </li><% }%>
+                        </ul><%}%>
+								</li><%}%>
+								
+						</ul><%}%>
+					</li><%}%>

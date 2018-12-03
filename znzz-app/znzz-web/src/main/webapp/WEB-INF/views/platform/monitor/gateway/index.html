@@ -1,0 +1,558 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1> 收集器管理 </h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/instrument/monitor/gateway#">设备动态管理</a></li>
+                <li class="active">收集器管理</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <div class="row">
+                <div style="padding: 15px 15px;">
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+									<div class="col-sm-6">
+										<label for="gatewayCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">网关编号：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" name="gatewayCode"  id="gatewayCode" placeholder="请输入网关编号">
+										</div>
+									</div>
+                                    <div class="col-sm-6">
+										<label for="gateWayName" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">网关名称：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" name="gatewayName" id="gatewayName" placeholder="请输入网关名称">
+										</div>
+									</div>
+
+                                </div>
+                                <div class="form-group">
+									<div class="col-sm-6">
+										<label for="gatewayLocation" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">位置：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control"  name="gatewayLocation" id="gatewayLocation"   placeholder="请输入位置">
+										</div>
+									</div>
+
+                                    <div class="col-sm-6">
+										<label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">录入时间：</label>
+										<div class="col-sm-9">
+											<div class="input-group date">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control pull-right" name="createTime" id="timeRange" readonly="readonly" style="background-color: white;"/>
+											</div>
+										</div>
+									</div>
+
+                                </div>
+                                <div class="box-footer" style="height: 30px;">
+                                    <!--<button type="submit" class="btn btn-default">Cancel</button>-->
+                                    <!-- <button id="clearData" onclick="clearData()" class="btn btn-default pull-left"  style="width:80px">重置</button> -->
+                                    <!-- <a href="${base}/instrument/monitor/gateway" class="btn btn-default pull-left" style="width: 90px;">重置 / 刷新</a> -->
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<!-- 添加  删除 -->
+					<div class="box-header">
+						<a id="add" class="btn btn-md btn-success" href="${base}/instrument/monitor/gateway/add" data-pjax><i class="fa fa-fw fa-plus"></i> 添加</a>
+				        <a class="btn btn-primary" href="${base}/instrument/monitor/gateway/downLoad">
+                          	<span class="glyphicon glyphicon-download-alt"></span> 模板下载
+                         </a>
+				        <a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('acardFile').click();">
+                          	<span class="glyphicon glyphicon-arrow-down"></span> 导入
+                        </a>
+                         <input type="file" style="display:none;" id="acardFile" name="acardFile" onchange="submitImportFile();" />
+						<button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+						<!-- <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button> -->
+					</div>
+					
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="unittable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<!-- <th>
+                                        <input type="checkbox" class="minimal" checked="">
+                                    </th>  -->
+									<th>序号</th> 
+									<th>网关编号</th>
+									<th>网关名称</th>
+									<th>位置</th>
+									<th>IP</th>
+									<th>录入时间</th>
+									<th style="width:240px;">操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+	
+	
+	
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除网关</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除后收集器信息无法恢复 , 请谨慎操作 ! <br/>确定要删除吗?
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 检测-->
+<div id="checkCard" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">检测网关</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12" id="checkInfo">
+						确认检测？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+			    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="checkButton" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 重启-->
+<div id="restartNEW" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">重启网关</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12" id="checkInfo">
+						确认重启？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+			    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="restartButton" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                    <!-- <button id="" type="button" class="btn btn-primary">确定</button> -->
+                </div>
+            </div>
+        </div>
+</div>
+<script>
+var datatable;
+var datatable1;
+function initDatatable() {
+    datatable = $('#unittable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/instrument/monitor/gateway/data",
+            "type": "post",
+            "data": function (d) {        
+            	d.gatewayCode = $('#gatewayCode').val().trim();
+                d.gatewayName=$('#gatewayName').val().trim();
+                d.gatewayLocation=$('#gatewayLocation').val().trim();
+                d.createTime=$('#timeRange').val().trim();
+            }
+        },
+        "order": [[5, "desc"]],
+        "columns": [
+                    {"data":null,"width":"30px"},
+                {"data": "gatewayCode", "bSortable": true},
+                {"data": "gatewayName", "bSortable": true},
+                {"data": "gatewayLocation", "bSortable": true},
+                {"data": "ip", "bSortable": true},
+                {"data": "createTime", "bSortable": true}
+                /* {"data": "remark", "bSortable": true} */
+        ],
+        
+        "columnDefs": [	
+                      	{
+        				    "searchable": false,
+        				    "orderable": false,
+        				    "targets": 0
+        				},
+            	{
+                "render": function (data, type, row) {
+              return '&nbsp;&nbsp;<a class="btn btn-xs btn-success" href="${base}/instrument/monitor/gateway/edit/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>'+
+          		   '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="del(\'' + row.id + '\' )"><i class="glyphicon glyphicon-trash"></i> 删除</a>'+
+          		   '&nbsp;&nbsp;<a class="btn btn-xs btn-info" href="javascript:void(0);" onclick="checkAcard(\'' + row.id + '\')" ><i class=""></i> 检测</a>'+
+          		   '&nbsp;&nbsp;<a class="btn btn-xs btn-info" href="javascript:void(0);" onclick="restart(\'' + row.id + '\')" ><i class=""></i> 重启</a>';
+                		   
+
+                },
+                "targets": 6
+            }
+            	
+        ]
+        
+    });
+    //datatable.column(0).visible(false);
+    //var testdata = [0,1,2,3]
+    //datatable.columns( testdata ).visible( false, false );
+    //datatable.columns.adjust().draw( false ); // 调整列的大小,重新绘制表格
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+    	 //datatable.fnDraw();
+        datatable.ajax.reload();
+    }); 
+    
+}
+/* 导入 */
+function submitImportFile(){
+	if($("#acardFile").val()!=null){
+		if(!/.(xls|xlsx)$/.test($("#acardFile").val())){
+			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+			return false;
+		}
+	}
+	$('#loading').modal('show');
+		//loading(true);
+		$.ajaxFileUpload({  
+		url:"${base}/instrument/monitor/gateway/upload",
+        type:'POST',
+        secureuri : false,  
+        fileElementId : 'acardFile',
+        dataType : 'JSON', 
+        success : function (data, status){
+        	$("#acardFile").val("");
+        	$('#loading').modal('hide');
+        	var obj = $.parseJSON(data);
+        	if(obj.code == 0){
+       			loading(false);
+        		Toast.success("导入成功")
+       			$("#ladda-btn").button("reset");
+        		setTimeout(function(){
+        			location.reload();
+        		},1000);
+        	}else {
+        		var obj = $.parseJSON(data);
+            	loading(false);
+        		
+        		showCheckExcel(obj.msg);
+        	}
+        },
+        error: function(data, status, e){
+        	$('#loading').modal('hide');
+        	Toast.error("系统错误，导入失败")
+        }
+    });
+}
+function showCheckExcel(msg){
+	//alert(msg)
+	var excel = $("#checkExcel");
+	excel.modal("show");
+	excel.find("#inputText").html(msg)
+}
+function checkAcard(id) {
+	console.info(id)
+	//console.info(datatable.rows('.selected').data());
+	//console.info(datatable);
+    var dialog = $("#checkCard");
+    dialog.modal("show");
+    dialog.find("#checkButton").unbind("click");
+    dialog.find("#checkButton").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/instrument/monitor/gateway/check", {id: id}, function (data) {
+        	console.info(data)
+            if (data.code == 1) {
+            	Toast.error(data.msg);
+            } else {
+            	Toast.success(data.msg);
+            }
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+    });
+}
+
+function restart (id) {
+	var dialog = $("#restartNEW");
+    dialog.modal("show");
+    dialog.find("#restartButton").unbind("click");
+    dialog.find("#restartButton").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/instrument/monitor/gateway/restart", {id: id}, function (data) {
+        	console.info(data)
+            if (data.code == 1) {
+            	Toast.error(data.msg);
+            } else {
+            	Toast.success(data.msg);
+            }
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+    /* var dialog = $("#restartNEW");
+    dialog.modal("show");
+    dialog.find("#checkButton").unbind("click");
+    dialog.find("#restartButton").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/instrument/monitor/gateway/restart", {id: id}, function (data) {
+        	console.info(data)
+            if (data.code == 1) { 
+            	Toast.error(data.msg);
+            } else {
+            	Toast.success(data.msg);
+            }
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json"); */
+    });
+    
+}
+
+
+
+function delCheck() {
+    var chks = datatable.rows('.selected').data();
+    if (chks.length > 0) {
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/instrument/monitor/gateway/delete", {ids: ids.toString()}, function (data) {
+                if (data == 1) {
+                    datatable.ajax.reload(null,false);
+                    Toast.success("操作成功");
+                }else if(data.code == 1){
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }else if(data.code==0){
+                	Toast.success(data.msg);
+                	console.info(data.msg)
+                	datatable.ajax.reload(null,false);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    } else {
+        Toast.warning("请先选择要删除的项！");
+    }
+}
+function del(id) {
+    var dialog = $("#dialogDelete");
+    dialog.modal("show");
+    dialog.find("#okDel").unbind("click");
+    dialog.find("#okDel").bind("click", function(event){
+        var btn = $(this);
+        btn.button("loading");
+        $.post("${base}/instrument/monitor/gateway/delete/"+id,{},function(data){
+        	if (data == 1) {
+                datatable.ajax.reload(null,false);
+                Toast.success("操作成功");
+            }else if(data == 0){
+            	Toast.error("scacda接口错误，操作失败");
+            }else if(data.code==0){
+                Toast.success(data.msg);
+                datatable.ajax.reload();
+            }
+            //重置按钮状态，关闭提示框
+            btn.button("reset");
+            dialog.modal("hide");
+        }, "json");
+    });
+}
+
+$(function () {
+    initDatatable();
+    datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+    $("#dialogGatewayDetail").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+});
+
+</script>
+<script>
+    $(function () {
+        var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        $('#timeRange').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "timePickerSeconds":true,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker":true,
+            //"timePicker24Hour": true
+            "timePickerSeconds": true
+        });
+       /*  $("#timeRange").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        }); */
+        
+        $("#timeRange").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange").val('')
+        })
+        function rangeTime(time) {
+        	var id = time.id;
+        	$("#" + id).on('apply.daterangepicker', function(ev, picker) {
+	            $("#" + id).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+	        }); 
+        }
+        rangeTime(timeRange)
+    });
+</script>
+<%}%>
+

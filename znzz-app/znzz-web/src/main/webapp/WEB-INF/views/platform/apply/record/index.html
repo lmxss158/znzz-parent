@@ -1,0 +1,242 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+    <h1>审批履历</h1>
+    <ol class="breadcrumb pull-left">
+        <li><a href="#">资产预约</a></li>
+        <li class="active">审批履历</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-body">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <label for="applyId" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">申请编号：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="applyId"
+                                       placeholder="申请编号">
+                            </div>
+
+                            <label for="assetInfo" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">资产信息：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="assetInfo"
+                                       placeholder="资产名称/资产型号/出厂编号">
+                            </div>
+                            <label class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">申请人：</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="chargePerson" id="chargePerson" style="width: 100%;"
+                                       placeholder="姓名/科室">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="startDate" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">开始时间：</label>
+                            <div class="col-sm-3" style="float: left">
+                                <input type="text" class="form-control" id="startDate"
+                                       placeholder="开始时间">
+                            </div>
+                            <label for="endDate" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">结束时间：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="endDate"
+                                       placeholder="结束时间">
+                            </div>
+                            <div class="col-sm-4 control-label">
+                                <button class="btn btn_All btn-primary pull-right" id="searchBtn"
+                                        data-loading-text="搜索..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">搜索
+                                </button>
+                                <button class="btn btn_All btn-danger ml_20 pull-right" id="exportBtn"
+                                        onclick="doClear()" data-loading-text="清空..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">清空
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+
+                    <table id="applyRecordTable" class="table table-bordered table-striped table-hover"
+                           style="table-layout:fixed">
+                        <thead>
+                        <tr>
+                            <th>申请编号</th>
+                            <th>资产名称</th>
+                            <th>资产型号</th>
+                            <th>出厂编号</th>
+                            <th>借用日期</th>
+                            <th>归还日期</th>
+                            <th>单位</th>
+                            <th>申请人</th>
+                            <th>申请状态</th>
+                            <th>操作时间</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    var recordDatatable;
+
+    function initRecordTable() {
+        recordDatatable = $('#applyRecordTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "stateSave": true,
+            "destroy": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/apply/record/data",
+                "type": "post",
+                "data": function (d) {
+                    d.applyId = $("#applyId").val().trim();
+                    d.assetInfo = $("#assetInfo").val().trim();
+                    d.startDate = $("#startDate").val().trim();
+                    d.endDate = $("#endDate").val().trim();
+                    d.chargeMan = $("#chargePerson").val().trim();
+                }
+            },
+            "order": [[9, "desc"]],
+            "columns": [
+                {"data": "applyid"},
+                {"data": "assetname"},
+                {"data": "deviceversion"},
+                {"data": "serialnumber"},
+                {"data": "lenddate"},
+                {"data": "returndate"},
+                {"data": "lenderunit"},
+                {"data": "proposer"},
+                {"data": "operatestate"},
+                {"data": "operatetime"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<a href="${base}/asset/apply/record/detail/' + data + '" data-pjax>' + data + '</a>';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = subStrCustomNew(data, 5);
+                        }
+                        return str;
+                    },
+                    "targets": [1, 2, 3, 9]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = data;
+                        }
+                        return str;
+                    },
+                    "targets": [6, 7]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = data.split(" ")[0];
+                        }
+                        return str;
+                    },
+                    "targets": [4, 5]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "未领取";
+                        } else if (data == 1) {
+                            return "已领取";
+                        } else if (data == 2) {
+                            return "已延期";
+                        } else if (data == 3) {
+                            return "已取消";
+                        } else if (data == 4) {
+                            return "已归还";
+                        }
+                    },
+                    "targets": [8]
+                }
+            ]
+        });
+
+        recordDatatable.on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                recordDatatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#searchBtn").on('click', function () {
+            recordDatatable.ajax.reload();
+        });
+    }
+
+    $(function () {
+        setDate("startDate", "endDate");
+        loadUnitAndUser();
+        var table = $('#applyRecordTable').dataTable().api();
+        // 记录分页
+        if (typeof ($.cookie('divide')) == "undefined") {
+            table.state.clear();
+        } else {
+            // 清理cookie
+            $.cookie("divide", "", {expires: -1, path: '/'});
+        }
+        initRecordTable();
+    });
+
+    // 清空操作
+    function doClear() {
+        $("#assetInfo").val("");
+        $("#applyId").val("");
+        $("#startDate").val("");
+        $("#endDate").val("");
+        $("#chargePerson").val("");
+        $("#chargePerson_text").val("");
+        recordDatatable.ajax.reload();
+    }
+
+</script>
+
+<%}%>

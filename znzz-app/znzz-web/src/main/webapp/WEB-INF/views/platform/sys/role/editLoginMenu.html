@@ -1,0 +1,255 @@
+<% layout("/layouts/platform.html"){ %>
+<div class="modal-content">
+	<div class="modal-header">
+		<h4 class="modal-title" id="myModalLabel">分配登录跳转</h4>
+	</div>
+	<form id="addRoleForm" class="form-horizontal stepy" method="post" action="${base}/platform/sys/role/editMenuDo">
+		<input type="hidden" id="menuIds" name="menuIds" />
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-lg-12">
+					<form id="addRoleForm" class="form-horizontal stepy" method="post" action="${base}/platform/sys/role/editMenuDo">
+						<input type="hidden" id="menuIds" name="menuIds" />
+
+						<div class="form-group no-b">
+							<div class="col-sm-8">
+								<div class="panel">
+									<div class="panel-heading no-b">
+										<h5>
+											选择<b>顶部菜单</b>
+										</h5>
+									</div>
+									<div class="panel-body">
+										<!-- <div id="jsTreeMenu"></div> -->
+										<ul id="treeDemo" class="ztree"></ul>
+									</div>
+								</div>
+							</div>
+
+
+
+							<div class="col-sm-4">
+								<div class="panel">
+									<div class="panel-heading no-b">
+										<h5>
+											菜单<b>描述</b>
+										</h5>
+									</div>
+									<div id="menuDescript" class="panel-body">
+										<div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer" style="text-align: center;">
+			<a href="${base}/platform/sys/role" id="goback" data-pjax>
+				<button type="button" class="btn btn-default" data-dismiss="modal" style="width: 120px">关闭</button>
+			</a>
+			<button class="btn btn-primary navbar-btn" onclick="complete()" style="width: 120px;margin-top: 0">
+				<i class="ti-share"></i> 保存
+			</button>
+		</div>
+	</form>
+</div>
+<script language="JavaScript">
+    /*   var jsTreeMenu;
+      $(function () {
+          jsTreeMenu = $("#jsTreeMenu").jstree({
+                      plugins: ["wholerow", "checkbox"],
+                      core: {
+                          data: ${menus!}
+                  },
+                  checkbox: {
+                      three_state: true,
+                      cascade: 'up'
+          }
+      }).on("hover_node.jstree", function (e, data) {
+          if (data.node.data)
+              $("#menuDescript").text(data.node.data);
+      }).on("dehover_node.jstree", function (e, data) {
+          $("#menuDescript").html("<div class='alert alert-info'>请勾选每一个需要分配的菜单</div>");//清空菜单描述
+      }).bind("loaded.jstree", function (e, data) {
+          //立即加载树下所有节点
+      });
+      }); */
+
+
+
+    var setting = {
+        check: {
+            enable: true
+        },
+        view: {
+            showLine: false,
+            showIcon: showIconForTree
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            beforeMouseDown: beforeMouseDown,
+           // beforeCheck:beforeCheck,
+			onCheck: onCheck
+        }
+    };
+    function showIconForTree(treeId, treeNode) {
+        return treeNode.isParent;
+    };
+    function beforeMouseDown(treeId, treeNode) {
+        if (treeNode&&treeNode.data){
+            $("#menuDescript").text(treeNode.data);
+        }else{
+            $("#menuDescript").html("<div class='alert alert-info'>请勾选每一个需要分配的菜单</div>");//清空菜单描述
+        }
+    }
+
+
+    var zNodes =${headmenus!};
+
+    var code;
+
+    function setCheck() {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            py = $("#py").attr("checked")? "p":"",
+            sy = $("#sy").attr("checked")? "s":"",
+            pn = $("#pn").attr("checked")? "p":"",
+            sn = $("#sn").attr("checked")? "s":"",
+            type =  { "Y" : "p", "N" : "p" };
+        zTree.setting.check.chkboxType = type;
+        showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
+        openParent();
+    }
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        setCheck();
+        $("#py").bind("change", setCheck);
+        $("#sy").bind("change", setCheck);
+        $("#pn").bind("change", setCheck);
+        $("#sn").bind("change", setCheck);
+    });
+
+
+
+    /*  function each(node, tree, nodes) {
+         var p = tree.get_parent(node);
+         if (p.length > 1) {
+             if (nodes&&p&&nodes.indexOf(p)<0)
+                 nodes.push(p);
+             each(p, tree, nodes);
+         }
+     } */
+    function complete() {
+        /*  var tree = $.jstree.reference("#jsTreeMenu");
+         var ids = tree.get_selected();  */
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = zTree.getCheckedNodes(true);
+        var ids = new Array();
+        if(nodes.length>1){
+            Toast.warning("登录跳转菜单最多选择1个！");
+            return ;
+		}
+        for(var i=0;i<nodes.length;i++){
+            ids.push(nodes[i].id) ;
+        }
+
+
+            $.post("${base}/platform/sys/role/editLoginMenuDo", {menuIds: ids.toString(), roleid: '${obj.id}'}, function (data) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 1000);
+                } else {
+                    Toast.error(data.msg);
+                }
+            }, "json");
+
+    }
+    //选中的展开父级
+	function openParent(){
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = treeObj.getCheckedNodes(true);
+        if(nodes!=null&&nodes.length>0){
+            for(var i=0;i<nodes.length;i++){
+                var p = nodes[i].getParentNode() ;
+
+                if(p!=null){
+                    treeObj.expandNode(p, true, true, true);
+				}
+			}
+		}
+	}
+    function beforeCheck(treeId,treeNode){
+        var flag = false ;
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = treeObj.getCheckedNodes(true);
+        if(nodes.length>=1){
+        	for(var i=0;i<nodes.length;i++){
+                var bnodes = getPeerNodes(nodes[i]) ;//获取兄弟节点
+        	    if(bnodes!=null){//有兄弟节点
+        	     	for(var j=0;j<bnodes.length;j++){
+        	     	    if(treeNode.id==bnodes[j].id){//
+        	     	        flag = true ;
+						}
+					}
+				}else{
+                    if(treeNode.id==nodes[i].id){//相同的再选允许
+                        flag =  true ;
+                    }
+				}
+
+
+			}
+        	if(!flag){
+        	    Toast.warning("登录跳转菜单最多选择1个！");
+			}
+        }else{
+            flag = true ;
+		}
+
+        return flag ;
+
+	}
+
+    function onCheck(e, treeId, treeNode) {
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = treeObj.getNodes();
+        nodes = treeObj.transformToArray(nodes);
+
+        if(nodes!=null){//所有节点
+			for(var i=0;i<nodes.length;i++){
+			    var b = nodes[i] ;
+			    var chid=b.id;
+			    if(treeNode.id!=chid&&b.checked==true){//不等于,清除选中
+                    treeObj.checkNode(b);
+				}
+			}
+		}
+    }
+
+    function getPeerNodes(targetNode){
+        if(targetNode == null){
+            return null;
+        }else{
+            if(targetNode.getParentNode() != null){
+                return targetNode.getParentNode().children;
+            }
+            return null;
+        }
+
+    }
+</script>
+<%}%>

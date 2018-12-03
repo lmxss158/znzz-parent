@@ -1,0 +1,225 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+                    <h4 class="modal-title">
+                    	<input  value="<%if(obj[9]=='test'){%>检定<%}else{%>修改<%}%>">
+                    </h4>
+                </div>
+		
+		<!--检定-->
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/cycle/examine/testDo" method="post">
+    	<input id="id" name="id" type="hidden" value="${obj[0]}">
+    	<%if(obj[9]=='test'){%>
+    	<input id="wherefor" name="wherefor" type="hidden" value="检定">
+    	<%}else{%>
+    	<input id="recordid" name="recordid" type="hidden" value="${obj[8]}">
+    	<input id="wherefor" name="wherefor" type="hidden" value="修改">
+    	<%}%>
+    	
+        	<!-- <div class="modal-dialog" style="margin: 30px auto auto; ">
+            <div class="modal-content"> -->
+                
+                <div class="modal-body">
+                 <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="add-device-num" class="col-sm-2 control-label">统一编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="${obj[1]}" name="assetCode" id="add-device-num" placeholder="请输入统一编号" readonly="readonly">
+                            </div>
+                        </div>
+                        
+                         <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">资产名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="${obj[2]}" name="assetName"  placeholder="请输入资产名称" readonly="readonly">
+                            </div>
+                        </div> 
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">启用日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="enableTime" value="${obj[3]}" id="add-gateway-time" readonly="readonly">
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">到期检定日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="dueDate1" value="${obj[5]}" id="dueDate1" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr style="height:1px;border:none;border-top:1px dashed #555555;" />
+                    
+                    <div class="form-horizontal">
+                    	<div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">检定日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="examineDate" value="<%if(obj[9]=='test'){%><%}else{%>${obj[4]}<%}%>" id="examineDate">
+                                </div>
+                            </div>
+                        </div> 
+                    	<div class="form-group">
+                            <label for="add-gateway-time" class="col-sm-2 control-label">下次到期检定日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="dueDate"  id="dueDate" value="<%if(obj[9]=='test'){%><%}else{%>${obj[5]}<%}%>">
+                                </div> 
+                            </div>
+                        </div> 
+                    	<div class="form-group">
+                            <label for="add-gateway-desc" class="col-sm-2 control-label">检定结论</label>
+                            <!--<label class="cl-sm-2 control-label">Textarea</label>-->
+                            <div class="col-sm-8">
+                                		<select id="conclusion" name="conclusion" class="form-control select5" data-placeholder="请选择检定结论" style="width: 100%">
+                                				<%if(obj[9]=='test'){%>
+                                					<option value="" selected="selected">请选择</option>
+		                                        	<option value="0" >合格</option>
+		                                        	<option value="1" >不合格</option>
+		                                        	<option value="2" >无法确定</option>
+                                				<%}else{%>
+                                					<%if(obj[6]=='0'){%>
+                                						<option value="">请选择</option>
+                                						<option value="0" selected="selected">合格</option>
+		                                        		<option value="1">不合格</option>
+		                                        		<option value="2">无法确定</option>
+                                					<%}else if(obj[6]=='1'){%>
+                                						<option value="">请选择</option>
+                                						<option value="0">合格</option>
+		                                        		<option value="1" selected="selected">不合格</option>
+		                                        		<option value="2">无法确定</option>
+                                					<%}else if(obj[6]=='2'){%>
+                                						<option value="">请选择</option>
+                                						<option value="0">合格</option>
+		                                        		<option value="1">不合格</option>
+		                                        		<option value="2" selected="selected">无法确定</option>
+                                					<%}else{%>
+                                						<option value="">请选择</option>
+                                						<option value="0">合格</option>
+		                                        		<option value="1">不合格</option>
+		                                        		<option value="2">无法确定</option>
+                                					<%}%>
+                                					
+                                				 <%}%>
+                                		</select> 
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-gateway-desc" class="col-sm-2 control-label">过期原因</label>
+                            <!--<label class="cl-sm-2 control-label">Textarea</label>-->
+                            <div class="col-sm-8">
+                                <textarea class="form-control" rows="3" name="overdueReaspn" id="overdueReaspn" 
+                                          placeholder="${obj[7]==null?'请输入过期原因':obj[7]}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/cycle/examine" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+                </div>
+                
+           <!--  </div>
+            /.modal-content
+        </div>
+        /.modal-dialog -->
+    </form>
+    
+	</div>
+	
+<script language="JavaScript">
+
+    $(document).ready(function () {    	
+        myForm.init();
+        
+        $("#examineDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",//控制仅显示到日
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy/mm/dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+        $("#dueDate").datetimepicker({
+            language: "zh-CN",
+            minView: "month",
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy/mm/dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#examineDate").val()==""){
+            		Toast.error("检定日期不能为空");
+            		return false;
+            	}
+            	if($("#dueDate").val()==""){
+            		Toast.error("下次到期检定日期不能为空");
+            		return false;
+            	}
+                /* if($("#type").val()=="hide"&&$("#toUrl").val().indexOf("http")>-1){
+                	Toast.error("隐性URL不可为外链");
+                    return false;
+                } */
+                
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<%}%>
+
+

@@ -1,0 +1,437 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header" xmlns:margin="http://www.w3.org/1999/xhtml">
+            <h1> 盘点履历 </h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/asset/inventory/#">资产盘点</a></li>
+                <li class="active">盘点履历</li>
+            </ol>
+</section>
+        
+<section class="content">
+            <!-- 查询条件内容 -->
+            <div class="row" style="vertical-align: middle; text-align: center;">
+                <div style="padding: 15px 15px;">
+                    <div class="box" >
+                        <div class="box-body" style="padding-top: 21px; padding-bottom:0px;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+								<form id="inventoryRecordSearch">
+									<div class="form-group">
+										<div class="col-sm-5">
+											<label for="assetCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">资产信息：</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="assetCode" placeholder="统一编号/资产名称/资产型号/出厂编号">
+											</div>
+										</div>
+										<div class="col-sm-5" style="padding-left: 0; padding-left: 25px;">
+											<label for="inventoryChecker" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0; width:153px;">盘点人：</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" name="inventoryChecker" id="inventoryChecker" placeholder="请输入盘点人">
+											</div>
+										</div>
+										<div class="col-sm-2" style="padding-left: 110px; height: 30px;">
+											<input id="clearSearchReload" type="reset" style="width:60px" value="清空" onclick="clearSearch();" class="btn btn btn-warning pull-left"/>
+										</div>
+
+									</div>
+								</form>
+                                <div class="form-group">
+									<div class="col-sm-5">
+										<label for="inventorySite" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">盘点位置：</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control"  name="inventorySite" id="inventorySite"   placeholder="请输入盘点位置">
+										</div>
+									</div>
+
+									<div class="form-group col-sm-5" style="padding-left: 110px; padding-right: 0;">
+										<label for="inventoryBeginTime" class="col-sm-1 control-label" style="padding-right: 63px;white-space: nowrap;">盘点时间 : </label>
+										<div class="col-sm-2" style="padding-left: 23px; height: 30px;width:226px;">
+											<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inventoryBeginTime" id="inventoryBeginTime" placeholder="盘点开始时间">
+										</div>
+										<label for="inventoryEndTime" class="col-sm-1 control-label" style="width:auto">至</label>
+										<div class="col-sm-2" style="height: 30px; width:226px;">
+											<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inventoryEndTime" id="inventoryEndTime"  placeholder="盘点结束时间">
+										</div>
+									</div>
+
+
+									<div class="col-sm-2" style="padding-left: 77px; height: 30px;">
+										<button id="searchBtn" class="btn btn-primary" data-loading-text="搜索..." style="width:60px">搜索</button>
+									</div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+                        <a class="btn btn-primary" data-loading-text="下载中..." href="${base}/asset/inventory/record/templateDownload">
+                            <span class="glyphicon glyphicon-download-alt"></span> 模板下载
+                        </a>
+				        <a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('recordFile').click();">
+                          	<span class="glyphicon glyphicon-arrow-down"></span> 批量导入
+                        </a>
+                        <a class="btn btn-primary" id="exportInventoryRecordInfo" data-loading-text="导出中..." onclick="exportInventoryRecordInfo()">
+                          	<span class="glyphicon glyphicon-open"></span> 批量导出
+                        </a>
+                         <input type="file" style="display:none;" id="recordFile" name="recordFile" onchange="submitImportFile();" />
+					</div>
+					
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="recordTable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th>统一编号</th>
+									<th>资产名称</th>
+									<th>资产型号</th>
+									<th>出厂编号</th>
+									<th>使用单位</th>
+									<th>责任人</th>
+									<th>资产原位置</th>
+									<th>盘点位置</th>
+									<th>盘点人单位</th>
+									<th>盘点人</th>
+									<th>盘点人工号</th>
+									<th>盘点时间</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+	
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+</div>
+
+<div class="modal fade" id="loading-asset-export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-backdrop='static'>
+    <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+        <div class="modal-content" style="background:transparent;">
+            <!-- <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">提示</h4>
+            </div> -->
+            <div class="modal-body">
+                <div class="loading-box">
+                    <div class="sk-fading-circle">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                    <div class="text-center" style="padding-bottom:5px;">正在导出资产信息，请稍后...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script>
+var datatable;
+function initDatatable() {
+    datatable = $('#recordTable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+         
+        "ajax": {
+            "url": "${base}/asset/inventory/record/data",
+            "type": "post",
+            "data": function (d) {
+            	d.assetCode = $("#assetCode").val();
+                d.inventoryChecker=$("#inventoryChecker").val();
+                d.inventorySite=$("#inventorySite").val();
+                d.inventoryBeginTime=$("#inventoryBeginTime").val();
+                d.inventoryEndTime=$("#inventoryEndTime").val();
+            }
+        },
+        "order": [[0, "asc"]],
+        "columns": [
+                {"data": "assetcode", "bSortable": true},
+                {"data": "assetname", "bSortable": true},
+                {"data": "assetmodel", "bSortable": true},
+                {"data": "serialnumber", "bSortable": true},
+                {"data": "usedepartment", "bSortable": true},
+                {"data": "chargeperson", "bSortable": true},
+                {"data": "assetoriginalsite", "bSortable": true},
+                {"data": "inventorysite", "bSortable": true},
+				{"data": "inventorycheckerdepartment", "bSortable": true},
+            	{"data": "inventorychecker", "bSortable": true},
+                {"data": "jobnumber", "bSortable": true},
+                {"data": "inventorydate", "bSortable": true}
+        ],
+        
+        "columnDefs": [	
+                      	{
+        				    "searchable": false,
+        				    "orderable": false,
+        				    "targets": 0
+        				},
+						{
+							"render": function (data, type, row) {
+								return '<a class="self-hover" style="cursor:pointer;" onclick="showInventoryRecordDetail(\''+row.assetcode+'\');">' + data + '</a>'
+							},
+							"targets": 0
+						},
+						{
+							"render": function (data, type, row) {
+								var str ="" ;
+								if(data!=null){
+									var day = data.split(" ")[0] ;
+									var yearM = day.split("-") ;
+									str=yearM[0]+"-"+yearM[1]+"-"+yearM[2];
+								}
+								return str ;
+							},
+							"targets": 11
+						},
+       				 ]
+        
+    });
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+    
+}
+
+//对查询清空操作
+function clearSearch() {
+    $("#assetCode").val("");
+    $("#inventoryChecker").val("");
+    $("#inventorySite").val("");
+    $("#inventoryBeginTime").val("");
+    $("#inventoryEndTime").val("");
+    datatable.ajax.reload();
+}
+
+/* 导入 */
+function submitImportFile(){
+	if($("#recordFile").val()!=null){
+		if(!/.(xls|xlsx)$/.test($("#recordFile").val())){
+			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+			return false;
+		}
+	}
+	$('#loading').modal('show');
+		//loading(true);
+		$.ajaxFileUpload({  
+		url:"${base}/asset/inventory/record/upload",
+        type:'POST',
+        secureuri : false,  
+        fileElementId : 'recordFile',
+        dataType : 'JSON', 
+        success : function (data, status){
+        	$("#recordFile").val("");
+        	$('#loading').modal('hide');
+        	var obj = $.parseJSON(data);
+        	if(obj.code == 0){
+       			loading(false);
+        		Toast.success("导入成功")
+       			$("#ladda-btn").button("reset");
+        		setTimeout(function(){
+        			location.reload();
+        		},1000);
+        	}else {
+        		var obj = $.parseJSON(data);
+            	loading(false);
+        		
+        		showCheckExcel(obj.msg);
+        	}
+        },
+        error: function(data, status, e){
+        	$('#loading').modal('hide');
+        	Toast.error("系统错误，导入失败")
+        }
+    });
+}
+
+//导出
+function exportInventoryRecordInfo() {
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "post",
+                    data: {
+                        "assetCode": $("#assetCode").val(),
+                        "inventoryChecker": $("#inventoryChecker").val(),
+                        "inventorySite": $("#inventorySite").val(),
+                        "inventoryBeginTime": $("#inventoryBeginTime").val(),
+                        "inventoryEndTime": $("#inventoryEndTime").val(),
+                    },
+                    dataType: "JSON",
+                    url: "${base}/asset/inventory/record/exportInventoryRecordInfo/",
+                    async: false,
+                    success: function (data) {
+                        console.info(data);
+                        if ("error" == data) {
+                            Toast.error("导出失败");
+                            $('#loading-asset-export').modal('hide');
+                            return;
+                        }
+                        exportAssetsInfoByUrl(data);
+                        //Toast.info("返回成功")
+                        $('#loading-asset-export').modal('hide');
+                    }
+                });
+            }, 500);
+
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    });
+}
+
+// 导出资产信息列表根据URL
+function exportAssetsInfoByUrl(urlData) {
+    var url = "${base}/asset/inventory/record/exportInventoryRecordInfoByUrl";
+    var form = $("<form></form>").attr("action", url).attr("method", "post");
+    form.append($("<input></input>").attr("type", "hidden").attr("name", "url").attr("value", urlData));
+    form.appendTo('body').submit().remove();
+}
+
+
+function showCheckExcel(msg){
+	//alert(msg)
+	var excel = $("#checkExcel");
+	excel.modal("show");
+	excel.find("#inputText").html(msg)
+}
+
+//资产祥情页面
+var showInventoryRecordDetail = function (assetCode) {
+    $("#homeDetail").modal('show');
+    $("#homeDetail").load('${base}/asset/info/detail/' + assetCode);
+}
+
+$(function () {
+    initDatatable();
+    //加载使用单位和责任人
+    loadUnitAndUser(null, "inventoryChecker", null);
+    $("#dialogGatewayDetail").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+});
+
+</script>
+<script>
+   $(function() {
+       //日期控件
+       $('#inventoryBeginTime').datetimepicker({
+           language : 'zh-CN',//显示中文
+           format : 'yyyy-mm-dd',//显示格式
+           minView : "month",//设置显示到天
+           initialDate : new Date(),//初始化当前日期
+           autoclose : true,//选中自动关闭
+           todayBtn : true
+           //显示今日按钮
+       }).on("changeDate",function(){
+           $("#inventoryEndTime").datetimepicker("setStartDate",$("#inventoryBeginTime").val());
+       });
+       $('#inventoryEndTime').datetimepicker({
+           language : 'zh-CN',//显示中文
+           format : 'yyyy-mm-dd',//显示格式
+           minView : "month",//设置显示到天
+           initialDate : new Date(),//初始化当前日期
+           autoclose : true,//选中自动关闭
+           todayBtn : true//显示今日按钮
+       }).on("changeDate",function(){
+           $("#inventoryBeginTime").datetimepicker("setEndDate",$("#inventoryEndTime").val());
+       });
+
+   });
+</script>
+<%}%>
+

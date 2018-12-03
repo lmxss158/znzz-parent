@@ -1,0 +1,95 @@
+<div class="modal-dialog" style="width:600px;">
+    <form id="addModal" role="form" class="form-horizontal parsley-form" data-parsley-validate
+          action="${base}/asset/report/manuallyGeneratedDo" method="post" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width:600px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">选择时间生成月度报告</h4>
+                </div>
+                <input type="hidden" name="id"/>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="panel-group" id="add-manually-generated" role="tablist" aria-multiselectable="true">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-4 margin-top-self" style="padding-left: 90px; width: 1250px">
+                                        <label class="col-sm-1 control-label">月度</label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control pull-center" name="month" id="selectTime" readonly="readonly" style="padding-right: auto" placeholder="请输入时间" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="goback" class="btn btn-default pull-center" data-dismiss="modal">取消</button>
+                    <button id="confirm-add" type="button" data-loading-text="正在提交..." onclick="submitForm();"
+                            class="btn btn-primary pull-right">确定
+                    </button>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $('#selectTime').datepicker({
+        language: "zh-CN",
+        todayHighlight: true,
+        format: 'yyyy-mm',
+        autoclose: true,
+        clearBtn:true,
+        startView: 'months',
+        maxViewMode:'years',
+        minViewMode:'months'
+    });
+</script>
+<script>
+
+    function submitForm() {
+        if (checkNotNull()) {
+            var dataList = $("#addModal").serialize();
+            // var dataList = $("#selectTime").val();
+            console.log(dataList)
+            $.ajax({
+                type: "post",
+                data: dataList,
+                dataType: "json",
+                url: "${base}/asset/report/manuallyGeneratedDo",
+                success: function (data) {
+
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
+                        //关闭当前需求，刷新父页面
+                        $("#homeDetail").modal('hide');
+                    } else {
+                        if ("没有权限" != data.msg) {
+                            Toast.error(data.msg);
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    // 非空校验(必填字段校验)
+    var checkNotNull = function () {
+        /*月度非空校验*/
+        var selectTime = $("#selectTime").val();
+        if (selectTime == "") {
+            Toast.error("月度时间不能为空");
+            return false;
+        }
+        return true;
+    }
+</script>

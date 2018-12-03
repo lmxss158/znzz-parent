@@ -1,0 +1,189 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+             <h4 class="modal-title">添加项目</h4>
+        </div>
+		
+		<!--新增框-->
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/instrument/monitor/projectinfo/addDo" method="post">
+       <!--  <div class="modal-dialog" style="margin: 30px auto auto; ">
+             <div class="modal-content"> -->
+                
+                <div class="modal-body"> 
+                <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="add-device-num" class="col-sm-2 control-label">项目编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="code" id="code" placeholder="请输入项目编号" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-project-name" class="col-sm-2 control-label">项目名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="name" id="name"  placeholder="请输入项目名称">
+                            </div>
+                        </div>
+                        
+                       <!--  <div class="form-group">
+                            <label for="add-project-type" class="col-sm-2 control-label">项目类型</label>
+                            <div class="col-sm-10">
+                                <select id="type" name="type" class="form-control select1" data-placeholder="Select a State" style="width: 100%;" disabled="disabled">
+                                    <option value="0">技改</option>
+                                    <option value="1" selected="selected">在用</option>
+                                </select>
+                            </div>
+                        </div> -->
+                        
+                       <!--  <div class="form-group">
+                            <label for="add-project-time" class="col-sm-2 control-label">录入时间</label>
+                            <div class="col-sm-10">
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="createTime" id="timeRange">
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <label for="add-project-detail" class="col-sm-2 control-label">项目简介</label>
+                            <div class="col-sm-8">
+                                 <textarea class="form-control" rows="3" name="detail" id="detail"
+                                          placeholder="请输入项目简介"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/instrument/monitor/projectinfo" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+                </div>
+                
+           
+    </form>
+    
+</div>
+	
+<script language="JavaScript">
+
+    $(document).ready(function () {    	
+        myForm.init();
+        /* 
+        $("#timeRange").datetimepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+            format: "yyyy/mm/dd hh:ii"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        }); */
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#code").val()==""){
+            		Toast.error("项目编号不能为空");
+            		return false;
+            	}
+            	if($("#name").val()==""){
+            		Toast.error("项目名称不能为空");
+            		return false;
+            	}
+            	/* if($("#detail").val()==""){
+            		Toast.error("项目简介不能为空");
+            		return false;
+            	} */
+            	if(!checkCode()){
+            		return false;
+            	}
+            	if(!checkName()){
+            		return false;
+            	}
+            	
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<script>
+function checkCode(){
+	var code = $("#code").val();
+	if(code == null || code == ''){
+		Toast.error("项目编号不能为空");
+		return false;
+	}
+	var flag = $.ajax({
+    	type: "post",
+        url: "${base}/instrument/monitor/projectinfo/codeList/"+code,
+        dataType: "json",
+        data:code,
+        async:false,
+        success:function(data){
+        }
+    }); 
+	var temp = flag.responseJSON;
+    if(temp.code != 0){
+    	Toast.error(temp.msg);
+    	return false;
+    }else {
+    	return true;
+    }
+}
+function checkName(){
+	var code = $("#name").val();
+	if(code == null || code == ''){
+		Toast.error("项目名称不能为空");
+		return false;
+	}
+	var flag = $.ajax({
+    	type: "post",
+        url: "${base}/instrument/monitor/projectinfo/nameList/"+code,
+        dataType: "json",
+        data:code,
+        async:false,
+        success:function(data){
+        }
+    }); 
+	var temp = flag.responseJSON;
+    if(temp.code != 0){
+    	Toast.error(temp.msg);
+    	return false;
+    }else {
+    	return true;
+    }
+}
+
+</script>
+<%}%>
+
+

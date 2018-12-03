@@ -1,0 +1,391 @@
+<div class="modal-dialog" style="width:1200px;">
+    <form id="addModal" role="form" class="form-horizontal parsley-form" data-parsley-validate
+          action="${base}/platform/sys/import/editDo" method="post" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width:1200px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">修改报表</h4>
+                    <input type="hidden" name="id" value="${obj.id}">
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="panel-group" id="add-accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="addHeadingFour">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#add-accordion"
+                                                   href="#addCollapseFour" aria-expanded="true"
+                                                   aria-controls="addCollapseFour">
+                                                    常用字段
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="addCollapseFour" class="panel-collapse collapse in" role="tabpanel"
+                                             aria-labelledby="addHeadingFour">
+                                            <div class="panel-body">
+                                                <div class="form-group" style="padding-left:10px;">
+                                                    <div class="row">
+                                                        <div>
+                                                            <div style="padding-left:10px;">
+                                                                <div class="flex-row-center form-group">
+                                                                	<div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="add-instrument-category"
+                                                                               class="control-label"
+                                                                               style="flex: 0 0 120px; margin-right:10px;"><span style="color: red">* </span>报表编码</label>
+                                                                         <div>
+                                                                            <input type="text" style="width:220px; margin-right:10px"
+                                                                                   id="code" name="code"
+                                                                                   maxlength="80" class="form-control"
+                                                                                   placeholder="请输入报表编码" value="${obj.code}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 15px">
+                                                                        <label for="add-unified-num"
+                                                                               class="control-label text-left"
+                                                                               style=" flex: 0 0 120px;margin-right:10px;">导入列表类型</label>
+                                                                          <div class="inline-block" >
+                                                                          <input type="text"
+                                                                                   id="type" name="type"
+                                                                                   maxlength="120" class="form-control" style="width: 220px；margin-right:10px;"
+                                                                                   placeholder="请输入导入列表类型" value="${obj.type}"/>
+                                                            				</div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 15px">
+                                                                        <label for="add-instrument-name"
+                                                                               class="control-label"
+                                                                               style=" flex: 0 0 120px; margin-right:10px;">开始读取sheet号</label>
+                                                                        <div>
+                                                                            <input type="text" id="startsheetindex" 
+                                                                                   name="startsheetindex" maxlength="80"
+                                                                                   class="form-control" style="width: 220px；margin-right:10px;"
+                                                                                   value="${obj.startsheetindex}" placeholder="请输入sheet号">
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                                <div class="flex-row-center form-group">
+                                                                    <div class="flex-row-center" style="width: 30%; margin-left:6px">
+                                                                        <label for="add-instrument-name" class="control-label"
+                                                                               style="flex: 0 0 120px;">读取sheet数量</label>
+                                                                        <div>
+                                                                            <input type="text" id="sheetnum"
+                                                                                   name="sheetnum" maxlength="80"
+                                                                                   class="form-control" style="width: 220px；margin-right:15px;"
+                                                                                   value="${obj.sheetnum}" placeholder="请输入sheet数量">
+                                                                        </div>
+                                                                    </div>
+                                                                	<div class="flex-row-center" style="width: 30%;margin-left: 15px">
+                                                                        <label for="deviceVersion" class="control-label"
+                                                                               style="flex: 0 0 120px; margin-right:10px;">开始行数</label>
+                                                                        <div>
+                                                                            <input type="text" id="startrows"
+                                                                                   name="startrows" maxlength="80"
+                                                                                   class="form-control"  style="width: 220px；margin-right:10px;"
+                                                                                   value="${obj.startrows}" placeholder="请输入开始行数">
+                                                                        </div>
+                                                                    </div>
+                                                                     <div class="flex-row-center" style="width: 30%;margin-left: 15px">
+                                                                        <label for="add-specifications" class="control-label">标题行数</label>
+                                                                        <div>
+                                                                            <input type="text" id="titlerows" name="titlerows"
+                                                                                   maxlength="80" class="form-control" style="width: 220px；margin-right:10px;"
+                                                                                   value="${obj.titlerows}" placeholder="请输入标题行数">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="flex-row-center form-group">
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="serialNumber"
+                                                                               class="control-label"
+                                                                               style="width: 80px; flex: 0 0 120px;margin-right:15px;">表头行数</label>
+                                                                        <div style="margin-right:15px;">
+                                                                            <input type="text" id="headrows"
+                                                                                   name="headrows" maxlength="80"
+                                                                                   class="form-control" value="${obj.headrows}"
+                                                                                   placeholder="请输入表头行数"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="deviceVersion" class="control-label"
+                                                                               style="flex: 0 0 120px;text-align:left;">是否保存上传文件</label>
+                                                                        <div class="inline-block" style="width: 220px;">
+                                                                            <select id="needsave" name="needsave"
+                                                                                    class="form-control select5"
+                                                                                    data-placeholder="是否保存上传文件" style="width: 100%;">
+                                                                                <option value=""  <%if(obj.needsave==""){%>selected<%}%>>全部</option>
+                                                                                <option value="0" <%if(obj.needsave=="0"){%>selected<%}%>>否</option>
+                                                                                <option value="1" <%if(obj.needsave=="1"){%>selected<%}%>>是</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 100%;margin-left: 8px">
+                                                                        <label for="add-position-message"
+                                                                               class="control-label text-left"
+                                                                               style="flex: 0 0 120px;margin-right:15px;">保存路径</label>
+                                                                        <div style="flex:1; margin-right:10px;">
+                                                                            <input type="text" id="saveurl"
+                                                                                   name="saveurl" maxlength="100"
+                                                                                   class="form-control" value="${obj.saveurl}"
+                                                                                   placeholder="请输入保存路径"
+                                                                                   style="width: 95%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="addHeadingOne">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#add-accordion"
+                                                   href="#addCollapseOne" aria-expanded="false"
+                                                   aria-controls="addCollapseOne">
+                                                    其他字段
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="addCollapseOne" class="panel-collapse collapse" role="tabpanel"
+                                             aria-labelledby="addHeadingOne">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: 5px">
+                                                            <label for="add-contract-num" class="control-label"
+                                                                   style="width:100px">主键列号</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" id="keyindex" maxlength="80"
+                                                                       name="keyindex" class="form-control" value="${obj.keyindex}"
+                                                                       placeholder="请输入主键列号">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -70px">
+                                                            <label for="add-documents-num" class="control-label"
+                                                                   style="width: 100px;">是否需要验证</label>
+                                                            				<div class="inline-block" style="width: 170px;margin-left: 5px">
+                                                                		<select id="needverify" name="needverify"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否需要验证" style="width: 100%;">
+                                                                        		<option value=""  <%if(obj.needverify==""){%>selected<%}%>>全部</option>
+                                                                   			 	<option value="0" <%if(obj.needverify=="0"){%>selected<%}%>>否</option>
+                                                                    			<option value="1" <%if(obj.needverify=="1"){%>selected<%}%>>是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -60px">
+                                                            <label for="add-supply-unit" class="control-label"
+                                                                   style="width: 90px;">检验组列名</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" id="verifygroup" maxlength="80"
+                                                                       name="verifygroup" class="form-control" value="${obj.verifygroup}"
+                                                                       placeholder="请输入检验组列名">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3"  style="margin-left: -70px">
+                                                            <label for="add-project-name" class="control-label"
+                                                                   style="width: 90px;">校验处理接口</label>
+                                                            <div class="inline-block" style="width: 110px;margin-left: 5px">
+                                                                <input type="text" name="verifyhandler"
+                                                                       class="form-control" id="verifyhandler" value="${obj.verifyhandler}"
+                                                                       style="width:160px;" placeholder="请输入校验处理接口">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                	<div class="form-group">
+                                                     <div class="row">
+                                                        <div class="col-xs-3"  style="width: 30%;margin-left: 5px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">最后的无效行数</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" name="lastofinvalirow" value="${obj.lastofinvalirow}"
+                                                                       class="form-control" id="lastofinvalirow"
+                                                                       maxlength="80" placeholder="请输入无效行数">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -70px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">手动读取行数</label>
+                                                            <div class="inline-block" style="width: 170px;margin-left: 5px">
+                                                                <input type="text" name="readrows"
+                                                                       class="form-control" id="readrows" value="${obj.readrows}"
+                                                                       style="width:169px;" placeholder="请输入手动读取行数">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -40px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 70px;">导入列顺序</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" name="importfields" value="${obj.importfields}"
+                                                                       class="form-control" id="importfields"
+                                                                       maxlength="80" placeholder="请输入导入列顺序">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 25%;margin-left: -100px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">是否校验列顺序</label>
+                                                            				<div class="inline-block" style="width: 160px;margin-left: 5px">
+                                                                		<select id="needcheckorder" name="needcheckorder"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否校验列顺序" style="width: 100%;">
+                                                                        		<option value=""  <%if(obj.needcheckorder==""){%>selected<%}%>>全部</option>
+                                                                   			 	<option value="0" <%if(obj.needcheckorder=="0"){%>selected<%}%>>否</option>
+                                                                    			<option value="1" <%if(obj.needcheckorder=="1"){%>selected<%}%>>是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                      </div>
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -10px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                  style="width: 30%;margin-left: 5px">数据处理类名</label>
+                                                            <div class="inline-block" style="width: 160px;margin-left: 5px">
+                                                                <input type="text" name="data_handler"
+                                                                       class="form-control" id="data_handler" value="${obj.data_handler}"
+                                                                       style="width:150px;" placeholder="请输入数据处理类名">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3"  style="width: 30%;margin-left:-50px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 90px;">字典处理类名</label>
+                                                            <div class="inline-block" style="width: 178px;margin-left: 5px">
+                                                                <input type="text" name="dic_handler"
+                                                                       class="form-control" id="dic_handler" value="${obj.dic_handler}"
+                                                                       style="width:169px;" placeholder="请输入字典处理类名">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3"  style="width: 30%;margin-left: -32px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">key标记</label>
+                                                            <div class="inline-block" style="width: 178px;margin-left: 5px">
+                                                                <input type="text" name="keymark"
+                                                                       class="form-control" id="keymark" value="${obj.keymark}"
+                                                                       style="width:150px;" placeholder="请输入key标记">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 24%;margin-left: -90px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 90px;">是否全局扫描</label>
+                                                            				<div class="inline-block" style="width: 150px; margin-left: 5px">
+                                                                		<select id="readsinglecell" name="readsinglecell"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否全局扫描" style="width: 106%;">
+                                                                        		<option value=""  <%if(obj.readsinglecell==""){%>selected<%}%>>全部</option>
+                                                                   			 	<option value="0" <%if(obj.readsinglecell=="0"){%>selected<%}%>>否</option>
+                                                                    			<option value="1" <%if(obj.readsinglecell=="1"){%>selected<%}%>>是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                     </div>
+                                                        <div class="col-xs-3" style="width: 100%;margin-left: 15px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">备注</label>
+                                                            <div class="inline-block" style="width: 91%;margin-left: 5px">
+                                                                <input type="text" name="remark"  value="${obj.remark}"
+                                                                       class="form-control" id="remark"
+                                                                        placeholder="请输入备注">
+                                                            </div>
+                                                        </div>
+                                                     
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    
+                               
+                                   
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!--  -->
+                    <button type="button" id="goback" class="btn btn-default pull-center" data-dismiss="modal">取消
+                    </button>
+                    <button id="confirm-add" type="button" data-loading-text="正在提交..." onclick="submitForm();"
+                            class="btn btn-primary pull-center">确定
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </form>
+</div>
+
+<script>
+    $(function () {
+        $('.collapse').collapse({
+            toggle: false
+        });
+        //去除首尾空格
+        autoDeleteSpace('input');
+       /*  $("#deviceVersion").blur(function () {
+            checkDeviceVersion();
+        });
+        getJGProjectInfoList("#projectName3");
+        setDate("factoryTime1", "enableTime1", "examineDate", "dueDate", "unpackingDate"); */
+    });
+
+    function autoDeleteSpace(obj) {//[name=LastName]
+        $(document).on('blur', obj, function () {
+            $(this).val($(this).val().trim());
+        })
+    }
+
+
+    function submitForm() {
+        if (checkNotNull()) {
+            var dataList = $("#addModal").serialize();
+
+            $.ajax({
+                type: "post",
+                data: dataList,
+                dataType: "json",
+                url: "${base}/platform/sys/import/editDo",
+                success: function (data) {
+
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
+                        //关闭当前需求，刷新父页面
+                        $("#homeDetail").modal('hide');
+                    } else {
+                        if ("没有权限" != data.msg) {
+                            Toast.error(data.msg);
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    // 非空校验
+    var checkNotNull = function () {
+        var code = $("#code").val();
+        if (code == '') {
+            Toast.error("报表编号不能为空");
+            return false;
+        }
+
+       
+        return true; 
+    }
+
+   
+</script>

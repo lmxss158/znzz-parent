@@ -1,0 +1,237 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title" id="myModalLabel">修改用户</h4>
+		</div>
+		<form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/platform/sys/user/editDo" method="post">
+		<div class="modal-body">
+			<div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group has-feedback">
+                            <label for="parentId" class="col-sm-2 control-label">所属单位</label>
+
+                            <div class="col-sm-8">
+                               <!--  <div class="input-group"> -->
+                                    <input id="parentId" type="text" class="form-control" placeholder="选择单位" disabled
+                                           value="${obj.unit.name}" data-parsley-required="true"/>
+                               <!--  </div> -->
+                                <!-- <input type="hidden" name="id" value="${obj.id!}"> -->
+                                <input type="hidden" name="unitid" id="unitid" value="${obj.unitid!}">
+                                <input type="hidden" name="oldLoginname" value="${obj.loginname!}">
+                                <input type="hidden" name="empid" id="empid" value="${obj.id!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginname" class="col-sm-2 control-label">关联职工</label>
+                                 <div class="col-sm-8">
+                                       <!-- <select class="form-control select2" name="id" id="id"  disabled="disabled" style="width: 100%;"data-allow-clear="true" data-tags="true">
+                                      	<option value="${obj.id}">${obj.username+"/"+obj.unit.name!}</option>
+                                      </select>  -->
+                                      <input type="text" name="empInfo" id="empInfo" class="form-control" value="${obj.username+'/'+obj.unit.name!}" readonly="readonly">
+                                      <input type="hidden" name="id" id="id" value="${obj.id!}">
+                                 </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginname" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="loginname" value="${obj.loginname!}" class="form-control" name="loginname" onblur="checkLoginna();" data-parsley-required="true" placeholder="用户名(用户名由3-16字母和数字组成)">
+                            </div>
+                        </div>                       
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">用户昵称</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="nickName" class="form-control" name="nickName" value="${obj.nickName!}" data-parsley-required="true" placeholder="姓名/昵称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">电子邮箱</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="email" name="email" value="${obj.email!}" class="form-control" placeholder="电子邮箱">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+			</div>
+		<div class="modal-footer" style="text-align: center;">
+			 <a href="${base}/platform/sys/user" id="goback" data-pjax>
+			 	<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+			 </a>
+			<button  class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">提交</button>
+		</div>
+		</form>
+	</div>
+<a class="exit-offscreen"></a>
+<!-- 选择上级单位 -->
+<div id="dialogSelectParentUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">选择上级单位</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="jsTreeParentUnit" class="demo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button type="button" class="btn btn-primary" onclick="selectParentMenu()">确认选择</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+var employeeAndUnit;//暂存 职工eid与单位uid的关系 
+var employeeAndName; //暂存职工eid与单位名称uname的关系
+	/* function loadEmployeeList(id,employeeid){
+	alert(employeeid);
+   		employeeAndUnit=new Array();
+   		employeeAndName=new Array();
+  	 	$.ajax({
+			type:"post",
+			url:"${base}/platform/sys/user/getEmployeeList",
+			data:{unitid:id},
+			async:false,
+			dataType:"json",
+			success:function(data){
+				if(data){
+					var str = "<option value=''>请选择</option>" ;
+					for(var i=0;i<data.length;i++){
+						alert(1);
+						alert(data[i].id);
+						alert(2);
+						if(data[i].id==employeeid){
+							str+="<option value='"+data[i].id+"' selected>"+data[i].username+"/"+data[i].name+"</option>";
+						}else{
+							str+="<option value='"+data[i].id+"'>"+data[i].username+"/"+data[i].name+"</option>";
+						}
+						employeeAndUnit[data[i].id]=data[i].unitid;
+						employeeAndName[data[i].id]=data[i].name;
+					}
+					$("#employeeid").html(str);
+				}
+			},
+			error:function(data){
+			
+			}
+		}); 
+	} */
+	/* function employeeListChange(){
+	   var empId=$("#employeeid option:selected").val();
+	   $("#unitid").val(employeeAndUnit[empId]);
+	   $("#parentId").val(employeeAndName[empId]);
+	   $.post("${base}/platform/sys/user/checkEmployee",{"empId":empId},function(data){
+        	if (data!= 0) {
+            	Toast.error("该职工已拥有对应用户");
+            	return false;
+        	}else{
+        		return true;
+        	}
+    	}, "json");
+	}  */
+    function initTreeView() {
+        $("#jsTreeParentUnit").jstree({
+            plugins: ["wholerow", "json_data"],
+            core: {
+                data: {
+                    dataType: "json",
+                    url: function (node) {
+                        return node.id === "#" ? "${base}/platform/sys/unit/tree" : "${base}/platform/sys/unit/tree?pid=" + node.id
+                    }
+                },
+                multiple: false
+            }
+        }).on("dblclick.jstree", function (node) {
+            selectParentMenu();
+        });
+    }
+    
+    //选择父菜单
+    function selectParentMenu() {
+        var tree = $.jstree.reference("#jsTreeParentUnit");
+        var node = tree.get_selected(true);
+        $("#unitAddForm #parentId").val(node[0].text);
+        $("#unitAddForm input[name='unitid']").val(node[0].id);
+        //loadEmployeeList($("#unitid").val(),$("#empid").val());   //单位改变重新加载下拉框
+        $("#dialogSelectParentUnit").modal("hide");
+    }
+    $(document).ready(function () {
+        initTreeView();
+        //loadEmployeeList($("#unitid").val(),$("#empid").val());
+        var emare = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+        var pswre=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,21}$/;
+        var lognre=/^[a-zA-Z0-9_]{3,16}$/;
+        $('#unitAddForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+            	if($("#parentId").val()==""){
+            		Toast.error("请选择单位");
+            		return false;
+            	}	
+            	if($("#loginname").val()==""){
+            		Toast.error("请输入用户名");
+            		return false;
+            	}
+            	if(!lognre.test($("#loginname").val())){
+            		Toast.error("用户名格式不正确");
+            		return false;
+            	}
+            	if($("#nickName").val()==""){
+            		Toast.error("请输入用户昵称");
+            		return false;
+            	}
+            	if($("#email").val()!=""&&!emare.test($("#email").val())){
+            		Toast.error("请输入正确的邮箱");
+            		return false;
+            	}
+            	if(!checkLoginna()){
+            		return false;
+            	}
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 1000);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+     function checkLoginna(){
+         var loginname = $.trim($("#loginname").val());
+         $("#loginname").val(loginname);
+         var userid = $("#empid").val();
+         var flag = true ;
+    	
+    	  $.ajax({
+    	    	type: "post",
+    	        url: "${base}/platform/sys/user/checkLogin",
+    	        dataType: "json",
+    	        data:{"loginname":loginname,"id":userid},
+    	        async:false,
+    	        success:function(data){
+    	        	if (data!= 0) {
+    	            	Toast.error("用户名已存在");
+    	            	flag= false;
+    	        	}
+    	        }
+    	    }); 
+    	  return flag; 
+    }
+     
+</script>
+<%}%>

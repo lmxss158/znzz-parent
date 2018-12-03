@@ -1,0 +1,966 @@
+<div class="modal-dialog" style="width:1200px;">
+    <form id="addModal" role="form" class="form-horizontal parsley-form" data-parsley-validate
+          action="${base}/asset/info/addDo" method="post" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width:1200px;">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">录入资产信息</h4>
+                </div>
+                <input type="hidden" name="id"/>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+
+                        <div class="panel-group" id="add-asset-accordion" role="tablist" aria-multiselectable="true">
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="add-asset-heading-one">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#add-asset-accordion"
+                                           href="#add-asset-collapse-one" aria-expanded="true"
+                                           aria-controls="add-asset-collapse-one">
+                                            基本信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="add-asset-collapse-one" class="panel-collapse collapse in" role="tabpanel"
+                                     aria-labelledby="add-asset-heading-one">
+                                    <div class="panel-body">
+                                        <div class="form-group" style="padding-left:10px;">
+                                            <div class="row">
+
+                                                <div class="col-sm-2">
+
+                                                    <input type="hidden" name="urlImage" id="urlImage" value=''>
+                                                    <div id="fileListAsset" style="width:180px;height:200px;" class="uploader-list">
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-10">
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-assetType"
+                                                                       class="control-label asset-style-sen-row">类别<span
+                                                                        class="font-red">*</span> </label>
+                                                                <div class="div-shade">
+                                                                    <select id="add-assetType" name="assetType"
+                                                                            class="form-control select5 asset-style-width"
+                                                                            data-placeholder="资产种类">
+                                                                        <option value="0">----请选择----</option>
+                                                                        <option value="1">设备</option>
+                                                                        <option value="2">仪器</option>
+                                                                        <option value="3">工量具</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-assetCode"
+                                                                       class="control-label text-left asset-style-flex-low">统一编号<span
+                                                                        class="font-red">*</span> </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-assetCode" name="assetCode"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入统一编号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-assetName"
+                                                                       class="control-label text-left asset-style-flex ">名称<span class="font-red">*</span> </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text" id="add-assetName"
+                                                                           name="assetName"
+                                                                           maxlength="30"
+                                                                           class="form-control  asset-style-width"
+                                                                           placeholder="请输入仪器名称" value=""/>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-factoryTime"
+                                                                       class="control-label asset-style-sen-row">出厂日期 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <div class="input-group date asset-style-width">
+                                                                        <div class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </div>
+                                                                        <input type="text"
+                                                                               id="add-factoryTime" name="factoryTime"
+                                                                               maxlength="30"
+                                                                               class="form-control"
+                                                                               placeholder="请输入出厂日期" value=""/>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-deviceVersion"
+                                                                       class="control-label text-left asset-style-flex-low">型号<span
+                                                                        class="font-red">*</span> </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-deviceVersion" name="deviceVersion"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入型号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-ggName"
+                                                                       class="control-label text-left asset-style-flex ">规格 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-ggName" name="ggName"
+                                                                           maxlength="30"
+                                                                           class="form-control  asset-style-width"
+                                                                           placeholder="请输入规格名称" value=""/>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-serialNumber"
+                                                                       class="control-label asset-style-sen-row">出厂编号 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-serialNumber" name="serialNumber"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入出厂编号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-originalValue"
+                                                                       class="control-label text-left asset-style-flex-low">原值<span
+                                                                        class="font-red">*</span> </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-originalValue" name="originalValue"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入原值" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="add-locationInfo"
+                                                                       class="control-label text-left asset-style-flex">位置信息 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="add-locationInfo" name="locationInfo"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入位置信息" value=""/>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group" id="fujianDiv">
+                                                        <div class="row">
+
+                                                                <div class="flex-row-center" style="margin-left: 38px;">
+                                                                    <div id="filePickerAsset">图片上传 </div>
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="add-asset-heading-two">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#add-asset-accordion"
+                                           href="#add-asset-collapse-two" aria-expanded="false"
+                                           aria-controls="add-asset-collapse-two">
+                                            经费信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="add-asset-collapse-two" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="add-asset-heading-two">
+                                    <div class="panel-body">
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-contractCode"
+                                                           class="control-label asset-style-width-label">合同号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-contractCode" maxlength="30"
+                                                               name="contractCode"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入合同号">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-batch_code"
+                                                           class="control-label asset-style-width-label">批件序号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-batch_code" maxlength="30"
+                                                               name="batch_code"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入批件序号">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-supplier"
+                                                           class="control-label asset-style-width-label">供货单位 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-supplier" maxlength="30"
+                                                               name="supplier"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入供货单位">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-asset-projectName"
+                                                           class="control-label asset-style-width-label">项目名称 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" name="projectName" style="width: 250px;"
+                                                               class="form-control" id="add-asset-projectName"
+                                                               placeholder="请输入项目名称">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-fundSources"
+                                                           class="control-label asset-style-width-label">资金来源 </label>
+                                                    <div class="inline-block">
+                                                        <select id="add-fundSources" name="fundSources"
+                                                                class="form-control select5 asset-style-width-sen"
+                                                                data-placeholder="资金来源">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">拨款</option>
+                                                            <option value="1">自购</option>
+                                                            <option value="2">科研费</option>
+                                                            <option value="3">馈赠或无偿调入</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="add-asset-heading-three">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse"
+                                           data-parent="#add-asset-accordion" href="#add-asset-collapse-three"
+                                           aria-expanded="false"
+                                           aria-controls="add-asset-collapse-three">
+                                            管理信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="add-asset-collapse-three" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="add-asset-heading-three">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-power"
+                                                           class="control-label asset-style-width-label">功率<span
+                                                            class="font-red">*</span> </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-power" name="power"
+                                                               maxlength="10" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入功率">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="macHour" class="control-label asset-style-width-label">台时信息 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="macHour" name="macHour"
+                                                               maxlength="30" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入台时信息">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-manageStatus"
+                                                           class="control-label asset-style-width-label">管理状态 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="add-manageStatus" name="manageStatus"
+                                                                class="form-control select9 asset-style-width-sen"
+                                                                data-placeholder="管理状态">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">在用</option>
+                                                            <option value="1">封存</option>
+                                                            <option value="2">闲置</option>
+                                                            <option value="3">禁用</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-manage-level"
+                                                           class="control-label asset-style-width-label">管理级别 </label>
+                                                    <div class="inline-block">
+                                                        <select id="add-manage-level" name="manageLevel"
+                                                                class="form-control select9 asset-style-width-sen"
+                                                                data-placeholder="管理级别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">厂(所)管</option>
+                                                            <option value="1">院管</option>
+                                                            <option value="2">总公司部管</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-assetCategory"
+                                                           class="control-label asset-style-width-label">资产类别 </label>
+                                                    <div class="inline-block">
+                                                        <select id="add-assetCategory" name="assetCategory"
+                                                                class="form-control select9 asset-style-width-sen"
+                                                                data-placeholder="资产类别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">固定资产</option>
+                                                            <option value="1">低值</option>
+                                                            <option value="2">在建</option>
+                                                            <option value="3">附件</option>
+                                                            <option value="4">零值</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-repair-status"
+                                                           class="control-label asset-style-width-label">维修状态 </label>
+                                                    <div class="inline-block">
+                                                        <select id="add-repair-status" name="repairState"
+                                                                class="form-control select1 asset-style-width-sen"
+                                                                data-placeholder="维修状态">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">维修中</option>
+                                                            <option value="1">已完成</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <div>
+                                                        <label for="add-enableTime" class="control-label asset-style-width-label"
+                                                               style="vertical-align:top;">启用日期 </label>
+                                                        <div class="inline-block">
+                                                            <div class="input-group date asset-style-width-sen">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" name="enableTime"
+                                                                       class="form-control pull-right"
+                                                                       id="add-enableTime" style="width: 100%">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4  flex-row-center">
+                                                    <label for="use_type" class="control-label asset-style-width-label">用途 </label>
+                                                    <div class="inline-block">
+                                                        <select id="use_type" name="use_type"
+                                                                class="form-control select5 asset-style-width-sen"
+                                                                data-placeholder="用途">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">科研类</option>
+                                                            <option value="1">生产类</option>
+                                                            <option value="2">测量类</option>
+                                                            <option value="3">办公类</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="add-asset-heading-four">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse"
+                                           data-parent="#add-asset-accordion" href="#add-asset-collapse-four"
+                                           aria-expanded="false"
+                                           aria-controls="add-asset-collapse-four">
+                                            其它信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="add-asset-collapse-four" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="add-asset-heading-four">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-country" class="control-label asset-style-width-label"
+                                                           >国别 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-country" maxlength="30"
+                                                               name="country" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入国别">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-manufactor" class="control-label asset-style-width-label"
+                                                           >厂家 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-manufactor" maxlength="30"
+                                                               name="manufactor" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入厂家">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-topicNo" class="control-label asset-style-width-label"
+                                                    >课题号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-topicNo" maxlength="30"
+                                                               name="topicNo" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入课题号">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-warrantyPeriod" class="control-label asset-style-width-label"
+                                                           >保修期 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-warrantyPeriod"
+                                                               name="warrantyPeriod" maxlength="11"
+                                                               class="form-control asset-style-width-sen" placeholder="保修期">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-depreciationYear" class="control-label asset-style-width-label"
+                                                           >折扣年限 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-depreciationYear" maxlength="10"
+                                                               name="depreciationYear" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入折扣年限">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-depreciationRate" class="control-label asset-style-width-label"
+                                                    >年折旧率 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-depreciationRate" maxlength="10"
+                                                               name="depreciationRate" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入年折旧率">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-instrumentCategory" class="control-label asset-style-width-label"
+                                                    >仪器设备类别 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="add-instrumentCategory"
+                                                                name="instrumentCategory"
+                                                                class="form-control select3  asset-style-width-sen"
+                                                                data-placeholder="仪器设备类别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">普通</option>
+                                                            <option value="1">精大贵稀</option>
+                                                            <option value="2">进口普通</option>
+                                                            <option value="3">进口精大贵稀</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-unpackingDate" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">开箱日期 </label>
+                                                    <div class="inline-block" >
+                                                        <div class="input-group date asset-style-width-sen">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="unpackingDate"
+                                                                   class="form-control pull-right"
+                                                                   id="add-unpackingDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-examineDate" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">检定日期 </label>
+                                                    <div class="inline-block  asset-style-width-sen" >
+                                                        <div class="input-group date">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="examineDate" disabled
+                                                                   class="form-control pull-right"
+                                                                   id="add-examineDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+
+
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-dueDate" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">到期检定 </label>
+                                                    <div class="inline-block   asset-style-width-sen" >
+                                                        <div class="input-group date">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="dueDate"
+                                                                   class="form-control pull-right" id="add-dueDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-is_military" class="control-label asset-style-width-label"
+                                                    >军工设备 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="add-is_military" name="is_military"
+                                                                class="form-control select5 asset-style-width-sen"
+                                                                data-placeholder="军工设备"  >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-checker" class="control-label asset-style-width-label"
+                                                    >验收人 </label>
+                                                    <div class="inline-block text-left" >
+                                                        <input type="text" id="add-checker" name="checker"
+                                                               maxlength="11" class="form-control  asset-style-width-sen"
+                                                               placeholder="请输入验收人">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-isOverdue" class="control-label asset-style-width-label"
+                                                    >是否过期 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="add-isOverdue" class="form-control select1  asset-style-width-sen"
+                                                                name="isOverdue" data-placeholder="是否过期" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-isOverdue" class="control-label asset-style-width-label"
+                                                    >是否需要计量 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="add-isMeasure" class="form-control select1  asset-style-width-sen"
+                                                                name="isMeasure" data-placeholder="是否需要计量" >
+                                                            <option value="0">是</option>
+                                                            <option value="1" selected>否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-technicalIndex" class="control-label asset-style-width-label"
+                                                    >技术指标 </label>
+                                                    <div class="inline-block text-left" >
+                                                        <input type="text" id="add-technicalIndex" name="technicalIndex"
+                                                               maxlength="11" class="form-control  asset-style-width-sen"
+                                                               placeholder="请输入技术指标">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-weight" class="control-label asset-style-width-label"
+                                                    >重量 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-weight" maxlength="30"
+                                                               name="weight" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入重量">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="add-installedCapacity" class="control-label asset-style-width-label"
+                                                    >装机容量 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="add-installedCapacity" maxlength="30"
+                                                               name="installedCapacity" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入装机容量">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center" style="width: 1200px">
+                                                    <label for="add-remark" class="control-label asset-style-width-label" >备注 </label>
+                                                    <div class="inline-block" style="vertical-align: middle; height: 79px;">
+                                                            <textarea rows="3" cols="145.5"
+                                                                      id="add-remark" class="form-control"
+                                                                      style="width: 1049px;" name="remark" data-placeholder="备注"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="reset" value="重置" class="btn btn-default pull-left" />
+                    <!--  -->
+                    <button type="button" id="goback" class="btn btn-default pull-center" data-dismiss="modal">取消
+                    </button>
+                    <button id="confirm-add" type="button" data-loading-text="正在提交..." onclick="submitForm();"
+                            class="btn btn-primary pull-center">确定
+                    </button>
+                </div>
+
+
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </form>
+</div>
+<script>
+    $(function () {
+
+        /*下拉 切换*/
+        $('.collapse').collapse({
+            toggle: false
+        });
+        //去除首尾空格
+        autoDeleteSpace('input');
+        $("#add-deviceVersion").blur(function () {
+            setDeviceVersion();
+        });
+        //校验统一编号
+        $("#add-assetCode").blur(function () {
+            checkAssetCode();
+        });
+        //是否需要计量
+        $("#add-isMeasure").change(function () {
+            var measure = $("#add-isMeasure").val();
+            //是 才有检定日期(0是/1否)
+            if (measure == 1){
+                $("#add-examineDate").val('');
+                $("#add-examineDate").attr("disabled",true);
+            } else {
+                $("#add-examineDate").attr("disabled",false);
+            }
+        });
+        /*获取项目下拉列表*/
+        getJGProjectInfoList("#add-asset-projectName");
+        /*设置各个时间的值*/
+        setDate("add-enableTime", "add-examineDate", "add-dueDate", "add-unpackingDate","add-factoryTime");
+    });
+
+    // 校验统一编号是否重复
+    function checkAssetCode() {
+        var assetCode = $("#add-assetCode").val();
+        // 校验统一编号是否重复
+        var flag = $.ajax({
+            type: "post",
+            url: "${base}/asset/info/checkAssetCode/" + assetCode,
+            data: assetCode,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    return true;
+                } else {
+                    Toast.error(data.msg);
+                    return false;
+                }
+            }
+        });
+        var temp = flag.responseJSON;
+        if (temp.code == 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 对型号进行校验
+    function setDeviceVersion() {
+        var deviceVersion = $("#add-deviceVersion").val();
+        $.ajax({
+            type: "post",
+            url: "${base}/asset/info/checkDeviceVersion/" + deviceVersion,
+            dataType: "json",
+            async: true,
+            success: function (data) {
+                if (data.assetName != null){
+                    //有型号
+                    $("#add-assetName").val(data.assetName);//资产名称
+                    //$("#selectFileList").children("img").attr("src", "data:image/*;base64," + data.urlImage + "");//图片信息
+                    if( data.urlImage != ''){
+                        $('#fileListAsset').empty();
+                        $('#fileListAsset').append('<img name="file" src="data:image/*;base64,'+data.urlImage+'" style="width: 100%;height: 100%"></img>');
+
+                    }
+                    //改变资产名称状态 -->不可修改
+                    $("#add-assetName").prop('disabled',true);
+                    $("#fujianDiv").css("display","none");
+
+                } else {//数据库当中没有此型号
+                    //改变资产名称状态 -->可修改
+                    $("#add-assetName").prop('disabled',false);
+                    $("#fujianDiv").css("display","block");
+                }
+            }
+        });
+    }
+
+
+    function submitForm() {
+        if (checkNotNull() && checkAssetCode()) {
+            var dataList = $("#addModal").serialize();
+            $.ajax({
+                type: "post",
+                data: dataList,
+                dataType: "json",
+                url: "${base}/asset/info/addDo",
+                success: function (data) {
+
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
+                        //关闭当前需求，刷新父页面
+                        $("#homeDetail").modal('hide');
+                    } else {
+                        if ("没有权限" != data.msg) {
+                            Toast.error(data.msg);
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    // 非空校验(必填字段校验)
+    var checkNotNull = function () {
+        /*类别 统一编号非空校验*/
+        var assetType = $("#add-assetType").val();
+        if (assetType == 0 || assetType == null) {
+            Toast.error("类别不能为空");
+            return false;
+        }
+        var assetCode = $("#add-assetCode").val();
+        if (assetCode == '') {
+            Toast.error("统一编号不能为空");
+            return false;
+        }
+        /*原值 功率格式校验*/
+        var originalValue = $("#add-originalValue").val();
+        var addPower = $("#add-power").val();
+        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([1-9])?$)/;
+        var regP = /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/;
+        if (!reg.test(originalValue)) {
+            Toast.error("原值输入有误! 请输入小数或整数,最多2位小数");
+            return false;
+        }
+        if (!regP.test(addPower)) {
+            Toast.error("功率输入有误! 请输入大于0的小数或整数,最多2位小数");
+            return false;
+        }
+
+        var remark = $("#add-remark").val();
+        if (remark.length > 200) {
+            Toast.error("备注输入过长");
+            return false;
+        }
+        //名称
+        var assetNameOri = $("#add-assetName").val();
+        if (assetNameOri == ''){
+            Toast.error("名称不能为空");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+<script type="text/javascript">
+
+    jQuery(function () {
+
+        var $list = $('#fileListAsset');
+        var ratio = window.devicePixelRatio || 1;
+        var thumbnailWidth = 100 * ratio;
+        var thumbnailHeight = 100 * ratio;
+        var uploader;
+        setTimeout(function(){
+
+            uploader = WebUploader.create({
+                auto: true,
+
+                swf: '${base}/assets/webuploader/Uploader.swf',
+
+                server: '${base}/asset/rule/upImage',
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: '#filePickerAsset',
+
+                //允许重复
+                duplicate: true,
+
+                /* //自定义上传参数
+                formData:{
+                 deviceVersion:type
+             }, */
+
+                /* //限制文件数量
+                fileNumLimit: 1, */
+
+                //限制文件大小
+                fileSizeLimit: 1024 * 1024 * 2,
+
+                accept: {
+                    title: 'Images',
+                    extensions: 'jpg,jpeg,bmp',
+                    mimeTypes: 'image/jpg,image/jpeg'
+                }
+            });
+
+            uploader.on('fileQueued', function (file) {
+                //控制删除前一张图片
+                var firstDiv = $($list.children('div').get(0));
+                if (!(typeof(firstDiv.attr('id')) == 'undefined') && firstDiv.attr('id') != file.id) {
+                    firstDiv.remove();
+                }
+
+                var $li = $(
+                    /* 原样式  class="file-item thumbnail"  */
+                    '<div id="' + file.id + '" >' +
+                    '<img name="file" style="width: 100%;height: 100%">' +
+                    /*  '<div class="info">' + file.name + '</div></img>' +  */
+                    '</img>' +
+                    '</div>'
+                    ),
+                    $img = $li.find('img');
+                // $list为容器jQuery实例
+                $list.empty();
+                $list.append($li);
+
+                uploader.makeThumb(file, function (error, src) {
+                    if (error) {
+                        $img.replaceWith('<span>不能预览</span>');
+                        return;
+                    }
+
+                    $img.attr('src', src);
+                }, thumbnailWidth, thumbnailHeight);
+            });
+
+            uploader.on('uploadProgress', function (file, percentage) {
+                var $li = $('#' + file.id),
+                    $percent = $li.find('.progress span');
+
+                if (!$percent.length) {
+                    $percent = $('<p class="progress"><span></span></p>')
+                        .appendTo($li)
+                        .find('span');
+                }
+                $percent.css('width', percentage * 100 + '%');
+            });
+
+            uploader.on('uploadSuccess', function (file, response) {
+                $('#' + file.id).addClass('upload-state-done');
+                $('#urlImage').val(response);
+            });
+
+            uploader.on('uploadError', function (file) {
+                var $li = $('#' + file.id),
+                    $error = $li.find('div.error');
+
+                if (!$error.length) {
+                    $error = $('<div class="error"></div>').appendTo($li);
+                }
+
+                $error.text('上传失败');
+            });
+            uploader.on('uploadComplete', function (file) {
+                $('#' + file.id).find('.progress').remove();
+            });
+
+            uploader.on("error", function (type) {
+                if (type == "Q_TYPE_DENIED") {
+                    alert("请上传JPG、JPEF格式文件");
+                } else if (type == "Q_EXCEED_SIZE_LIMIT") {
+                    alert("文件大小不能超过2M");
+                } else {
+                    alert("上传出错！请检查后重新上传！错误代码" + type);
+                }
+            });
+        },200);
+
+
+
+    });
+</script>
+

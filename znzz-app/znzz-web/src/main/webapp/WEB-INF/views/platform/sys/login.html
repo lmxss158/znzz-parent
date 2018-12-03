@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+<meta name="description" content="${AppName!}">
+<meta name="keywords" content="智能制造">
+<title>${AppName!}</title>
+<link rel="shortcut icon" href="${base!}/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet"
+	href="${base!}/assets/bootstrap/css/bootstrap.min.css">
+<!--表单验证-->
+<link rel="stylesheet"
+	href="${base!}/assets/dist/css/bootstrapValidator.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="${base!}/assets/dist/css/AdminLTE.css">
+<link rel="stylesheet" href="${base!}/assets/dist/css/index2.css">
+<link rel="stylesheet" href="${base!}/assets/dist/css/index3.css">
+<link rel="stylesheet"
+	href="${base!}/assets/plugins/iCheck/square/blue.css">
+	  <link rel="stylesheet" href="${base!}/assets/plugins/iCheck/all.css">
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+	<div class="second-login-bgc" style="overflow: auto;">
+
+    <div class="text-center second-login-header">
+        <img src="${base!}/assets/dist/img/logo.png" alt="登录LOGO">
+        <span class="second-logo-title vertical-middle">中国航天科工二院25所</span>
+    </div>
+    <div class="second-login-container" style="position:relative;">
+       <div class="inline-block second-container-left">仪器设备管理系统</div>
+       <div class="inline-block second-container-right">
+            <div class="login-form-header">
+                <span>
+                    系统登录
+                </span>
+                <span class="inline-block"></span>
+                <span>User Login</span>
+            </div>
+          	<form id="loginForm" style="margin: 26px 0 0 37px;" action="${base!}/platform/login/doLogin"
+				data-parsley-validate="" novalidate="" role="form" method="post">
+                <div class="form-group flex-center second-admin-box">
+                    <span class="inline-block" style="color:#fff;width：56px;">
+                        用户名：
+                    </span>
+                    <input class="form-control second-login-text" placeholder=" ${msg['login.username']}" 
+                type="text" placeholder="账号" id="username" name="username" onkeypress="javascript:if(event.keyCode==13) loginSubmitFun();">
+                </div>
+                <div class="form-group flex-center second-admin-box" style="padding-bottom:6px;">
+                    <span class="inline-block" style="color:#fff; width:56px;">
+                        密码：
+                    </span>
+                      <input class="form-control second-login-text" type="hidden" placeholder="密码" placeholder=" ${msg['login.password']}" id="password"
+						name="password">
+                    <input class="form-control second-login-text" type="password" placeholder="密码" placeholder=" ${msg['login.password']}" id="password2"
+						name="password2" onkeypress="javascript:if(event.keyCode==13) loginSubmitFun();">
+                </div>
+                <div id ="veryDiv" class="form-group flex-center second-admin-box ver-code hide" style="padding-bottom:6px;">
+                    <span class="inline-block" style="color:#fff;width:56px;">验证码：</span>
+                    <input class="form-control second-test-text" type="text" id="platformCaptcha" required name="platformCaptcha"
+									class="form-control login-text verification-input"
+									placeholder="${msg['login.captcha']}" onkeypress="javascript:if(event.keyCode==13) loginSubmitFun();" >
+                    <span class="inline-block" style="background:#fff;padding:4px;">
+                    
+                    	<img id="captcha_img" src="${base!}/platform/login/captcha" 
+									onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())" />
+                    </span>
+                </div>
+                <div  id ="tip" style="display: none;padding-left:66px;padding-bottom:6px;color:DarkOrange;"></div>
+        
+                   <div class="form-group no-margin" style="padding-left:66px;padding-bottom:14px;">
+                    <label class="vertical-middle">
+                        <input type="checkbox"  id="remeBut" >
+                    </label>
+                    <span style="font-size:14px;vertical-align: text-bottom;color:#fff;">
+                       		记住密码
+                    </span>
+                </div>
+                <div class="text-center">
+                <button class="asd btn"  id="login" type="button" style="width:96px;margin-right:22px;" name="signup" value="Sign up">${msg['login.submit']}</button>
+                 <button class="btn" type="button" id ="resetBut" style="width:96px;">重置</button>
+                </div>
+                
+            </form>
+       </div>
+       
+    </div>
+    <div class="login-footer">
+        <img src="${base!}/assets/dist/img/login-footer.png" alt="">
+    </div>
+</div>
+
+	<!-- jQuery 2.2.3 -->
+	<script src="${base!}/assets/plugins/jQuery/jquery.min.js"></script>
+	<!-- Bootstrap 3.3.6 -->
+	<script src="${base!}/assets/bootstrap/js/bootstrap.min.js"></script>
+	<!-- iCheck -->
+	<script src="${base!}/assets/plugins/iCheck/icheck.min.js"></script>
+	<!--表单验证-->
+	<script src="${base!}/assets/dist/js/bootstrapValidator.js"></script>
+	<script src="${base!}/assets/js/sso/RSA.js"></script>
+	<script src="${base!}/assets/js/sso/BigInt.js"></script>
+	<script src="${base!}/assets/js/sso/Barrett.js"></script>
+	<script src="${base!}/assets/js/jquery.pjax.js"></script>
+	<script src="${base!}/assets/plugins/jquery.form.js"></script>
+	<script src="${base!}/assets/plugins/modernizr.js"></script>
+	<script src="${base!}/assets/plugins/jquery.cookie.js"></script>
+
+	<script>
+	
+	$(function(){
+			$("#resetBut").on('click', function () {
+				var username = $("#username").val("") ;
+				var password = $("#password2").val("") ;
+	        });
+	       $("#remeBut").on("change",function(){
+	        	if($("#remeBut").is(':checked')){
+	 		        	addRemberUser();
+	 	       }else{
+	 	        	removeRemberUser(); 
+	 	       }
+	        })
+	        var userdd= $.cookie("loginuser") ;
+	       
+	        if(userdd){//有值则放入
+	           var user = JSON.parse(userdd) ;
+	            $("#remeBut").prop("checked",true);
+	        	$("#username").val(user.uF) ;
+	        	$("#password2").val(user.pF) ;
+	        } 
+	        
+	});
+	
+	
+	
+function bodyRSA()
+{
+    setMaxDigits(200);
+    return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
+}
+var key =  bodyRSA();
+var temp;
+$(document).ready(function () {
+	  $("#username").focus();
+	  logi(); 
+   
+});
+
+function logi(){
+	$("#login").on("click",function () {
+		loginSubmitFun();
+	});
+$("#loginForm").ajaxForm({
+    dataType: 'json',
+    beforeSubmit: function (arr, form, options) {
+        form.find("button:submit").text("${msg['login.load']}");
+        form.find("button:submit").attr("disabled", "disabled");
+    },
+    success: function (data, statusText, xhr, form) {
+        if (data.code == 0) {
+            $("#tip").hide();
+            form.find("button:submit").text("${msg['login.success']}");
+            var href = data.data ;
+
+            var  url = "${base!}/platform/account/indexNew";
+//            if(permissionList.indexOf("sys.tohome")!=-1){
+//                url = "${base!}/platform/home";
+//            }
+            if(href){
+                url = "${base!}"+href ;
+            }
+
+
+	        window.location.href = url;
+        } else if (data.code == 2||data.code==1) {//验证码为空 || 错误
+        	$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
+       		$("#captcha_img").css({"width": "87px", "height": "31px"});
+        	$("#platformCaptcha").val("");
+        	data.code==2? $("#tip").html("请输入验证码"):$("#tip").html(data.msg);
+            $("#tip").fadeIn();
+           // $(".ver-code").toggleClass('hide');
+//          $(".verification-code").removeClass('show');
+			
+            $("#veryDiv").removeClass("hide");
+            $("#veryDiv").addClass("show");
+            $("#veryDiv").removeClass("show");
+           
+            
+            return  $("#veryDiv").fadeIn();
+        }else {
+            $("#platformCaptcha").val("");
+            $("#password").val("").focus();
+            $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
+            if($("#username").val()=="" || $("#username").val()==""){
+            	$("#tip").html("请输入用户名密码");
+            }else{
+                $("#tip").html(data.msg);
+            }
+            $("#tip").fadeIn();
+            form.find("button:submit").text("${msg['login.submit']}");
+            form.find("button:submit").removeAttr("disabled")
+        }
+    }
+}); 
+}
+
+//记住密码
+function addRemberUser(){
+	if($("#remeBut").is(':checked')) {
+		if($("#username").val()&&$("#password2").val()){
+			var username = $("#username").val() ;
+			var password = $("#password2").val() ;
+	    	//var password = encryptedString(key,$("#password").val().split("").reverse().join(""));
+	    	var loginuser=JSON.stringify({uF:username,pF:password}) ;
+	    	
+	    	$.cookie("loginuser", loginuser,{path:"/",expires:10}); 
+		}
+	}
+}
+
+//删除密码  
+function removeRemberUser(){
+	$.cookie("loginuser", null, { path: '/' ,expires:-1});
+}
+//登录提交
+function loginSubmitFun(){
+	temp=$("#password").val();
+    addRemberUser();
+    setOrupdateCookie();
+    $("#password").val(encryptedString(key,$("#password2").val().split("").reverse().join("")));
+    $("#loginForm").submit();
+}
+// 添加切换主题cookie
+function setOrupdateCookie(){
+	if($.cookie("theme") == null || $.cookie("theme") != "black" ){//如果没有默认创建一个白色主题的
+		//创建一个key为theme,值为white,有效期为七天的cookie
+		$.cookie("theme", "white",{ path: "/", expires: 7 }); 
+	}else {
+		//如果有取值,并更新时间
+		var c_value = $.cookie("theme")
+		if(c_value != null){
+			$.cookie("theme", c_value,{ path: "/", expires: 7 });
+		}
+	}
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1465 @@
+<!--查看详情框-->
+<!--  <div class="bs-example-modal-lg" id="detail-modal" data-backdrop="static" data-keyboard="false"> -->
+<div class="modal-dialog modal-lg" style="width: 1200px;">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<h4 class="modal-title">详情</h4>
+		</div>
+
+		<div class="modal-body">
+			<div class="nav-tabs-custom" style="margin-bottom: 0;">
+				<!-- Tabs within a box -->
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#see-asset-detail"
+										  data-toggle="tab">资产详情</a></li>
+					<li><a href="#see-borrow-record" data-toggle="tab"
+						   onclick="showRecode();">借还记录</a></li><!--使用功能管理记录-->
+					<li><a href="#see-repair-chart" data-toggle="tab"
+						   onclick="showRepairRecord();">维修记录</a></li>
+					<li><a href="#see-sealed-chart" data-toggle="tab"
+						   onclick="showSealedRecord();">封存启封记录</a></li>
+					<li><a href="#see-scrap-chart" data-toggle="tab"
+						   onclick="showSrcapRecord();">报废记录</a></li>
+				</ul>
+				<div class="tab-content no-padding">
+					<!-- 资产详情 -->
+					<div id="see-asset-detail" class="tab-pane text-left active">
+						<div class="box-body no-padding">
+							<div class="modal-body">
+
+								<div class="form-horizontal">
+
+									<div class="panel-group" id="detail-asset-accordion" role="tablist"
+										 aria-multiselectable="true">
+
+										<div class="panel panel-primary">
+											<div class="panel-heading" role="tab" id="detail-asset-heading-one">
+												<h4 class="panel-title">
+													<a role="button" data-toggle="collapse" data-parent="#detail-asset-accordion"
+													   href="#detail-asset-collapse-one" aria-expanded="true"
+													   aria-controls="detail-asset-collapse-one">
+														基本信息
+													</a>
+												</h4>
+											</div>
+											<div id="detail-asset-collapse-one" class="panel-collapse collapse in" role="tabpanel"
+												 aria-labelledby="detail-asset-heading-one">
+												<fieldset disabled style="border: 0; padding: 0; margin: 0;">
+													<div class="panel-body">
+													<div class="form-group" style="padding-left:10px;">
+														<div class="row">
+
+															<div class="col-sm-2">
+																<img style="width: 180px; height: 200px;"
+																	  src="data:image/*;base64,${obj.urlImage}"
+																	  alt="资产图片信息">
+															</div>
+
+															<div class="col-sm-10">
+																<div class="flex-row-center form-group">
+																	<div class="row">
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-assetType"
+																				   class="control-label asset-style-sen-row">类别<span
+																					class="font-red">*</span> </label>
+																			<div>
+																				<select id="detail-assetType" name="assetType"
+																						class="form-control select5 asset-style-width"
+																						data-placeholder="资产种类">
+																					<option value="0"
+																					<%if(obj.assetType==0){%>selected<%}%>>----请选择----</option>
+																					<option value="1"
+																					<%if(obj.assetType==1){%>selected<%}%>>设备</option>
+																					<option value="2"
+																					<%if(obj.assetType==2){%>selected<%}%>>仪器</option>
+																					<option value="3"
+																					<%if(obj.assetType==3){%>selected<%}%>>工量具</option>
+																				</select>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-assetCode"
+																				   class="control-label text-left asset-style-flex-low">统一编号 </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-assetCode" name="assetCode"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入统一编号"
+																					   value="${obj.assetCode!}"/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-assetName"
+																				   class="control-label text-left asset-style-flex ">名称<span
+																					class="font-red">*</span> </label>
+																			<div class="margin-width-self">
+																				<input type="text" id="detail-assetName"
+																					   name="assetName"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入名称"
+																					   value="${obj.assetName!}"/>
+																			</div>
+																		</div>
+
+																	</div>
+																</div>
+
+																<div class="flex-row-center form-group">
+																	<div class="row">
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-factoryTime"
+																				   class="control-label asset-style-sen-row">出厂日期 </label>
+																			<div class="margin-width-self">
+																				<div class="input-group date asset-style-width">
+																					<div class="input-group-addon">
+																						<i class="fa fa-calendar"></i>
+																					</div>
+																					<input type="text"
+																						   id="detail-factoryTime"
+																						   name="factoryTime"
+																						   maxlength="30"
+																						   class="form-control"
+																						   placeholder="请输入出厂日期"
+																						   value="${@date.formatDate(obj.factoryTime)}"/>
+																				</div>
+
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-deviceVersion"
+																				   class="control-label text-left asset-style-flex-low">型号<span
+																					class="font-red">*</span> </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-deviceVersion"
+																					   name="deviceVersion"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入型号"
+																					   value="${obj.deviceVersion!}"/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-ggName"
+																				   class="control-label text-left asset-style-flex">规格 </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-ggName" name="ggName"
+																					   maxlength="30"
+																					   class="form-control  asset-style-width"
+																					   placeholder="请输入规格名称"
+																					   value="${obj.ggName!}"/>
+																			</div>
+																		</div>
+
+																	</div>
+																</div>
+
+																<div class="flex-row-center form-group">
+																	<div class="row">
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-serialNumber"
+																				   class="control-label asset-style-sen-row">出厂编号 </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-serialNumber"
+																					   name="serialNumber"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入出厂编号"
+																					   value="${obj.serialNumber!}"/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-originalValue"
+																				   class="control-label text-left asset-style-flex-low">原值<span
+																					class="font-red">*</span> </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-originalValue"
+																					   name="originalValue"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入原值"
+																					   value="${obj.originalValue!}"/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-locationInfo"
+																				   class="control-label text-left asset-style-flex">位置信息 </label>
+																			<div class="margin-width-self">
+																				<input type="text"
+																					   id="detail-locationInfo"
+																					   name="locationInfo"
+																					   maxlength="30"
+																					   class="form-control asset-style-width"
+																					   placeholder="请输入位置信息"
+																					   value="${obj.locationInfo!}"/>
+																			</div>
+																		</div>
+
+																	</div>
+																</div>
+
+																<div class="flex-row-center form-group">
+																	<div class="row">
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-serialNumber"
+																				   class="control-label asset-style-sen-row">使用单位 </label>
+																			<div class="margin-width-self">
+																				<input type="text" id="borrowDepart2" value="${obj.borrowDepart}"
+																					   name="borrowDepart" class="form-control"
+																					   style="width: 240px;" disabled/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-originalValue"
+																				   class="control-label text-left asset-style-flex-low">责任人 </label>
+																			<div class="margin-width-self">
+																				<input type="text" id="chargePerson2"
+																					   name="chargePerson" class="form-control" value="${obj.chargePerson}"
+																					   style="width: 240px;" disabled/>
+																			</div>
+																		</div>
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+																			<label for="detail-lendDate"
+																				   class="control-label text-left asset-style-flex">借用日期 </label>
+																			<div class="margin-width-self">
+																				<div class="input-group date asset-style-width">
+																					<div class="input-group-addon">
+																						<i class="fa fa-calendar"></i>
+																					</div>
+																					<input type="text" disabled="disabled"
+																						   name="lendDate"
+																						   value="${@date.formatDate(obj.lendDate)}"
+																						   class="form-control"
+																						   id="detail-lendDate">
+																				</div>
+
+
+																			</div>
+																		</div>
+
+																	</div>
+																</div>
+
+																<div class="flex-row-center form-group">
+																	<div class="row">
+
+																		<div class="flex-row-center col-sm-4 asset-style-basic">
+
+																			<label for="detail-returnDate"
+																				   class="control-label text-left asset-style-sen-row">归还日期 </label>
+																			<div class="margin-width-self">
+																				<div class="input-group date asset-style-width">
+																					<div class="input-group-addon">
+																						<i class="fa fa-calendar"></i>
+																					</div>
+																					<input type="text" disabled="disabled"
+																						   name="returnDate"
+																						   value="${@date.formatDate(obj.returnDate)}"
+																						   class="form-control"
+																						   id="detail-returnDate">
+																				</div>
+
+
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+
+															</div>
+
+
+														</div>
+
+													</div>
+												</div>
+												</fieldset>
+											</div>
+										</div>
+
+
+										<div class="panel panel-primary">
+											<div class="panel-heading" role="tab" id="detail-asset-heading-two">
+												<h4 class="panel-title">
+													<a role="button" data-toggle="collapse" data-parent="#detail-asset-accordion"
+													   href="#detail-asset-collapse-two" aria-expanded="false"
+													   aria-controls="detail-asset-collapse-two">
+														经费信息
+													</a>
+												</h4>
+											</div>
+											<div id="detail-asset-collapse-two" class="panel-collapse collapse" role="tabpanel"
+												 aria-labelledby="detail-asset-heading-two">
+												<fieldset disabled style="border: 0; padding: 0; margin: 0;">
+													<div class="panel-body">
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-contractCode"
+																	   class="control-label asset-style-width-label">合同号 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-contractCode" maxlength="30"
+																		   name="contractCode"
+																		   class="form-control asset-style-width-sen"
+																		   value="${obj.contractCode}"
+																		   placeholder="请输入合同号">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-batchCode"
+																	   class="control-label asset-style-width-label">批件序号 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-batchCode" maxlength="30"
+																		   name="batchCode" value="${obj.batchCode}"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入批件序号">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-supplier"
+																	   class="control-label asset-style-width-label">供货单位 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-supplier" maxlength="30"
+																		   name="supplier" value="${obj.supplier}"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入供货单位">
+																</div>
+															</div>
+
+														</div>
+													</div>
+
+													<div class="form-group">
+
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-projectName"
+																	   class="control-label asset-style-width-label">项目名称 </label>
+																<div class="inline-block">
+																	<input type="text" name="projectName" style="width: 250px;"
+																		   class="form-control" id="detail-projectName"
+																		   placeholder="请输入项目名称">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-fundSources"
+																	   class="control-label asset-style-width-label">资金来源 </label>
+																<div class="inline-block">
+																	<select id="detail-fundSources" name="fundSources"
+																			class="form-control select5 asset-style-width-sen"
+																			data-placeholder="资金来源">
+																		<option value="">----请选择----</option>
+																		<option value="0" <%if(obj.fundSources==0){%>selected<%}%>>拨款</option>
+																		<option value="1" <%if(obj.fundSources==1){%>selected<%}%>>自购</option>
+																		<option value="2" <%if(obj.fundSources==2){%>selected<%}%>>科研费</option>
+																		<option value="3" <%if(obj.fundSources==3){%>selected<%}%>>馈赠或无偿调入</option>
+																	</select>
+																</div>
+															</div>
+														</div>
+													</div>
+
+												</div>
+												</fieldset>
+											</div>
+										</div>
+
+										<div class="panel panel-primary">
+											<div class="panel-heading" role="tab" id="detail-asset-heading-three">
+												<h4 class="panel-title">
+													<a class="collapsed" role="button" data-toggle="collapse"
+													   data-parent="#detail-asset-accordion" href="#detail-asset-collapse-three"
+													   aria-expanded="false"
+													   aria-controls="detail-asset-collapse-three">
+														管理信息
+													</a>
+												</h4>
+											</div>
+											<div id="detail-asset-collapse-three" class="panel-collapse collapse" role="tabpanel"
+												 aria-labelledby="detail-asset-heading-three">
+												<fieldset disabled style="border: 0; padding: 0; margin: 0;">
+													<div class="panel-body">
+
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-power"
+																	   class="control-label asset-style-width-label">功率<span
+																		class="font-red">*</span> </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-power" name="power"
+																		   value="${obj.power!}"
+																		   maxlength="10"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入功率">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="macHour"
+																	   class="control-label asset-style-width-label">台时信息 </label>
+																<div class="inline-block">
+																	<input type="text" id="macHour" name="macHour"
+																		   value="${obj.macHour!}"
+																		   maxlength="30"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入台时信息">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-manageStatus"
+																	   class="control-label asset-style-width-label">管理状态 </label>
+																<div class="inline-block">
+																	<select id="detail-manageStatus" name="manageStatus"
+																			class="form-control select9 asset-style-width-sen"
+																			data-placeholder="管理状态">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.manageStatus==0){%>selected<%}%>>在用</option>
+																		<option value="1"
+																		<%if(obj.manageStatus==1){%>selected<%}%>>封存</option>
+																		<option value="2"
+																		<%if(obj.manageStatus==2){%>selected<%}%>>闲置</option>
+																		<option value="3"
+																		<%if(obj.manageStatus==3){%>selected<%}%>>禁用</option>
+																	</select>
+																</div>
+															</div>
+
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-manageLevel"
+																	   class="control-label asset-style-width-label">管理级别 </label>
+																<div class="inline-block">
+																	<select id="detail-manageLevel" name="manageLevel"
+																			class="form-control select9 asset-style-width-sen"
+																			data-placeholder="管理级别">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.manageLevel==0){%>selected<%}%>>厂(所)管</option>
+																		<option value="1"
+																		<%if(obj.manageLevel==1){%>selected<%}%>>院管</option>
+																		<option value="2"
+																		<%if(obj.manageLevel==2){%>selected<%}%>>总公司部管</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-assetCategory"
+																	   class="control-label asset-style-width-label">资产类别 </label>
+																<div class="inline-block">
+																	<select id="detail-assetCategory" name="assetCategory"
+																			class="form-control select9 asset-style-width-sen"
+																			data-placeholder="资产类别">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.assetCategory==0){%>selected<%}%>>固定资产</option>
+																		<option value="1"
+																		<%if(obj.assetCategory==1){%>selected<%}%>>低值</option>
+																		<option value="2"
+																		<%if(obj.assetCategory==2){%>selected<%}%>>在建</option>
+																		<option value="3"
+																		<%if(obj.assetCategory==3){%>selected<%}%>>附件</option>
+																		<option value="4"
+																		<%if(obj.assetCategory==4){%>selected<%}%>>零值</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-repairState"
+																	   class="control-label asset-style-width-label">维修状态 </label>
+																<div class="inline-block">
+																	<select id="detail-repairState" name="repairState"
+																			class="form-control select1 asset-style-width-sen"
+																			data-placeholder="维修状态">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.repairState==0){%>selected<%}%>>维修中</option>
+																		<option value="1"
+																		<%if(obj.repairState==1){%>selected<%}%>>已完成</option>
+																	</select>
+																</div>
+															</div>
+
+
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<div>
+																	<label for="detail-enableTime" class="control-label  asset-style-width-label"
+																		   style="vertical-align:top;">启用日期 </label>
+																	<div class="inline-block">
+																		<div class="input-group date asset-style-width-sen">
+																			<div class="input-group-addon">
+																				<i class="fa fa-calendar"></i>
+																			</div>
+																			<input type="text" name="enableTime"
+																				   class="form-control pull-right" value="${@date.formatDate(obj.enableTime)}"
+																				   id="detail-enableTime" style="width: 100%">
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-4  flex-row-center">
+																<label for="useType"
+																	   class="control-label asset-style-width-label">用途 </label>
+																<div class="inline-block">
+																	<select id="useType" name="useType"
+																			class="form-control select5 asset-style-width-sen"
+																			data-placeholder="用途">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.useType==0){%>selected<%}%>>科研类</option>
+																		<option value="1"
+																		<%if(obj.useType==1){%>selected<%}%>>生产类</option>
+																		<option value="2"
+																		<%if(obj.useType==2){%>selected<%}%>>测量类</option>
+																		<option value="3"
+																		<%if(obj.useType==3){%>selected<%}%>>办公类</option>
+																	</select>
+																</div>
+															</div>
+														</div>
+
+													</div>
+												</div>
+												</fieldset>
+											</div>
+										</div>
+
+										<div class="panel panel-primary">
+											<div class="panel-heading" role="tab" id="detail-asset-heading-four">
+												<h4 class="panel-title">
+													<a class="collapsed" role="button" data-toggle="collapse"
+													   data-parent="#detail-asset-accordion" href="#detail-asset-collapse-four"
+													   aria-expanded="false"
+													   aria-controls="detail-asset-collapse-four">
+														其它信息
+													</a>
+												</h4>
+											</div>
+											<div id="detail-asset-collapse-four" class="panel-collapse collapse" role="tabpanel"
+												 aria-labelledby="detail-asset-heading-four">
+												<fieldset disabled style="border: 0; padding: 0; margin: 0;">
+													<div class="panel-body">
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-country"
+																	   class="control-label asset-style-width-label"
+																>国别 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-country" maxlength="30"
+																		   value="${obj.country}"
+																		   name="country"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入国别">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-manufactor"
+																	   class="control-label asset-style-width-label"
+																>厂家 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-manufactor" maxlength="30"
+																		   value="${obj.manufactor}"
+																		   name="manufactor"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入厂家">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-topicNo"
+																	   class="control-label asset-style-width-label"
+																>课题号 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-topicNo" maxlength="30"
+																		   value="${obj.topicNo}"
+																		   name="topicNo"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入课题号">
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="form-group">
+														<div class="row">
+
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-warrantyPeriod"
+																	   class="control-label asset-style-width-label"
+																>保修期 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-warrantyPeriod"
+																		   name="warrantyPeriod" maxlength="11"
+																		   value="${obj.warrantyPeriod}"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="保修期">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-depreciationYear"
+																	   class="control-label asset-style-width-label"
+																>折扣年限 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-depreciationYear" maxlength="10"
+																		   value="${obj.depreciationYear}"
+																		   name="depreciationYear"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入折扣年限">
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+
+
+																<label for="detail-depreciationRate"
+																	   class="control-label asset-style-width-label"
+																>年折旧率 </label>
+																<div class="inline-block">
+																	<input type="text" id="detail-depreciationRate" maxlength="10"
+																		   value="${obj.depreciationRate}"
+																		   name="depreciationRate"
+																		   class="form-control asset-style-width-sen"
+																		   placeholder="请输入年折旧率">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-instrumentCategory"
+																	   class="control-label asset-style-width-label"
+																>仪器设备类别 </label>
+																<div class="inline-block">
+																	<select id="detail-instrumentCategory"
+																			name="instrumentCategory"
+																			class="form-control select3  asset-style-width-sen"
+																			data-placeholder="仪器设备类别">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.instrumentCategory ==
+																		0){%>selected<%}%>>普通</option>
+																		<option value="1"
+																		<%if(obj.instrumentCategory ==
+																		1){%>selected<%}%>>精大贵稀</option>
+																		<option value="2"
+																		<%if(obj.instrumentCategory ==
+																		2){%>selected<%}%>>进口普通</option>
+																		<option value="3"
+																		<%if(obj.instrumentCategory ==
+																		3){%>selected<%}%>>进口精大贵稀</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-unpackingDate" class="control-label  asset-style-width-label"
+																	   style="vertical-align:top;">开箱日期 </label>
+																<div class="inline-block">
+																	<div class="input-group date asset-style-width-sen">
+																		<div class="input-group-addon">
+																			<i class="fa fa-calendar"></i>
+																		</div>
+																		<input type="text" name="unpackingDate"
+																			   value="${@date.formatDate(obj.unpackingDate!)}"
+																			   class="form-control pull-right"
+																			   id="detail-unpackingDate">
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+
+
+																<label for="detail-examineDate" class="control-label  asset-style-width-label"
+																	   style="vertical-align:top;">检定日期 </label>
+																<div class="inline-block  asset-style-width-sen">
+																	<div class="input-group date">
+																		<div class="input-group-addon">
+																			<i class="fa fa-calendar"></i>
+																		</div>
+																		<input type="text" name="examineDate"
+																			   class="form-control pull-right"
+																			   value="${@date.formatDate(obj.examineDate!)}"
+																			   id="detail-examineDate">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-dueDate" class="control-label asset-style-width-label"
+																	   style="vertical-align:top;">到期检定 </label>
+																<div class="inline-block   asset-style-width-sen">
+																	<div class="input-group date">
+																		<div class="input-group-addon">
+																			<i class="fa fa-calendar"></i>
+																		</div>
+																		<input type="text" name="dueDate"
+																			   class="form-control pull-right" id="detail-dueDate"
+																			   value="${@date.formatDate(obj.examineDate!)}">
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-isMilitary"
+																	   class="control-label asset-style-width-label"
+																>军工设备 </label>
+																<div class="inline-block">
+																	<select id="detail-isMilitary" name="isMilitary"
+																			class="form-control select5 asset-style-width-sen"
+																			data-placeholder="军工设备">
+																		<option value="">----请选择----</option>
+																		<option value="0"<%if(obj.isMilitary == 0){%>selected<%}%>>是</option>
+																		<option value="1"<%if(obj.isMilitary == 1){%>selected<%}%>>否</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+
+
+																<label for="detail-checker"
+																	   class="control-label asset-style-width-label"
+																>验收人 </label>
+																<div class="inline-block text-left">
+																	<input type="text" id="detail-checker" name="checker"
+																		   value="${obj.checker}"
+																		   maxlength="11"
+																		   class="form-control  asset-style-width-sen"
+																		   placeholder="请输入验收人">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-isOverdue"
+																	   class="control-label asset-style-width-label"
+																>是否过期 </label>
+																<div class="inline-block">
+																	<select id="detail-isOverdue"
+																			class="form-control select1  asset-style-width-sen"
+																			name="isOverdue" data-placeholder="是否过期">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.isOverdue == 0){%>selected<%}%>>是</option>
+																		<option value="1"
+																		<%if(obj.isOverdue == 1){%>selected<%}%>>否</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-completeStatus"
+																	   class="control-label asset-style-width-label"
+																>完好状态 </label>
+																<div class="inline-block">
+																	<select id="detail-completeStatus"
+																			class="form-control select1  asset-style-width-sen"
+																			name="completeStatus" data-placeholder="完好状态">
+																		<option value="">----请选择----</option>
+																		<option value="0"
+																		<%if(obj.completeStatus == 0){%>selected<%}%>>完好</option>
+																		<option value="1" <%if(obj.completeStatus == 1){%>selected<%}%>>不完好</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4 flex-row-center">
+																<label for="detail-completeStatus"
+																	   class="control-label asset-style-width-label"
+																>是否需要计量 </label>
+																<div class="inline-block">
+																	<select id="detail-isMeasure"
+																			class="form-control select1  asset-style-width-sen"
+																			name="isMeasure" data-placeholder="是否需要计量">
+																		<option value="">----请选择----</option>
+																		<option value="0" <%if(obj.isMeasure == 0){%>selected<%}%>>是</option>
+																		<option value="1" <%if(obj.isMeasure != 0){%>selected<%}%>>否</option>
+																	</select>
+																</div>
+															</div>
+
+														</div>
+													</div>
+													<div class="form-group">
+															<div class="row">
+																<div class="col-sm-4 flex-row-center">
+																	<label for="detail-isLend" class="control-label asset-style-width-label"
+																	>是否借出 </label>
+																	<div class="inline-block" >
+																		<select id="detail-isLend" class="form-control select  asset-style-width-sen"
+																				name="isLend" data-placeholder="是否借出" >
+																			<option value="">----请选择----</option>
+																			<option value="0"<%if(obj.isLend == 0){%>selected<%}%>>是</option>
+																			<option value="1"<%if(obj.isLend == 1){%>selected<%}%>>否</option>
+																		</select>
+																	</div>
+																</div>
+																<div class="col-sm-4 flex-row-center">
+																	<label for="detail-ScrapState" class="control-label asset-style-width-label"
+																	>报废状态 </label>
+																	<div class="inline-block" >
+																		<select id="detail-ScrapState" class="form-control select  asset-style-width-sen"
+																				name="ScrapState" data-placeholder="报废状态" >
+																			<option value="">----请选择----</option>
+																			<option value="0"<%if(obj.ScrapState == 0){%>selected<%}%>>待报废</option>
+																			<option value="1"<%if(obj.ScrapState == 1){%>selected<%}%>>报废</option>
+																		</select>
+																	</div>
+																</div>
+																<div class="col-sm-4 flex-row-center">
+																	<label for="detail-isConnectCloud" class="control-label asset-style-width-label"
+																	>是否连接云网 </label>
+																	<div class="inline-block" >
+																		<select id="detail-isConnectCloud" class="form-control select  asset-style-width-sen"
+																				name="isConnectCloud" data-placeholder="是否连接云网" >
+																			<option value="">----请选择----</option>
+																			<option value="0"<%if(obj.isConnectCloud == 0){%>selected<%}%>>是</option>
+																			<option value="1"<%if(obj.isConnectCloud == 1){%>selected<%}%>>否</option>
+																		</select>
+																	</div>
+																</div>
+
+															</div>
+														</div>
+													<div class="form-group">
+															<div class="row">
+																<div class="col-sm-4 flex-row-center">
+																	<label for="detail-weight"
+																		   class="control-label asset-style-width-label"
+																	>重量 </label>
+																	<div class="inline-block">
+																		<input type="text" id="detail-weight" maxlength="30"
+																			   value="${obj.weight}"
+																			   name="weight"
+																			   class="form-control asset-style-width-sen"
+																			   placeholder="请输入重量">
+																	</div>
+																</div>
+																<div class="col-sm-4 flex-row-center">
+																	<label for="detail-installedCapacity"
+																		   class="control-label asset-style-width-label"
+																	>装机容量 </label>
+																	<div class="inline-block">
+																		<input type="text" id="detail-installedCapacity" maxlength="30"
+																			   value="${obj.installedCapacity}"
+																			   name="installedCapacity"
+																			   class="form-control asset-style-width-sen"
+																			   placeholder="请输入装机容量">
+																	</div>
+																</div>
+															</div>
+														</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-4 flex-row-center" style="width: 1200px">
+																<label for="detail-remark" class="control-label asset-style-width-label" >备注 </label>
+																<div class="inline-block" style="vertical-align: middle; height: 79px;">
+                                                            <textarea rows="3"
+																	  cols="145.5"
+																	  id="detail-remark"
+																	  class="form-control"
+																	  style="width: 1028px;"
+																	  name="remark"
+																	  data-placeholder="备注">${obj.remark!}</textarea>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												</fieldset>
+											</div>
+										</div>
+
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--借还记录-->
+					<div class="tab-pane text-left" id="see-borrow-record"
+						 style="position: relative; height: 300px;">
+						<!-- /.box-header -->
+						<div class="box-body  no-padding">
+							<table id="lend_recode_table"
+								   class="table table-bordered  table-hover">
+								<thead>
+								<tr>
+									<!-- 	   <th>统一编号</th>
+                                        <th>所属单位</th>
+                                        <th>操作单位</th>
+                                        <th>操作人</th>
+                                        <th>操作</th>
+                                        <th>操作时间</th> -->
+									<th>序号</th>
+									<th>统一编号</th>
+									<th>办理单位</th>
+									<th>办理人</th>
+									<th>使用单位</th>
+									<th>使用人</th>
+									<th>操作</th>
+									<th>操作时间</th>
+								</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- 分页-->
+					</div>
+					<!--维修记录-->
+					<div class="tab-pane text-left" id="see-repair-chart" style="">
+						<!-- /.box-header -->
+						<div class="box-body table-responsive no-padding"
+							 style="overflow: hidden;">
+							<table id="repair_record_table"
+								   class="table table-bordered table-striped table-hover">
+								<colgroup>
+									<col style="width: 6%">
+									<col style="width: 10%">
+									<col style="width: 9%">
+									<col style="width: 9%">
+									<col style="width: 9%">
+									<col style="width: 9%">
+									<col style="width: 15%">
+									<col style="width: 10%">
+									<col style="width: 12%">
+									<col style="width: 17%">
+								</colgroup>
+
+								<thead>
+								<tr>
+									<th>序号</th>
+									<th>设备编号</th>
+									<th>送修单位</th>
+									<th>送修人</th>
+									<th>维修单位</th>
+									<th>维修人</th>
+									<th>维修内容</th>
+									<th>维修费用</th>
+									<th>维修结果</th>
+									<th>完成时间</th>
+								</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+					<!--封存启封记录  -->
+					<div class="tab-pane text-left" id="see-sealed-chart"
+						 style="position: relative; height: 300px;">
+						<!-- /.box-header -->
+						<div class="box-body table-responsive no-padding">
+							<table id="sealed_record_table"
+								   class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th>序号</th>
+									<th>设备编号</th>
+									<th>类别</th>
+									<th>所属单位</th>
+									<th>操作人</th>
+									<th>操作</th>
+									<th>操作时间</th>
+								</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+					<!--报废记录  -->
+					<div class="tab-pane text-left" id="see-scrap-chart"
+						 style="position: relative; height: 300px;">
+						<!-- /.box-header -->
+						<div class="box-body table-responsive no-padding">
+							<table id="scrap_record_table"
+								   class="table table-bordered table-striped table-hover">
+								<thead>
+								<tr>
+									<th>序号</th>
+									<th>设备编号</th>
+									<th>类别</th>
+									<th>所属单位</th>
+									<th>操作人</th>
+									<th>操作</th>
+									<th>操作时间</th>
+								</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    var scrapDatatable;
+    var sealDatatable;
+    var datatable_lend;
+    $(function() {
+        $('.collapse').collapse({
+            toggle: false
+        });
+        var projectCode = '${obj.projectName!}';
+        setJGProjectInfo("detail-projectName", projectCode);
+    })
+    function showSrcapRecord() {
+        var code = $("#detail-assetCode").val();
+        $('#scrap_record_table').dataTable().fnDestroy(); //还原datatable的初始化信息，解决重复加载页面报错
+        scrapDatatable = $('#scrap_record_table')
+            .DataTable(
+                {
+                    "dom" : '<"toolbar">frtip',
+                    "searching" : false,
+                    "processing" : false,
+                    "serverSide" : true,
+                    "select" : false,
+                    "ordering" : true,
+                    "bAutoWidth" : false,
+                    "scrollX" : true,
+                    "pageLength" : 5,
+                    "language" : {
+                        "url" : "${base}/assets/plugins/datatables/cn.json"
+                    },
+                    "preDrawCallback" : function() {
+                        sublime.showLoadingbar($(".main-content"));
+                    },
+                    "drawCallback" : function(settings) {
+                        sublime.closeLoadingbar($(".main-content"));
+                    },
+                    "ajax" : {
+                        "url" : "${base}/asset/info/scrapRecord",
+                        "type" : "post",
+                        "data" : function(d) {
+                            d.assetCode = code;
+                        }
+                    },
+                    "columns" : [ {
+                        "data" : null,
+                        "width" : "30px"
+                    }, {
+                        "data" : "assetcode",
+                        "bSortable" : true
+                    }, {
+                        "data" : "assettype",
+                        "bSortable" : true
+                    }, {
+                        "data" : "borrowdepart",
+                        "bSortable" : true
+                    }, {
+                        "data" : "operator",
+                        "bSortable" : true
+                    }, {
+                        "data" : "scrapstate",
+                        "bSortable" : true
+                    }, {
+                        "data" : "operatetime",
+                        "bSortable" : true
+                    }
+
+                    ],
+                    "order" : [ [ 6, "desc" ] ],
+                    "columnDefs" : [
+                        {
+                            "searchable" : false,
+                            "orderable" : false,
+                            "targets" : 0
+                        },
+                        {
+                            "render" : function(data, type, row) {
+                                if (data == 0) {
+                                    return "<span class='label bg-red'>----请选择----</span>"
+                                } else if (data == 1) {
+                                    return "<span class='label bg-purple'>设备</span>"
+                                } else if (data == 2) {
+                                    return "<span class='label bg-light-blue'>仪器</span>"
+                                } else if (data == 3) {
+                                    return "<span class='label bg-red'>工量具</span>"
+                                } else {
+                                    return '--'
+                                }
+                            },
+                            "targets" : 2
+                        },
+                        {
+                            "render" : function(data, type, row) {
+                                return data == 0 ? "<span class='label bg-red'>确认报废</span>"
+                                    : "<span class='label bg-purple'>报废</span>";
+                            },
+                            "targets" : 5
+                        } ]
+                });
+        scrapDatatable.on('draw.dt', function() {
+            scrapDatatable.column(0, {
+                search : 'applied',
+                order : 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+                i = i + 1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+                var page = scrapDatatable.page.info();
+                //当前第几页，从0开始
+                var pageno = page.page;
+                //每页数据
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i + pageno * length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+
+    }
+    function showSealedRecord() {
+        var code = $("#detail-assetCode").val();
+        $('#sealed_record_table').dataTable().fnDestroy(); //还原datatable的初始化信息，解决重复加载页面报错
+        sealDatatable = $('#sealed_record_table')
+            .DataTable(
+                {
+                    "dom" : '<"toolbar">frtip',
+                    "searching" : false,
+                    "processing" : false,
+                    "serverSide" : true,
+                    "select" : false,
+                    "ordering" : true,
+                    "bAutoWidth" : false,
+                    "scrollX" : true,
+                    "pageLength" : 5,
+                    "language" : {
+                        "url" : "${base}/assets/plugins/datatables/cn.json"
+                    },
+                    "preDrawCallback" : function() {
+                        sublime.showLoadingbar($(".main-content"));
+                    },
+                    "drawCallback" : function(settings) {
+                        sublime.closeLoadingbar($(".main-content"));
+                    },
+                    "ajax" : {
+                        "url" : "${base}/asset/info/sealedRecord",
+                        "type" : "post",
+                        "data" : function(d) {
+                            d.assetCode = code;
+                        }
+                    },
+                    "columns" : [ {
+                        "data" : null,
+                        "width" : "30px"
+                    }, {
+                        "data" : "assetcode",
+                        "bSortable" : true
+                    }, {
+                        "data" : "assettype",
+                        "bSortable" : true
+                    }, {
+                        "data" : "borrowdepart",
+                        "bSortable" : true
+                    }, {
+                        "data" : "operator",
+                        "bSortable" : true
+                    }, {
+                        "data" : "sealstatus",
+                        "bSortable" : true
+                    }, {
+                        "data" : "operatetime",
+                        "bSortable" : true
+                    }
+
+                    ],
+                    "order" : [ [ 6, "desc" ] ],
+                    "columnDefs" : [
+                        {
+                            "searchable" : false,
+                            "orderable" : false,
+                            "targets" : 0
+                        },
+                        {
+                            "render" : function(data, type, row) {
+                                if (data == 0) {
+                                    return "<span class='label bg-red'>----请选择----</span>"
+                                } else if (data == 1) {
+                                    return "<span class='label bg-purple'>设备</span>"
+                                } else if (data == 2) {
+                                    return "<span class='label bg-light-blue'>仪器</span>"
+                                } else if (data == 3) {
+                                    return "<span class='label bg-red'>工量具</span>"
+                                } else {
+                                    return '--'
+                                }
+                            },
+                            "targets" : 2
+                        },
+                        {
+                            "render" : function(data, type, row) {
+                                return data == 1 ? "<span class='label bg-red'>启封</span>"
+                                    : "<span class='label bg-purple'>封存</span>";
+                            },
+                            "targets" : 5
+                        } ]
+                });
+        sealDatatable.on('draw.dt', function() {
+            sealDatatable.column(0, {
+                search : 'applied',
+                order : 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+                i = i + 1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+                var page = sealDatatable.page.info();
+                //当前第几页，从0开始
+                var pageno = page.page;
+                //每页数据
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i + pageno * length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+    }
+
+    function showRecode() {
+        $('#lend_recode_table').dataTable().fnDestroy();
+        var code = $("#detail-assetCode").val();
+        datatable_lend = $('#lend_recode_table').DataTable({
+
+            "dom" : '<"toolbar">frtip',
+            "searching" : false,
+            "processing" : false,
+            "serverSide" : true,
+            "select" : false,
+            "ordering" : true,
+            "distory" : true,
+            "bAutoWidth" : false,
+            "scrollX" : true,
+            "pageLength" : 5,
+            "language" : {
+                "url" : "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback" : function() {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback" : function(settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax" : {
+                "url" : "${base}/asset/recode/data",
+                "type" : "post",
+                "data" : function(d) {
+                    d.code = code;
+                }
+            },
+            "order" : [ [ 7, "desc" ] ],
+            "columns" : [
+
+                {
+                    "data" : null,
+                    "width" : "30px"
+                }, {
+                    "data" : "assetCode",
+                    "bSortable" : true
+                }, {
+                    "data" : "originalDepart",
+                    "bSortable" : true
+                }, {
+                    "data" : "handlePerson",
+                    "bSortable" : true
+                }, {
+                    "data" : "applyDepart",
+                    "bSortable" : true
+                }, {
+                    "data" : "applyPerson",
+                    "bSortable" : true
+                }, {
+                    "data" : "actionType",
+                    "bSortable" : true
+                }, {
+                    "data" : "oprateTime",
+                    "bSortable" : true
+                }
+
+            ],
+
+            "columnDefs" : [ {
+                "searchable" : false,
+                "orderable" : false,
+                "targets" : 0
+            	},
+				{
+                "render" : function(data, type, row) {
+					return data.split(" ")[0];
+                },
+                "targets" : 7
+            },
+				{
+                "render" : function(data, type, row) {
+                    if (data == 0) {
+                        return "<span class='label bg-blue'>借出</span>"
+                    } else if (data == 1) {
+                        return "<span class='label bg-green'>归还</span>"
+                    }else if(data ==2){
+						return "<span class='label bg-yellow'>转账</span>"
+					}
+                    /* return data==0?"<span class='label bg-green'>特级</span>":"<span class='label bg-red'>二级</span>"  ; */
+                },
+                "targets" : 6
+            }
+
+            ]
+
+        });
+
+        datatable_lend.on('draw.dt', function() {
+            datatable_lend.column(0, {
+                search : 'applied',
+                order : 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+                i = i + 1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+                var page = datatable_lend.page.info();
+                //当前第几页，从0开始
+                var pageno = page.page;
+                //每页数据
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i + pageno * length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+
+        /* 点击选中 */
+        datatable_lend.on('click', 'tr', function() {
+            $(this).toggleClass('selected');
+        });
+    }
+
+    //维修记录
+    function showRepairRecord() {
+        $('#repair_record_table').dataTable().fnDestroy();
+        var code = $("#detail-assetCode").val();
+
+        var repair_record_table = $('#repair_record_table').DataTable({
+            "dom" : '<"toolbar">frtip',
+            "searching" : false,
+            "processing" : false,
+            "serverSide" : true,
+            "select" : false,
+            "ordering" : true,
+            "pageLength" : 5,
+            "language" : {
+                "url" : "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback" : function() {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback" : function(settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax" : {
+                "url" : "${base}/repair/getRepairRecordForAssetInfo",
+                "type" : "post",
+                "data" : function(d) {
+                    d.assetCode = code;
+                }
+            },
+            "order" : [ [ 9, "desc" ] ],
+            "columns" : [ {
+                "data" : null,
+                "width" : "20px",
+                "bSortable" : false
+            }, {
+                "data" : "assetcode",
+                "bSortable" : false
+            }, {
+                "data" : "name",
+                "bSortable" : false
+            }, {
+                "data" : "username",
+                "bSortable" : false
+            }, {
+                "data" : "remarkdepart",
+                "bSortable" : false
+            }, {
+                "data" : "remarkman",
+                "bSortable" : false
+            }, {
+                "data" : "remark",
+                "bSortable" : false
+            }, {
+                "data" : "repaircost",
+                "bSortable" : false
+            }, {
+                "data" : "repaircontent",
+                "bSortable" : false
+            }, {
+                "data" : "operatortime",
+                "bSortable" : true
+            } ],
+            "columnDefs" : [ {
+                "searchable" : false,
+                "orderable" : false,
+                "targets" : 0
+            }, {
+                "render" : function(data, type, row) {
+                    return subStrCustom(data, 10);
+
+                },
+                "targets" : [ 6, 8 ]
+            }, {
+                "render" : function(data, type, row) {
+                    return subStrCustom(data, 5);
+
+                },
+                "targets" : [ 2, 3, 4, 5 ]
+            }, {
+                "render" : function(data, type, row) {
+                    return subStrCustom(data + "元", 10);
+                },
+                "targets" : 7
+            }
+
+            ]
+
+        });
+
+        repair_record_table.on('draw.dt', function() {
+            repair_record_table.column(0, {
+                search : 'applied',
+                order : 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+                i = i + 1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+                var page = repair_record_table.page.info();
+                //当前第几页，从0开始
+                var pageno = page.page;
+                //每页数据
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i + pageno * length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+
+    }
+</script>

@@ -1,0 +1,363 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+    <h1>预约审批</h1>
+    <ol class="breadcrumb pull-left">
+        <li><a href="#">资产预约</a></li>
+        <li class="active">预约审批</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-body">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <label for="applyId" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">申请编号：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="applyId"
+                                       placeholder="申请编号">
+                            </div>
+
+                            <label for="assetInfo" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">资产信息：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="assetInfo"
+                                       placeholder="资产名称/资产型号/出厂编号">
+                            </div>
+                            <label class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">申请人：</label>
+                            <div class="col-sm-2">
+                                <input type="text" name="chargePerson" id="chargePerson" style="width: 100%;"
+                                       placeholder="姓名/科室">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="applyState" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">申请状态：</label>
+                            <div class="col-sm-2">
+                                <select id="applyState" class="form-control">
+                                    <option value="">全部</option>
+                                    <option value="0">未领取</option>
+                                    <option value="1">已领取</option>
+                                    <option value="2">已延期</option>
+                                </select>
+                            </div>
+                            <label for="startDate" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">开始时间：</label>
+                            <div class="col-sm-2" style="float: left">
+                                <input type="text" class="form-control" id="startDate"
+                                       placeholder="开始时间">
+                            </div>
+                            <label for="endDate" class="col-sm-1 control-label"
+                                   style="padding-left: 0; padding-right: 0;">结束时间：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="endDate"
+                                       placeholder="结束时间">
+                            </div>
+                            <div class="col-sm-3 control-label">
+                                <button class="btn btn_All btn-primary pull-right" id="searchBtn"
+                                        data-loading-text="搜索..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">搜索
+                                </button>
+                                <button class="btn btn_All btn-danger ml_20 pull-right" id="exportBtn"
+                                        onclick="doClear()" data-loading-text="清空..."
+                                        style="margin-right:20px;width:80px;margin-top:-8px">清空
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="box-header">
+                        <button id="add" class="btn btn-primary" onclick="acquireConfirm()" data-pjax><i
+                                class="ti-bookmark"></i> 确认领取
+                        </button>
+                        <button class="btn btn-yahoo" onclick="returnConfirm()" data-pjax><i
+                                class="ti-notepad"></i> 确认归还
+                        </button>
+                        <button class="btn btn-danger" onclick="cancelApply()" data-pjax><i
+                                class="ti-trash"></i> 取消申请
+                        </button>
+                    </div>
+                    <table id="approvalTable" class="table table-bordered table-striped table-hover"
+                           style="table-layout:fixed">
+                        <thead>
+                        <tr>
+                            <th>申请编号</th>
+                            <th>资产名称</th>
+                            <th>资产型号</th>
+                            <th>出厂编号</th>
+                            <th>借用日期</th>
+                            <th>归还日期</th>
+                            <th>单位</th>
+                            <th>申请人</th>
+                            <th>资产状态</th>
+                            <th>申请状态</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    var approveTable;
+
+    function initApprovalTable() {
+        approveTable = $('#approvalTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "stateSave": true,
+            "destroy": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/apply/approve/data",
+                "type": "post",
+                "data": function (d) {
+                    d.applyId = $("#applyId").val().trim();
+                    d.assetInfo = $("#assetInfo").val().trim();
+                    d.applyState = $("#applyState").val().trim();
+                    d.startDate = $("#startDate").val().trim();
+                    d.endDate = $("#endDate").val().trim();
+                    d.chargeMan = $("#chargePerson").val().trim();
+                }
+            },
+            "order": [[9, "asc"]],
+            "columns": [
+                {"data": "applyid"},
+                {"data": "assetname"},
+                {"data": "deviceversion"},
+                {"data": "serialnumber"},
+                {"data": "lenddate"},
+                {"data": "returndate"},
+                {"data": "lenderunit"},
+                {"data": "proposer"},
+                {"data": "assetstate"},
+                {"data": "applystate"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<a href="${base}/asset/apply/approve/detail/' + data + '" data-pjax>' + data + '</a>';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = subStrCustomNew(data, 5);
+                        }
+                        return str;
+                    },
+                    "targets": [0, 1, 2, 3]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = data;
+                        }
+                        return str;
+                    },
+                    "targets": [6, 7]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = data.split(" ")[0];
+                        }
+                        return str;
+                    },
+                    "targets": [4, 5]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "未逾期";
+                        } else {
+                            return "已逾期";
+                        }
+                    },
+                    "targets": [8]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "未领取";
+                        } else if (data == 1) {
+                            return "已领取";
+                        } else if (data == 2) {
+                            return "已延期";
+                        } else if (data == 3) {
+                            return "已取消";
+                        } else if (data == 4) {
+                            return "已归还";
+                        }
+                    },
+                    "targets": [9]
+                }
+            ]
+        });
+
+        approveTable.on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                approveTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#searchBtn").on('click', function () {
+            approveTable.ajax.reload();
+        });
+    }
+
+    $(function () {
+        setDate("startDate", "endDate");
+        loadUnitAndUser();
+        var table = $('#approvalTable').dataTable().api();
+        // 记录分页
+        if (typeof ($.cookie('approval')) == "undefined") {
+            table.state.clear();
+        } else {
+            // 清理cookie
+            $.cookie("approval", "", {expires: -1, path: '/'});
+        }
+        initApprovalTable();
+    });
+
+    // 清空操作
+    function doClear() {
+        $("#assetInfo").val("");
+        $("#applyState").val("");
+        $("#applyId").val("");
+        $("#startDate").val("");
+        $("#endDate").val("");
+        $("#chargePerson").val("");
+        $("#chargePerson_text").val("");
+        approveTable.ajax.reload();
+        $("#applyState > option:first").attr("selected", true);
+    }
+
+    // 确认领取
+    function acquireConfirm() {
+        var chks = approveTable.rows('.selected').data();
+        if (chks.length > 0) {
+            var applyId = "";
+            var states = "";
+            var lendDate = "";
+            var returnDate = "";
+            $.each(chks, function (i, n) {
+                applyId = n.applyid;
+                states = n.applystate;
+                lendDate = n.lenddate.split(" ")[0];
+                returnDate = n.returndate.split(" ")[0];
+            });
+            var btn = $(this);
+            if (states == "0") {
+                btn.button("loading");
+                // 不到借用日期的无法确认领取,过了归还时间的也无法领取
+                var lend = new Date(lendDate);
+                var retu = new Date(returnDate);
+                var d = new Date();
+                d.setHours(0);
+                d.setMinutes(0);
+                d.setSeconds(0);
+                lend.setHours(0);
+                retu.setHours(0);
+                // alert(Date.parse(lend) - Date.parse(d));
+                if (Date.parse(lend) > Date.parse(d)) {
+                    Toast.warning("当前选择的申请还没到领取时间！");
+                } else if (Date.parse(retu) < Date.parse(d)) {
+                    Toast.warning("当前时间已经超过了归还时间,无法进行领取！");
+                } else {
+                    window.location.href = "${base}/asset/apply/approve/acquire/" + applyId;
+                }
+            } else {
+                Toast.warning("当前选择的记录无法确认领取！");
+            }
+            btn.button("reset");
+        } else {
+            Toast.warning("请先选择要确认领取的申请记录！");
+        }
+    }
+
+    // 确认归还
+    function returnConfirm() {
+        var chks = approveTable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = "";
+            var states = "";
+            $.each(chks, function (i, n) {
+                ids = n.applyid;
+                states = n.applystate;
+            });
+            var btn = $(this);
+            if (states == "1" || states == "2") {
+                btn.button("loading");
+                window.location.href = "${base}/asset/apply/approve/return/" + ids;
+            } else {
+                Toast.warning("当前选择的记录无法确认归还！");
+            }
+            btn.button("reset");
+        } else {
+            Toast.warning("请先选择要确认归还的申请记录！");
+        }
+    }
+
+    // 取消申请
+    function cancelApply() {
+        var chks = approveTable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = "";
+            var states = "";
+            $.each(chks, function (i, n) {
+                ids = n.applyid;
+                states = n.applystate;
+            });
+            var btn = $(this);
+            if (states != "0") {
+                Toast.warning("当前选择的记录无法取消申请！");
+            } else {
+                btn.button("loading");
+                window.location.href = "${base}/asset/apply/approve/applyCancel/" + ids;
+            }
+            btn.button("reset");
+        } else {
+            Toast.warning("请先选择要取消的申请记录！");
+        }
+    }
+
+</script>
+
+<%}%>

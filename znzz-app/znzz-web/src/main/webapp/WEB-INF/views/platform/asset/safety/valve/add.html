@@ -1,0 +1,333 @@
+<% layout("/layouts/platform.html"){ %>
+<div class="modal-content">
+      <div class="modal-header">
+             <h4 class="modal-title">添加安全阀设备年检记录</h4>
+       </div>
+		
+		<!--新增框-->
+    <form id="addValveForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/asset/safety/valve/addDo" method="post">
+        <div class="modal-body">
+            <div class="text-right">
+                 <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="checkNo" class="control-label"><span class="font-red">* </span>检测号 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="checkNo" name="checkNo" maxlength="30" class="form-control"
+                                           placeholder="请输入检测号" />
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="safetyValveCode" class="control-label"><span class="font-red">* </span>统一编号 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="safetyValveCode" name="safetyValveCode" maxlength="30" class="form-control"
+                                           onmousedown="checkValveCode()" placeholder="请输入统一编号" />
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="chargePerson" class="control-label"><span class="font-red">* </span>负责人 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="chargePerson" name="chargePerson" maxlength="30" class="form-control"
+                                           placeholder="请输入负责人" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="telephone" class="control-label">联系电话 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="telephone" name="telephone" maxlength="30" class="form-control"
+                                           placeholder="请输入联系电话" />
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="floorNo" class="control-label"><span class="font-red">* </span>楼号 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <select class="form-control" id="floorNo" name="floorNo" placeholder="请输入楼号"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="roomNo" class="control-label"><span class="font-red">* </span>房间号 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <select class="form-control" id="roomNo" name="roomNo" placeholder="请输入房间号"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="medium" class="control-label">介质 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <input type="text" class="form-control" id="medium" name="medium" placeholder="请输入介质" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="attribute" class="control-label">属性 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="attribute" name="attribute" maxlength="30" class="form-control"
+                                           placeholder="请输入属性" />
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="caliber" class="control-label">口径 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="caliber" name="caliber" maxlength="30" class="form-control"
+                                           placeholder="请输入口径" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="setPressure" class="control-label">整定压力 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <input type="text" class="form-control" id="setPressure" name="setPressure" placeholder="请输入整定压力"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="annualInspectionDate" class="control-label"
+                                           style="vertical-align: top;"><span class="font-red">* </span>年检日期 : </label>
+                                </div>
+                                <div class="col-sm-8" style="padding-right: 42px; width: 380px; z-index: 9999">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" name="annualInspectionDate" id="annualInspectionDate" class="form-control pull-right"
+                                               placeholder="请输入年检日期" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="annualInspectionDate" class="control-label"
+                                           style="vertical-align: top;"><span class="font-red">* </span>下次年检日期 : </label>
+                                </div>
+                                <div class="col-sm-8" style="padding-right: 42px; width: 380px; z-index: 9999">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" name="nextAnnualInspectionDate" id="nextAnnualInspectionDate" class="form-control pull-right"
+                                               placeholder="请输入下次年检日期" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="daysNotice" class="control-label"><span class="font-red">* </span>提前提醒天数 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="daysNotice" name="daysNotice" maxlength="30" class="form-control"
+                                           placeholder="请输入提前提醒天数" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer" style="text-align: center;">
+            <a id="goback" href="${base}/asset/safety/valve" data-pjax>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width:80px">关闭</button>
+            </a>
+            <button class="btn btn-primary" data-loading-text="正在提交..." style="width:80px">确定</button>
+        </div>
+    </form>
+</div>
+
+<script language="JavaScript">
+
+    var floors = ${floors};
+    var rooms = ${rooms};
+    $(document).ready(function () {
+        myForm.init();
+
+        $('#addValveForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#checkNo").val()==""){
+            		Toast.error("检测号不能为空");
+            		return false;
+            	}
+            	if($("#safetyValveCode").val()==""){
+            		Toast.error("统一编号不能为空");
+            		return false;
+            	}
+                if($("#chargePerson").val()==""){
+                    Toast.error("负责人不能为空");
+                    return false;
+                }
+                if($("#floorNo").val()==""){
+                    Toast.error("楼号不能为空");
+                    return false;
+                }
+                if($("#roomNo").val()==""){
+                    Toast.error("房间号不能为空");
+                    return false;
+                }
+            	if($("#annualInspectionDate").val()==""){
+            		Toast.error("年检日期不能为空");
+            		return false;
+            	}
+            	if($("#nextAnnualInspectionDate").val()==""){
+            		Toast.error("下次年检日期不能为空");
+            		return false;
+            	}
+            	if($("#daysNotice").val()==""){
+            		Toast.error("提前提醒天数不能为空");
+            		return false;
+            	}
+                if($("#annualInspectionDate").val() > $("#nextAnnualInspectionDate").val()){
+                    Toast.error("下次年检日期不能早于年检日期，请正确填写后提交!");
+                    return false;
+                }
+            	if(!checkValveCode()){
+            		return false;
+            	}
+                form.find("button:submit").button("loading");
+            },
+
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+
+    /**
+     * 为加载楼号房间号页面加载完毕后刷新一遍当前页面
+     */
+    reurl();
+    function reurl(){
+        url = location.href; //把当前页面的地址赋给变量 url
+        var times = url.split("?"); //分切变量 url 分隔符号为 "?"
+        if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
+            url += "?1"; //把变量 url 的值加入 ?1
+            self.location.replace(url); //刷新页面
+        }
+    }
+    $(function () {
+        //楼号.房间号
+        selectFloorNo();
+        selectroomNo();
+        //加载使用单位和责任人
+        loadUnitAndUser(null, "chargePerson", null);
+        //日期
+        setDate("annualInspectionDate","nextAnnualInspectionDate");
+
+    });
+</script>
+
+<script>
+function checkValveCode(){
+	var safetyValveCode = $("#safetyValveCode").val();
+	var flag = $.ajax({
+    	type: "post",
+        url: "${base}/asset/safety/valve/checkValveCode/"+safetyValveCode,
+        dataType: "json",
+        data:safetyValveCode,
+        async:false,
+        success:function(data){
+    	    if (data.code ==0){
+    	        return true;
+            }
+        }
+    })
+	var temp = flag.responseJSON;
+	console.log(temp);
+    if(temp.code != 0){
+    	Toast.error("统一编号已存在");
+    	return false;
+    }else {
+    	return true;
+    }
+}
+
+function selectFloorNo() {
+    $("#floorNo").append("<option value='' selected>-请选择楼号-</option>");
+    for(var i = 0; i < floors.length; i++){
+        $("#floorNo").append('<option value='+floors[i].id+'>' + floors[i].name+'</option>');
+    }
+
+}
+function selectroomNo() {
+    $("#roomNo").append("<option value='' selected>-请选择房间号-</option>");
+    for(var i = 0; i < rooms.length; i++){
+        $("#roomNo").append('<option value='+rooms[i].id+'>' + rooms[i].name+'</option>');
+    }
+
+}
+
+
+</script>
+<%}%>
+
+

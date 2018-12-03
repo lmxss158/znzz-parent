@@ -1,0 +1,532 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-header">
+		<h1>导入管理</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> 系统</a></li>
+			<li><a href="#">系统管理</a></li>
+			<li class="active">导入管理</li>
+		</ol>
+</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<a id="add" class="btn btn-primary btn-flat" onclick="addTable();" data-pjax><i class="fa fa-fw fa-plus"></i> 新建报表</a>
+						<!--   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label for="code" >报表编码：</label>
+                        <input type="text"  name="code"  id="code" placeholder="请输入报表编码">
+                        <label for="file_name" >文件名称：</label>
+                        <input type="text"  name="file_name" id="file_name" placeholder="请输入文件名称"> -->
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table id="import_table" class="table table-bordered table-striped mg-t datatable" >
+							<thead>
+								<tr>
+							<th>序号</th>
+                            <th>报表编号</th>
+                            <th>导入列表类型</th>
+                            <th>开始读取sheet号</th>
+                            <th>读取sheet数量</th>
+                            <th>开始行数</th>
+                            <th>标题行数</th>
+                            <th>表头行数</th>
+                            <th>主键列号</th>
+                            <th>是否保存上传文件</th>		<!-- 10 -->
+                            
+                            <th>保存路径</th>
+                            <th>检验组列名</th>     
+                            <th>是否需要验证</th>
+                            <th>校验处理接口</th>
+                            <th>最后的无效行数</th>
+                            <th>手动控制读取行数</th>
+                            <th>导入列顺序</th>
+                            <th>是否校验列顺序</th>
+                            <th>数据处理类名</th>
+                            <th>字典处理类名</th>        <!-- 20 -->
+
+                            <th>key标记</th>
+                            <th>是否全局扫描</th>
+                            <th>备注</th>
+                            <th>操作</th>			<!-- 24 -->
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+				<!------------------------------------- 华丽的分割线 ----------------------->
+				<div class="box">
+					<div class="box-header">
+						<a id="add_column" class="btn btn-primary btn-flat" onclick="addColumn();" data-pjax><i class="fa fa-fw fa-plus"></i> 新建column</a>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table id="import_column" class="table table-bordered table-striped mg-t datatable">
+							<thead>
+								<tr>
+							<th>序号</th>
+                            <th>key</th>
+                            <th>列名</th>
+                            <th>列类型</th>
+                            <th>保存地址</th>
+                            <th>图片类型</th>
+                            <th>后缀</th>
+                            <th>是否导入校验字段</th>
+                            <th>枚举导入静态方法</th>		<!-- 9 -->
+                            
+                            <th>父列表ID</th>
+                            <th>列组名</th>     
+                            <th>导入日期格式</th>
+                            <th>数据库日期格式</th>
+                            <th>内容/值替换</th>
+                            <th>字典名称</th>
+                            <th>是否超链接</th>        <!-- 16 -->
+
+                            <th>导入列号</th>
+                            <th>备注</th>
+                            <th>操作</th>			<!-- 19 -->
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+		<!------------------------------------- 华丽的分割线 ----------------------->
+			</div>
+		</div>
+	</section>
+<a class="exit-offscreen"></a>
+
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+</div>
+
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复； <br/>
+                        <br/>确定要删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(function () {
+   initDatatable();
+   datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+   initDatatable2();
+   datatable2.on('draw.dt',function() {
+   	datatable2.column(0, {
+           search: 'applied',
+           order: 'applied'
+       }).nodes().each(function(cell, i) {
+           //i 从0开始，所以这里先加1
+
+           i = i+1;
+           //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+           var page = datatable2.page.info();
+           //当前第几页，从0开始
+
+           var pageno = page.page;
+           //每页数据
+
+           var length = page.length;
+           //行号等于 页数*每页数据长度+行号
+
+           var columnIndex = (i+pageno*length);
+           cell.innerHTML = columnIndex;
+       });
+   }); 
+  
+});
+
+/*********************************我是华丽的分割线*******************************************/
+var datatable;
+function initDatatable() {
+    datatable = $('#import_table').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "autoWidth": true,		// 表格是否自动分配
+        "select": true,
+        "scrollX": true,
+        "scrollY": "230px",
+        "ordering": false, 
+        "aLengthMenu": [5],// 每页显示多少条数据
+        "limit": 5,
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        "ajax": {
+            "url": "${base}/platform/sys/import/data",
+            "type": "post",
+            "data": function (d) {
+            	
+            }
+        },
+        //"order": [[1, "desc"]],
+        "columns": [
+                    {"data": null, "width": "30px"}, 														
+                    {"data": "code", "bSortable": true, "width": "100px"}, 		//报表编码					
+                    {"data": "type", "bSortable": true, "width": "120px"},		//导入列表类型			    
+                    {"data": "startsheetindex", "bSortable": true, "width": "120px"}, 		//开始读取sheet号				    
+                    {"data": "sheetnum", "bSortable": true, "width": "120px"},		//读取sheet数量					   
+                    {"data": "startrows", "bSortable": true, "width": "80px"},			//开始行数       
+                    {"data": "titlerows", "bSortable": true, "width": "110px"},			//标题行数	    
+                    {"data": "headrows", "bSortable": true, "width": "100px"},				//表头行数 
+                    {"data": "keyindex", "bSortable": true, "width": "120px"}, 		//主键列号			            
+                    {"data": "needsave", "bSortable": true, "width": "120px"},		//是否需要保存上传文件	    
+                    {"data": "saveurl", "bSortable": true, "width": "90px"},			//保存路径	    
+                    {"data": "verifygroup", "bSortable": true, "width": "120px"},	//检验组列名	    
+
+                    {"data": "needverify", "bSortable": true, "width": "90px"}, 	//是否需要验证
+                    {"data": "verifyhandler", "bSortable": true, "width": "90px"},	//校验处理接口 
+                    {"data": "lastofinvalirow", "bSortable": true, "width": "120px"},	    //最后无效行数      
+                    {"data": "readrows", "bSortable": true, "width": "120px"},	   //手动控制读取行数    
+
+                    {"data": "importfields", "bSortable": true, "width": "90px"},	   //导入列顺序
+                    {"data": "needcheckorder", "bSortable": true, "width": "120px"},	   //是否校验列顺序         
+                    {"data": "data_handler", "bSortable": true, "width": "120px"},		//数据处理类名	       
+                    {"data": "dic_handler", "bSortable": true, "width": "90px"}, 	//字典处理类名       
+                    {"data": "keymark", "bSortable": true, "width": "90px"}, 	   //key标记
+                    {"data": "readsinglecell", "bSortable": true, "width": "120px"},	         //是否全局扫描               
+                    {"data": "remark", "bSortable": true, "width": "120px"},	//备注
+                    {"width": "100px", "target": 23, "bSortable": false}          //操作         
+             
+        ],
+        "columnDefs": [	
+                 {
+                     "searchable": false,
+                     "orderable": false,
+                     "targets": 0
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null || "" === data) {
+                             return "--"
+                         } else {
+                             return data
+                         }
+                     },
+                     "targets": [1,2,3,4,5,6,7,8,10,11,13,14,15,16,18,19,20,22]
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null) {
+                             return "--"
+                         } else if (data == "0") {
+                             return "<span >否</span>";
+                         } else if (data == "1") {
+                             return "<span >是</span>";
+                         } else {
+                             return "--";
+                         }
+                     },
+                     "targets": [9,12,17,21]
+                 },
+            	{
+                "render": function (data, type, row) {
+                	 return  '<a class="btn btn-xs btn-primary"  onclick="del(\'' + row.id + '\')" ><i class="glyphicon glyphicon-sunglasses"></i> 删除</a>' +
+                     '&nbsp;&nbsp;<a class="btn btn-xs btn-success" onclick="showEdit(\'' + row.id + '\')" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';                     
+                
+                },
+                "targets": 23
+            }
+        ]
+    });
+    datatable.on('click', 'tr', function () {
+    	 if ($(this).hasClass('selected') ) {
+    	       $(this).removeClass('selected');
+    	       tableOfColumn(null);
+    	    } else {
+    	    	datatable.$('tr.selected').removeClass('selected');
+    	       $(this).addClass('selected');
+    	       var data = datatable.row(this).data();
+    	       tableOfColumn(data.id);
+    	    }
+        //$(this).toggleClass('selected');
+        
+    });
+ /*    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    });  */
+}
+	
+    function addTable(){
+    	$("#homeDetail").modal('show');
+        $("#homeDetail").load('${base}/platform/sys/import/add');
+    }
+    
+    function del(id){
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/import/delete/"+id,{},function(data){
+                //重置按钮状态，关闭提示框
+                dialog.modal("hide");
+                if(data.code==0){
+                    Toast.success(data.msg);
+                    datatable.ajax.reload(null,false);
+                    //从表格中移除此行
+                }else{
+                    Toast.error("删除失败");
+                }
+                btn.button("reset");
+            },"json");
+        });
+    }
+    function showEdit(id) {
+        //asset.auth.info.edit
+    <%
+        if (@
+        shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.import.edit") != -1
+    )
+        {%>
+            $("#homeDetail").load('${base}/platform/sys/import/edit/' + id);
+            $("#homeDetail").modal('show');
+        <%
+        }
+    else
+        {%>
+            Toast.warning(NOPERMISSION);
+            return;
+        <%
+        }
+    %>
+    }
+    
+   /***************************我是华丽的分割线**********************************************/
+var column_id=null; 
+function tableOfColumn(id){
+	   column_id = id ;
+	   datatable2.ajax.reload();
+	   
+}   
+   
+var datatable2;
+function initDatatable2() {
+    datatable2 = $('#import_column').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "autoWidth": true,		// 表格是否自动分配
+        "select": true,
+        "scrollX": true,
+        "scrollY": "230px",
+        "ordering": false,
+        "destroy": true,
+        "aLengthMenu": [5],// 每页显示多少条数据
+        "scrollCollapse": false,
+        "limit": 5,
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        "ajax": {
+            "url": "${base}/platform/sys/import/data2",
+            "type": "post",
+            "data": function (d) {
+            	d.id = column_id ;
+            }
+        },
+        //"order": [[1, "desc"]],
+        "columns": [
+                    {"data": null, "width": "30px"}, 														
+                    {"data": "map_key", "bSortable": true, "width": "100px"}, 		//key				
+                    {"data": "col_name", "bSortable": true, "width": "120px"},	//列名			    
+                    {"data": "type", "bSortable": true, "width": "90px"}, 		//列类型				    
+                    {"data": "saveurl", "bSortable": true, "width": "120px"},		//保存地址					   
+                    {"data": "savetype", "bSortable": true, "width": "80px"},			//图片类型      
+                    {"data": "suffix", "bSortable": true, "width": "110px"},			//后缀	    
+                    {"data": "importfield", "bSortable": true, "width": "120px"},			//是否导入校验字段 
+                    {"data": "enumimportmethod", "bSortable": true, "width": "120px"}, 		//枚举导入静态方法			            
+                    {"data": "parent_id", "bSortable": true, "width": "70px"},		//父列表ID	    
+                    {"data": "group_name", "bSortable": true, "width": "90px"},			//列组名	    
+                    {"data": "date_format", "bSortable": true, "width": "120px"},	//导入日期格式	    
+
+                    {"data": "database_date_format", "bSortable": true, "width": "120px"}, 	//数据库日期格式
+                    {"data": "export_replace", "bSortable": true, "width": "90px"},	//内容/值替换 
+                    {"data": "dict", "bSortable": true, "width": "90px"},	    //字典名称   
+                    {"data": "hyper_link", "bSortable": true, "width": "120px"},	   //是否超链接    
+
+                    {"data": "fixed_index", "bSortable": true, "width": "90px"},	   //导入列号
+                    {"data": "remark", "bSortable": true, "width": "120px"},	//备注
+                    {"width": "100px", "target": 25, "bSortable": false}          //操作         
+             
+        ],
+        "columnDefs": [	
+                 {
+                     "searchable": false,
+                     "orderable": false,
+                     "targets": 0
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null || "" === data) {
+                             return "--"
+                         } else {
+                             return data
+                         }
+                         
+                     },
+                     "targets": [1,2,4,6,8,9,10,11,12,13,14,16,17]
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null) {
+                             return "--"
+                         } else if (data == 1) {
+                             return "<span >字符串</span>"
+                         } else if (data == 2) {
+                             return "<span >图片</span>"
+                         } else if (data == 3) {
+                             return "<span >函数</span>"
+                         } else if (data == 10) {
+                             return "<span >浮点数</span>"
+                         } else {
+                             return "--"
+                         }
+                     },
+                     "targets": 3
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null) {
+                             return "--"
+                         } else if (data == 1) {
+                             return "<span >文件</span>"
+                         } else if (data == 2) {
+                             return "<span >数据库</span>"
+                         } else {
+                             return "--"
+                         }
+                     },
+                     "targets": 5
+                 },
+                 {
+                     "render": function (data, type, row) {
+                         if (data == null) {
+                             return "--"
+                         } else if (data == "0") {
+                             return "<span >否</span>";
+                         } else if (data == "1") {
+                             return "<span >是</span>";
+                         } else {
+                             return "--";
+                         }
+                     },
+                     "targets": [7,15]
+                 },
+            	{
+                "render": function (data, type, row) {
+                	 return  '<a class="btn btn-xs btn-primary"  onclick="del2(\'' + row.id + '\')" ><i class="glyphicon glyphicon-sunglasses"></i> 删除</a>' +
+                     '&nbsp;&nbsp;<a class="btn btn-xs btn-success" onclick="showEdit2(\'' + row.id + '\')" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';                     
+                
+                },
+                "targets": 18
+            }
+        ]
+    });
+    datatable2.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+}
+   
+   function addColumn(){
+	  // datatable.$('tr.selected').removeClass('selected');
+	  var data = datatable.row(datatable.$('tr.selected')).data();
+	  if(data == null){
+		  Toast.warning("请先选中报表行");
+		  return ;
+	  }
+	   $("#homeDetail").modal('show');
+       $("#homeDetail").load('${base}/platform/sys/import/addColumn/'+data.id);
+   }
+   function del2(id){
+       var dialog = $("#dialogDelete");
+       dialog.modal("show");
+       dialog.find("#ok").unbind("click");
+       dialog.find("#ok").bind("click", function(event){
+           var btn = $(this);
+           btn.button("loading");
+           $.post("${base}/platform/sys/import/delete2/"+id,{},function(data){
+               //重置按钮状态，关闭提示框
+               dialog.modal("hide");
+               if(data.code==0){
+                   Toast.success(data.msg);
+                   datatable2.ajax.reload(null,false);
+                   //从表格中移除此行
+               }else{
+                   Toast.error("删除失败");
+               }
+               btn.button("reset");
+           },"json");
+       });
+   }
+   function showEdit2(id) {
+       //asset.auth.info.edit
+   <%
+       if (@
+       shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.import.edit") != -1
+   )
+       {%>
+           $("#homeDetail").load('${base}/platform/sys/import/edit2/' + id);
+           $("#homeDetail").modal('show');
+       <%
+       }
+   else
+       {%>
+           Toast.warning(NOPERMISSION);
+           return;
+       <%
+       }
+   %>
+   }
+   
+</script>
+<%}%>

@@ -1,0 +1,211 @@
+<% layout("/layouts/platform.html"){ %>
+<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title" id="myModalLabel">添加收集器</h4>
+		</div>
+		<form id="addGateway" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/instrument/monitor/gateway/addDo" method="post">
+			<div class="modal-body">
+				<div class="row">
+                        <div class="form-group">
+                            <label for="gatewayCode" class="col-sm-2 control-label">网关编号：</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="gatewayCode" id="gatewayCode" onblur="checkGatewayCode2()" placeholder="请输入网关编号">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gatewayName" class="col-sm-2 control-label">网关名称：</label>
+                            <div class="col-sm-8">
+                            	<input type="text" class="form-control" name="gatewayName" id="gatewayName"  placeholder="请输入网关名称">
+                            </div>
+                    	</div>
+                        <div class="form-group">
+                            <label for="ip" class="col-sm-2 control-label">IP：</label>
+                            <div class="col-sm-8">
+                            	<input type="text" class="form-control" name="ip" id="ip" onmousedown="checkIP();"  placeholder="请输入IP">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gatewayLocation" class="col-sm-2 control-label">网关位置：</label>
+                            <div class="col-sm-8">
+                            	<input type="text" class="form-control" name="gatewayLocation" id="gatewayLocation"  placeholder="请输入网关位置">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">录入时间：</label>
+                            <div class="col-sm-8">
+                            	<div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                        <input type="text" class="form-control pull-right" name="createTime" id="timeRange">
+                              		</div>
+                            </div>
+                        </div>   
+                    <div class="modal-footer" style="text-align: center;">
+			             	<a id="goback" href="${base}/instrument/monitor/gateway" data-pjax style="text-decoration:none;">
+			 					<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 			</a>
+			                <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+			        </div>
+		       </div>
+	        </div>
+		</form>
+</div>
+
+<script language="JavaScript">
+    $(document).ready(function () {    	
+        myForm.init();
+        $("#timeRange").datetimepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+            format: "yyyy/mm/dd hh:ii:ss"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+        $('#addGateway').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	
+               	var gatewayCodelength  = getStrLeng($("#gatewayCode").val())
+            	var gatewayNamelength  = getStrLeng($("#gatewayName").val())
+
+            	if(gatewayCodelength>60){
+            		Toast.error("网关编号过长");
+            		return false;
+            	}
+            	if(gatewayNamelength>60){
+            		Toast.error("网关名称过长");
+            		return false;
+            	}
+            	
+            	if($("#gatewayCode").val()==""){
+            		Toast.error("网关编号不能为空");
+            		return false;
+            	}
+            	if($("#gatewayName").val()==""){
+            		Toast.error("网关名称不能为空");
+            		return false;
+            	}
+            	if($("#ip").val()==""){
+            		Toast.error("ip地址不能为空");
+            		return false;
+            	}
+            	if($("#gatewayLocation").val()==""){
+            		Toast.error("位置不能为空");
+            		return false;
+            	}
+            	if($("#timeRange").val()==""){
+            		Toast.error("录入时间不能为空");
+            		return false;
+            	}
+            	if(checkGatewayCode2()){
+            		return false;
+            	}
+            	if(checkIP()){
+            		return false;
+            	}
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+            	console.info(data)
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<script>
+
+//UTF8字符集实际长度计算
+function getStrLeng(str){
+    var realLength = 0;
+    var len = str.length;
+    var charCode = -1;
+    for(var i = 0; i < len; i++){
+        charCode = str.charCodeAt(i);
+        if (charCode >= 0 && charCode <= 128) { 
+            realLength += 1;
+        }else{ 
+            // 如果是中文则长度加3
+            realLength += 3;
+        }
+    } 
+    return realLength;
+}
+//网关编号的校验(唯一)
+function checkGatewayCode2(){
+	var gatewayCode = $("#gatewayCode").val();
+	
+	var flag = $.ajax({
+		url:"${base}/instrument/monitor/gateway/checkGatewayCode/" + gatewayCode,
+		data:gatewayCode,
+		dataType:"json",
+		type:"post",
+		async:false,
+		success:function(data){
+			if (data.code != 0) {
+	        	// Toast.error("网关编号:"+gatewayCode+"已经存在了");
+	        	return true
+	        }
+		}
+	})
+	
+	var temp = flag.responseJSON
+	if(temp.code == 1){
+		Toast.error("网关编号:"+gatewayCode+"已经存在了");
+		return true;
+	}else {
+		return false;
+	}
+}
+
+// 校验ip
+function checkIP(){
+	var ipValue = $("#ip").val();
+	if(ipValue == ''){
+		Toast.error("IP地址不能为空")
+		return true;
+	}
+	var reg = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
+	var result = ipValue.match(reg);
+	if(result == null) {
+		Toast.error("IP格式输入错误,请重新输入")
+		return true;
+	}
+	//ipVlaue="12312321321"
+	// 校验ip是否冲出
+	var flag = $.ajax({
+		url:"${base}/instrument/monitor/gateway/checkIP/" + ipValue,
+		data:ipValue,
+		dataType:"JSON",
+		async:false,
+		type:"POST",
+		success:function(data){
+		}
+	});
+	var result2 = flag.responseJSON;
+	console.info(flag)
+	if(result2.code == 1){
+		Toast.error("IP重复,请重新输入")
+		return true;
+	}else {
+		return false;
+	} 
+}
+</script>
+<%}%>

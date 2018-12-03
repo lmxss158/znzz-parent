@@ -1,0 +1,207 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+			<!-- <h4 class="modal-title" id="myModalLabel">编辑云网网关</h4> -->
+			<!-- <a href="${base}/instrument/monitor/projectinfo" class="btn btn-default" style="width: 80px;">返回</a> -->
+			<h4 class="modal-title">修改网关</h4>
+		</div>
+		
+		<!--新增框-->
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/yun/configure/yungateway/editDo" method="post">
+    	<input id="id" name="id" type="hidden" value="${obj.id!}">
+        <!-- <div class="modal-dialog" style="margin: 30px auto auto; ">
+            <div class="modal-content"> -->
+                <div class="modal-body">
+                 <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="add-device-num" class="col-sm-2 control-label">统一编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="${obj.device_code!}" id="deviceCode" name="device_code" onchange="checkCode();" placeholder="请输入统一编号">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">设备ID</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="${obj.device_id!}" id="deviceId" name="device_id"  placeholder="请输入设备id">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">网关ID</label>
+                            <div class="col-sm-8">
+                                 <input type="text" class="form-control" value="${obj.gateway_id!}" id="gatewayId" name="gateway_id"  placeholder="请输入网关id"> 
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">网关名称</label>
+                            <div class="col-sm-8">
+                                 <input type="text" class="form-control" value="${obj.gateway_name!}" id="gatewayName" name="gateway_name"  placeholder="请输入网关名称"> 
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">ACCESSKEY</label>
+                            <div class="col-sm-8">
+                                 <input type="text" class="form-control" value="${obj.accesskey!}" id="accesskey" name="accesskey"  placeholder="请输入accesskey"> 
+                            </div>
+                         </div>
+                    </div>
+                    </div>
+					</div>
+					</div>              
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/yun/configure/yungateway" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+                </div>
+                
+    </form>
+    
+	</div>
+	
+<script language="JavaScript">
+$(function(){
+	getassetCodeInfoList();
+});
+    $(document).ready(function () {    	
+        myForm.init();
+       /*  $("#add-gateway-time").datetimepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+			
+            format: "yyyy/mm/dd hh:mm:ss"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        }); */
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#deviceCode").val()==""){
+            		Toast.error("统一编号不能为空");
+            		return false;
+            	}
+            	if($("#deviceId").val()==""){
+            		Toast.error("设备ID不能为空");
+            		return false;
+            	}
+            	if($("#gatewayName").val()==""){
+            		Toast.error("网关名称不能为空");
+            		return false;
+            	}
+            	if($("#gatewayId").val()==""){
+            		Toast.error("网关ID不能为空");
+            		return false;
+            	}
+            	if($("#accesskey").val()==""){
+            		Toast.error("ACCESSKEY不能为空");
+            		return false;
+            	}
+            	if(!checkCode()){
+            		return false;
+            	}
+                
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+    
+    
+    function checkCode(){
+    	var code = $.trim($("#deviceCode").val());		//trim去除输入框两端空格
+    	$("#deviceCode").val(code);
+    	
+    	/* if(code == null || code == ''){
+    		Toast.error("统一编号不能为空");
+    		return false;
+    	} */
+    	var flag = $.ajax({
+        	type: "post",
+            url: "${base}/yun/configure/yungateway/cherkID",
+            dataType: "json",
+            data:{"id":$("#id").val(),"code":code},
+            async:false,
+            success:function(data){
+            }
+        }); 
+    	var temp = flag.responseJSON;
+    	if(temp==2){
+        	//Toast.error("设备中不存在该统一编号");
+        	return false;
+        }else if(temp==1){
+        	//Toast.error("云网中已存在该统一编号");
+        	return false;
+        }else{
+        	return true;
+        }
+    }
+    
+  //获取统一编号下拉
+    function getassetCodeInfoList(id){
+    	var arrs = new Array();
+    	if(!id){
+    		id="#deviceCode";
+    	}
+    	if(arrs.length==0){
+    		var arr = new Array() ;
+    		$.ajax({
+    			type:"post",
+    			url:"${base}/yun/configure/yungateway/assetCodeListSelect2",
+    			data:{"id":$("#id").val()},
+    			async:false,
+    			success:function(data){
+    				var re = data.data ;
+    				console.info(re)
+    				for(var i=0;i<re.length;i++){
+    					var infos={} ;
+    					var info = re[i] ;
+    					infos["name"] = info.deviceCode;
+    					arr.push(infos) ;
+    					
+    				}
+    				arrs= arr ;
+    			},
+    			error:function(e){
+    				
+    			}
+    		});
+    	}
+    	$(id).selectPage({
+     	    showField : 'name',
+     	    keyField : 'name',
+     	    pageSize:5,
+     	    data : arrs
+     	});
+    }
+</script>
+<%}%>
+
+

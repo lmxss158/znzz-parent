@@ -1,0 +1,241 @@
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+             	  ${obj.str}
+                </h4>
+            </div>
+            
+            <!-- 验收单 -->
+            <%if(obj.type==1){%>
+              <div class="modal-body">
+                <div class="box-body">
+                    <div class="form-horizontal" id="defaultForm" >
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="facility-form">
+                                <div class="facility-from-col">
+                                    <div class="col-md-12">
+                                   
+                                    
+                                    <div class="form-group">
+                                		<label for="remark" class="col-sm-2 control-label">机电运转情况：</label>
+                                    	<div class="col-sm-8">
+                                    		<textarea class="form-control" id="remark" ></textarea>
+                                   		 </div>
+                               		 </div>
+                               		 
+                               		  <div class="form-group">
+                                        	
+                                        	  <label class="col-sm-2 control-label">验收日期：</label>
+                                   				 <div class="col-sm-3">
+                                       				 <div class="input-group date">
+                                         			   <div class="input-group-addon">
+                                             			   <i class="fa fa-calendar"></i>
+                                           			 </div>
+                                           		 <input type="text" class="form-control pull-right" name="acceptDate" id="acceptDate"/>
+                                        		</div>
+                                  		  </div>
+                                        	
+                                    </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        <%}else{%>   
+            
+        <!-- 领取单 -->
+            <div class="modal-body">
+                <div class="box-body">
+                    <div class="form-horizontal" id="defaultForm" >
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="facility-form">
+                                <div class="facility-from-col">
+                                    <div class="col-md-12">
+                                    <div class="form-group">
+                                   		 <label for="acceptMan" class="col-sm-2 control-label">取机人员：</label>
+                                   			<div class="col-sm-3">
+                                    			<input type="text" class="form-control" id="acceptMan" placeholder="请选择">
+                                        	</div>
+                                        	
+                                        	  <label class="col-sm-2 control-label">取机日期：</label>
+                                   				 <div class="col-sm-3">
+                                       				 <div class="input-group date">
+                                         			   <div class="input-group-addon">
+                                             			   <i class="fa fa-calendar"></i>
+                                           			 </div>
+                                           		 <input type="text" class="form-control pull-right" name="acceptDate" id="acceptDate"/>
+                                        		</div>
+                                  		  </div>
+                                        	
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                		<label for="remark" class="col-sm-2 control-label">备注：</label>
+                                    	<div class="col-sm-8">
+                                    		<textarea class="form-control" id="remark" ></textarea>
+                                   		 </div>
+                                    
+                               		 </div>
+                                    
+                                     
+                                
+                                
+                                
+                                
+                              
+                              
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            
+            <%}%>
+             
+            
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal"  type="button">关闭</button>
+                <button type="button" class="btn btn-primary facilityadd-btn"  style="margin-right: 383px;" onclick="resultCommit(${obj.id});">确认</button>
+            </div>
+            
+            <!-- 维修结果状态 -->
+            <input id="typeTemp" type="hidden" value="${obj.type}">
+            
+            
+        </div>
+    </div>
+</div>
+<script>
+
+$(function(){
+		 initTime() ;
+		 <%if(obj.type!=1){%>
+		    loadUnitAndUser("tempnull","acceptMan");
+		 <%}%>
+}) ;
+
+
+function clearNoNum(obj){  
+	  obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符   
+	  obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的   
+	  obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");  
+	  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数   
+	  if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额  
+	   obj.value= parseFloat(obj.value);  
+	  }  
+	}
+
+
+	function resultCommit(id){
+		var operateFacility = "" ;
+		var param={};
+		var type = $("#typeTemp").val() ;
+		var d = $("#acceptDate").val() ;
+		var r = $("#remark").val() ;
+		
+		if(!type){//空
+			Toast.error("操作失败");
+			return ;
+		}else if(type==1){
+			if(!r){
+				Toast.warning("请填写机电运转情况");
+				return ;
+			}else if(!d){
+				Toast.warning("请填写验收日期");
+				return ;
+			}
+			
+		}else{
+			var m = $("#acceptMan").selectPageText() ;
+			if(!m){
+				Toast.warning("请填写取机人员");
+				return ;
+			}else if(!d){
+				Toast.warning("请填写取机日期");
+				return ;
+			}else if(!r){
+				Toast.warning("请填写备注");
+				return ;
+			}else{
+				var marr = m.split("/") ;
+				param.acceptMan=marr[0];
+			}
+		}
+		param.id=id;
+		param.type =type ;
+		param.acceptDate = d ;
+		param.remark= r;
+		
+		
+		   $.ajax({
+        	type:"post",
+        	url:"${base}/repair/doFinish",
+        	data:param,
+        	async:false,
+        	success:function(data){
+        		if (data.code == 0) {
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+                    datatable.ajax.reload();
+        		  $("#myModal2").modal('hide');
+        	},
+        	error:function(data){
+        		Toast.error("网络异常");
+        	}
+        });   
+		
+	}
+	
+	//初始化时间
+	function initTime(){
+		$.fn.datepicker.dates['zh-CN'] = {
+			    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+			    daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+			    daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+			    months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+			    monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+			    days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+	            daysShort: ["日", "一", "二", "三", "四", "五", "六", "七"],
+	            daysMin: ["日", "一", "二", "三", "四", "五", "六", "七"],
+			    today: "Today",
+			    clear: "清除",
+			    format: "mm/dd/yyyy",
+			    titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+			    weekStart: 0
+		};
+		$('#acceptDate').datepicker({
+			 language: "zh-CN",
+	         todayHighlight: true,
+	         format: 'yyyy-mm-dd',
+	         autoclose: true,
+	         clearBtn:true,
+	         endDate: new Date(),
+            startDate:new Date(${obj.operateTime})
+	        // startView: 'months',
+	       //  maxViewMode:'years',
+	        // minViewMode:'months'
+		    });
+		
+		 
+		
+	}
+	
+	
+</script>

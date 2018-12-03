@@ -1,0 +1,263 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title">修改规格型号</h4>
+		</div>
+		
+		<!--新增框-->
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/asset/rule/editDo" method="post">
+    <input id="id" name="id" type="hidden" value="${obj.id!}">
+        <!-- <div class="modal-dialog" style="margin: 30px auto auto; ">
+            <div class="modal-content"> -->
+                
+                <div class="modal-body">
+                <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="add-device-num" class="col-sm-2 control-label">型号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="deviceVersion" id="deviceVersion" value="${obj.deviceVersion!}" onmousedown="checkVersion();" placeholder="请输入编号">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-gateway-name" class="col-sm-2 control-label">资产名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="assetName" id="assetName"  value="${obj.assetName!}"  placeholder="请输入资产名称">
+                            </div>
+                        </div>
+                       
+                               
+                        <div class="form-group">
+                          <label for="add-gateway-name" class="col-sm-2 control-label">图片上传</label>  
+                          <div class="col-sm-8">                    	
+                          	<span style="font-size:14px;">
+                        		<div id="uploader-demo">  
+                        		<input type="hidden" name="urlImage" id="urlImage" value='${obj.urlImage}'>
+    								<div id="fileList" class="uploader-list"></div>  
+     								<div id="filePicker">选择图片 </div>
+     								<!-- <button id="ctlBtn" class="btn btn-default" >开始上传</button>  -->   
+     								 
+								</div>  
+							 </span>
+							</div>   
+                        </div>            
+                    </div>
+                    
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/asset/rule" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+                </div>
+                
+        
+    </form>
+    
+</div>
+	
+<script language="JavaScript">
+function checkVersion(){
+	var deviceVersion = $("#deviceVersion").val();
+	if(deviceVersion=='' || deviceVersion==null){
+		Toast.error("型号不能为空");
+    	return false;
+	} 
+	var flag = $.ajax({
+    	type: "post",
+        url: "${base}/asset/rule/checkID",
+        dataType: "json",
+        data:{"deviceVersion":deviceVersion,"id":$("#id").val()},
+        async:false,
+        success:function(data){
+        }
+    });
+	var temp = flag.responseJSON;
+	if(temp != 0){
+	    Toast.error("型号已存在");
+	    return false;
+	 }else {
+	    return true;
+	 }
+	// 去除首尾空格
+    autoDeleteSpace('input')
+	
+}
+	function autoDeleteSpace(obj) {//[name=LastName]
+	    $(document).on('blur',obj, function () {
+	        $(this).val($(this).val().trim());
+	    })
+	}
+
+    $(document).ready(function () {    	
+        myForm.init();
+        
+        $("#add-gateway-time").datetimepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            weekStart: 1,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            clearBtn: true,//清除按钮
+			todayBtn: "linked",//今日按钮
+            format: "yyyy/mm/dd hh:ii"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+        });
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+             	if(!$("#deviceVersion").val()){
+            		Toast.error("型号不能为空");
+            		return false;
+            	}
+            	if(!$("#assetName").val()){
+            		Toast.error("资产名称不能为空");
+            		return false;
+            	}
+            	if(!checkVersion()){
+            		return false;
+            	}
+                
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+	jQuery(function(){
+		
+			if($('#urlImage').val()!=''){
+		        $('#fileList').append('<div id="hhaa"><img name="file" src="data:image/*;base64,'+$('#urlImage').val()+'" width="100px" higth="100px"></img></div>');      
+		         
+			} 
+		    var $list = $('#fileList');
+	        var ratio = window.devicePixelRatio || 1;
+	        var thumbnailWidth = 100 * ratio;
+	        var thumbnailHeight = 100 * ratio;
+	        var uploader;
+		    uploader = WebUploader.create({
+		        auto: true,
+
+		        swf: '${base}/assets/webuploader/Uploader.swf',
+
+		        server: '${base}/asset/rule/upImage',
+
+		        pick: '#filePicker',
+		     
+		        //允许重复
+		        duplicate: true,
+		        
+		        /* resize : true,  //不压缩图片 */
+		        
+		        /* //限制文件数量
+		        fileNumLimit: 1, */
+		        
+		        //限制文件大小
+		        fileSizeLimit: 1024*1024,
+		        
+		        accept: {
+		            title: 'Images',
+		            extensions: 'jpg,jpeg,bmp',
+		            mimeTypes:  'image/jpg,image/jpeg'
+		        }
+		    });
+		    
+		    uploader.on( 'fileQueued', function( file ) {
+		    	//控制删除前一张图片
+		    	var firstDiv = $($list.children('div').get(0));
+		    	if(!(typeof(firstDiv.attr('id')) == 'undefined') && firstDiv.attr('id')!=file.id){
+		    		firstDiv.remove();
+		    	}
+		    	
+		        var $li = $(
+		                '<div id="' + file.id + '" >' +
+		                    '<img name="file">' +
+		                    '</img>' + 
+		                '</div>'
+		                ),
+		        $img = $li.find('img');
+
+		        $list.append( $li );
+				
+		        uploader.makeThumb( file, function( error, src ) {
+		            if ( error ) {
+		                $img.replaceWith('<span>不能预览</span>');
+		                return;
+		            }
+
+		            $img.attr( 'src', src );
+		        }, thumbnailWidth, thumbnailHeight ); 
+		    });
+		    
+		    uploader.on( 'uploadProgress', function( file, percentage ) {
+		        var $li = $( '#'+file.id ),
+		            $percent = $li.find('.progress span');
+
+		        if ( !$percent.length ) {		//避免重复创建
+		            $percent = $('<p class="progress"><span></span></p>')
+		                    .appendTo( $li )
+		                    .find('span');
+		        }
+		        $percent.css( 'width', percentage * 100 + '%' );
+		    });
+		    
+		    uploader.on( 'uploadSuccess', function( file , response) {
+		        $( '#'+file.id ).addClass('upload-state-done');
+		        $('#urlImage').val(response);
+		    });
+		    
+		    uploader.on( 'uploadError', function( file ) {
+		        var $li = $( '#'+file.id ),
+		            $error = $li.find('div.error');
+
+		        if ( !$error.length ) {
+		            $error = $('<div class="error"></div>').appendTo( $li );
+		        }
+
+		        $error.text('上传失败');
+		    });
+		    uploader.on( 'uploadComplete', function( file ) {
+		        $( '#'+file.id ).find('.progress').remove();
+		    });
+		    
+		    uploader.on("error", function (type) {
+		        if (type == "Q_TYPE_DENIED") {
+		        	alert("请上传JPG、JPEF格式文件");
+		        } else if (type == "Q_EXCEED_SIZE_LIMIT") {
+		        	alert("文件大小不能超过1M");
+		        }else {
+		        	alert("上传出错！请检查后重新上传！错误代码"+type);
+		        }
+		    });
+		    
+		
+	});
+		
+	</script> 
+<%}%>
+
+

@@ -1,0 +1,2803 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+    <h1 id="titleName">资产信息</h1>
+    <ol class="breadcrumb pull-left">
+        <li class="active"><a href="${base}/asset/info#">资产台账管理</a></li>
+        <li class="active" id="breadLineName">资产信息</li>
+    </ol>
+</section>
+<section class="content">
+            <div class="box">
+                <div class="box-header">
+                    <div class="flex">
+                        <div class="pull-left ">
+                          <div id="hidenAssetOperation" class="inline-block">
+                              <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.info.add")!=-1){%>
+                              <button type="button" id="addManagement" class="btn btn-md btn-success" data-toggle="modal"
+                                      data-target="#modal-default">
+                                  <span class="glyphicon glyphicon-plus"></span>录入
+                              </button>
+                              <%}%>
+                              <div class="dropdown">
+                                  <span class="btn btn-primary my-glyphicon glyphicon-download-alt asset-gly-style" >模板下载</span>
+                                  <div class="dropdown-content">
+                                      <a href="${base}/asset/info/templateDownload?type=1">资产录入模板 </a>
+                                      <a href="${base}/asset/info/templateDownload?type=2">履历填充模板 </a>
+                                  </div>
+                              </div>
+                              <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.info.add")!=-1){%>
+                              <!-- 导入 -->
+                              <div class="dropdown">
+                                  <span class="btn btn-primary my-glyphicon glyphicon-arrow-down asset-gly-style" >批量操作</span>
+                                  <div class="dropdown-content">
+                                      <a data-loading-text="导入中..." href="javascript:document.getElementById('assetFile').click();">批量导入 </a>
+                                      <a data-loading-text="导入中..." href="javascript:document.getElementById('updateAssetFile').click();">批量修改</a>
+                                  </div>
+                              </div>
+
+                              <input type="file" style="display:none;" id="assetFile" name="assetFile"
+                                     onchange="submitImportFile();"/>
+                              <input type="file" style="display:none;" name="updateAssetFile" id="updateAssetFile"
+                                     onchange="submitUpdateImportFile();"/>
+                              <%}%>
+                          </div>
+                            <a class="btn btn-primary" id="exportAssetsInfo" onclick="exportAssetsInfo();">
+                                <span class="glyphicon glyphicon-open"></span>导出列表
+                            </a>
+
+
+                            <div id="hideDiv" class="inline-block">
+                                <a class="btn btn-primary" id="makeBarcode" onclick="makeBarcode();">
+                                    <span class="glyphicon glyphicon-open"></span> 条形码
+                                </a>
+                                <div class="dropdown">
+                                    <span class="btn btn-primary my-glyphicon glyphicon-th-list">管理状态变更</span>
+                                    <div class="dropdown-content">
+                                        <a id="unsealed">在用</a>
+                                        <a id="sealed">封存</a>
+                                        <a id="unUsed">闲置</a>
+                                        <a id="forbidden">禁用</a>
+                                    </div>
+                                </div>
+
+                                <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.confirmScrap")!=-1){%>
+                                <div class="dropdown">
+                                    <span class="btn btn-warning my-glyphicon glyphicon-magnet">报废状态</span>
+                                    <div class="dropdown-content">
+                                        <a id="scrap">报废</a>
+                                        <a id="confirmScrap">确认报废</a>
+                                    </div>
+                                </div>
+                                <%}%>
+
+                                <div class="dropdown">
+                                    <span class="btn btn-primary my-glyphicon glyphicon-th-list">借还办理</span><!--使用功能管理-->
+                                    <div class="dropdown-content">
+                                        <a id="showlendRecode">借出</a>
+                                        <a id="showReturnRecode">归还</a>
+                                        <a id="transferAccounts">转账</a>
+                                    </div>
+                                </div>
+                                <a class="btn btn-primary" data-loading-text="导入中..."
+                                   href="javascript:document.getElementById('resumeFile').click();">
+                                    <span class="glyphicon glyphicon glyphicon-transfer"></span> 履历填充
+                                </a>
+                                <input type="file" style="display:none;" id="resumeFile" name="resumeFile"
+                                       onchange="submitImportResumeFile();"/>
+                            </div>
+
+                        </div>
+                        <div class="pull-right">
+
+                            <button type="button" id="custom-search" onclick="showSearch();" class="btn btn-primary fr mr2">
+                                <span class="glyphicon glyphicon-search"></span>自定义查询
+                            </button> &nbsp;&nbsp;
+
+                            <button id="change-see-btn" class="btn btn-primary  fr mr2">
+                                <span class="glyphicon glyphicon-search"></span>自定义表格
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="box-body">
+                    <table id="assetTable" class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>统一编号</th>
+                            <th>名称</th>
+                            <th>型号</th>
+                            <th>规格</th>
+                            <th>类别</th>
+                            <th>使用单位</th>
+                            <th>责任人</th>
+                            <th>借用日期</th>     <!-- 8 -->
+                            <th>原值</th>
+                            <th>出厂编号</th>
+                            <th>归还日期</th>
+                            <th>合同号</th>
+                            <th>批件序号</th>
+                            <th>供货单位</th>
+                            <th>项目名称</th>
+                            <th>资金来源</th>        <!-- 16 -->
+
+                            <th>功率</th>
+                            <th>台时信息</th>
+                            <th>管理状态</th>
+                            <th>管理级别</th>
+                            <th>资产类别</th>
+                            <th>维修状态</th>
+                            <th>启用日期</th>
+                            <th>出厂日期</th>    <!-- 24 -->
+
+                            <th>国别</th>
+                            <th>厂家</th>
+                            <!--<th>精度等级</th>-->
+                            <th>课题号</th>
+                            <th>保修期</th>
+                            <th>折扣年限</th>
+                            <th>年折旧率</th>
+                            <th>开箱日期</th>
+                            <th>检定日期</th>
+                            <th>到期检定日期</th>
+                            <th>用途</th>
+                            <th>验收人</th>        <!-- 35 -->
+
+                            <th>是否过期</th>
+                            <th>军工设备</th>
+                            <th>连接云网</th>
+                            <th>报废状态</th>
+                            <th>技术指标</th>
+                            <th>是否借用</th>
+                            <th>仪器设备类别</th>
+
+                            <th>完好状态</th>    <!-- 43 -->
+                            <th>操作时间</th>    <!-- 44 -->
+                            <th>存放位置</th>
+
+                            <th>重量</th>    <!-- 46 -->
+                            <th>装机容量</th>    <!-- 47 -->
+
+                            <th>备注</th>        <!-- 48 -->
+                            <th>是否计量</th>     <!-- 49 -->
+                            <th>是否可预约</th>   <!-- 50 -->
+                            <th>操作</th>         <!-- 51 -->
+                        </tr>
+                        </thead>
+                        <!-- 必须得有tbody -->
+                        </tbody>
+                        <tbody>
+                    </table>
+                </div>
+            </div>
+
+</section>
+
+<!--自定义查询-->
+<form id="customAssetSearch">
+    <div class="modal fade" id="custom-modal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width: 1200px;">
+            <div class="modal-content">
+                <input type="hidden" name="ids" id="ids" value=""/>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">查询信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <input type="hidden" name="exportScrapState" id="exportScrapState" value=""/>
+                        <div class="panel-group" id="search-asset-accordion" role="tablist" aria-multiselectable="true">
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="search-asset-heading-one">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#search-asset-accordion"
+                                           href="#search-asset-collapse-one" aria-expanded="true"
+                                           aria-controls="search-asset-collapse-one">
+                                            基本信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="search-asset-collapse-one" class="panel-collapse collapse in" role="tabpanel"
+                                     aria-labelledby="search-asset-heading-one">
+                                    <div class="panel-body">
+                                        <div class="form-group" style="padding-left:10px;">
+                                            <div class="row">
+
+                                                <div class="col-sm-2">
+                                                    <!--<div id="selectFileList" style="width:180px;height:200px;" class="uploader-list"></div>-->
+                                                    <img id="selectFileList" class="uploader-list" style="width:180px;height:200px;" src="http://temp.im/180x200/4CD964/fff"
+                                                         alt="资产图片信息">
+                                                </div>
+
+                                                <div class="col-sm-10">
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-assetType"
+                                                                       class="control-label asset-style-sen-row">类别 </label>
+                                                                <div class="div-shade">
+                                                                    <select id="search-assetType" name="assetType"
+                                                                            class="form-control select asset-style-width"
+                                                                            data-placeholder="类别">
+                                                                        <option value="0">----请选择----</option>
+                                                                        <option value="1">设备</option>
+                                                                        <option value="2">仪器</option>
+                                                                        <option value="3">工量具</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-assetCode"
+                                                                       class="control-label text-left asset-style-flex-low">统一编号 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="search-assetCode" name="assetCode"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入统一编号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-assetName"
+                                                                       class="control-label text-left asset-style-flex ">名称 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text" id="search-assetName"
+                                                                           name="assetName"
+                                                                           maxlength="50"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入名称" value=""/>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for=""
+                                                                       class="control-label asset-style-sen-row">出厂日期 </label>
+                                                                <div class="margin-width-self">
+                                                                    <div class="input-group date asset-style-width div-shade">
+                                                                        <div class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </div>
+                                                                        <input type="text"
+                                                                               id="search-factoryTime" name="factoryTimeRange"
+                                                                               maxlength="30"
+                                                                               class="form-control"
+                                                                               placeholder="请输入出厂日期" value=""/>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-deviceVersion"
+                                                                       class="control-label text-left asset-style-flex-low">型号 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="search-deviceVersion" name="deviceVersion"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入型号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-ggName"
+                                                                       class="control-label text-left asset-style-flex">规格 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="search-ggName" name="ggName"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入规格名称" value=""/>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-serialNumber"
+                                                                       class="control-label asset-style-sen-row">出厂编号 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="search-serialNumber" name="serialNumber"
+                                                                           maxlength="30"
+                                                                           class="form-control asset-style-width"
+                                                                           placeholder="请输入出厂编号" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-originalValue" class="control-label text-left asset-style-flex-low">原值 </label>
+                                                                <div class="margin-width-self flex-row-center div-shade">
+                                                                    <input type="text" id="search-originalValue" name="originalValue1"
+                                                                           maxlength="11" class="form-control asset-style-width-originValue"
+                                                                           placeholder="请输入原值" value=""/>&nbsp;~&nbsp;
+                                                                    <input type="text" id="search-originalValue2" name="originalValue2"
+                                                                           maxlength="11" class="form-control asset-style-width-originValue"
+                                                                           placeholder="请输入原值" value=""/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for="search-locationInfo"
+                                                                       class="control-label text-left asset-style-flex">位置信息 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text"
+                                                                           id="search-locationInfo" name="locationInfo"
+                                                                           maxlength="30"
+                                                                           class="form-control  asset-style-width"
+                                                                           placeholder="请输入位置信息" value=""/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic" style="position: relative;z-index: 2;">
+                                                                <label for="edit-borrowDepart"
+                                                                       class="control-label asset-style-sen-row">使用单位 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text" id="edit-borrowDepart" name="borrowDepart" class="form-control" style="width: 240px;"  />
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic"  style="position: relative;z-index: 1;">
+                                                                <label for="edit-chargePerson"
+                                                                       class="control-label text-left asset-style-flex-low">责任人 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <input type="text" id="edit-chargePerson" name="chargePerson" class="form-control" style="width: 240px;"  />
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for=""
+                                                                       class="control-label asset-style-flex">借用日期 </label>
+                                                                <div class="margin-width-self div-shade">
+                                                                    <div class="input-group date asset-style-width">
+                                                                        <div class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </div>
+                                                                        <input type="text"
+                                                                               id="search-lendDate" name="lendDateRange"
+                                                                               maxlength="30"
+                                                                               class="form-control pull-right"
+                                                                               placeholder="请输入借用日期" value=""/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-row-center form-group">
+                                                        <div class="row">
+                                                            <div class="flex-row-center col-sm-4 asset-style-basic">
+                                                                <label for=""
+                                                                       class="control-label asset-style-sen-row">归还日期 </label>
+                                                                <div class="margin-width-self">
+                                                                    <div class="input-group date asset-style-width div-shade">
+                                                                        <div class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </div>
+                                                                        <input type="text"
+                                                                               id="search-returnDate" name="returnDateRange"
+                                                                               maxlength="30"
+                                                                               class="form-control pull-right"
+                                                                               placeholder="请输入归还日期" value=""/>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="search-asset-heading-two">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#search-asset-accordion"
+                                           href="#search-asset-collapse-two" aria-expanded="false"
+                                           aria-controls="search-asset-collapse-two">
+                                            经费信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="search-asset-collapse-two" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="search-asset-heading-two">
+                                    <div class="panel-body">
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-contractCode"
+                                                           class="control-label asset-style-width-label">合同号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-contractCode" maxlength="30"
+                                                               name="contractCode"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入合同号">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-batch_code"
+                                                           class="control-label asset-style-width-label">批件序号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-batch_code" maxlength="30"
+                                                               name="batch_code"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入批件序号">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-supplier"
+                                                           class="control-label asset-style-width-label">供货单位 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-supplier" maxlength="30"
+                                                               name="supplier"
+                                                               class="form-control asset-style-width-sen"
+                                                               placeholder="请输入供货单位">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-projectName"
+                                                           class="control-label asset-style-width-label">项目名称 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" name="projectName" style="width: 250px;"
+                                                               class="form-control" id="search-projectName"
+                                                               placeholder="请输入项目名称">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-fundSources"
+                                                           class="control-label asset-style-width-label">资金来源 </label>
+                                                    <div class="inline-block">
+                                                        <select id="search-fundSources" name="fundSources"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="资金来源">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">拨款</option>
+                                                            <option value="1">自购</option>
+                                                            <option value="2">科研费</option>
+                                                            <option value="3">馈赠或无偿调入</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="search-asset-heading-three">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse"
+                                           data-parent="#search-asset-accordion" href="#search-asset-collapse-three"
+                                           aria-expanded="false"
+                                           aria-controls="search-asset-collapse-three">
+                                            管理信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="search-asset-collapse-three" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="search-asset-heading-three">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-power"
+                                                           class="control-label asset-style-width-label">功率 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-power" name="power"
+                                                               maxlength="12" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入功率">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-macHour" class="control-label asset-style-width-label">台时信息 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-macHour" name="macHour"
+                                                               maxlength="30" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入台时信息">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-manageStatus"
+                                                           class="control-label asset-style-width-label">管理状态 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-manageStatus" name="manageStatus"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="管理状态">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">在用</option>
+                                                            <option value="1">封存</option>
+                                                            <option value="2">闲置</option>
+                                                            <option value="3">禁用</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-manageLevel"
+                                                           class="control-label asset-style-width-label">管理级别 </label>
+                                                    <div class="inline-block">
+                                                        <select id="search-manageLevel" name="manageLevel"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="管理级别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">厂(所)管</option>
+                                                            <option value="1">院管</option>
+                                                            <option value="2">总公司部管</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-assetCategory"
+                                                           class="control-label asset-style-width-label">资产类别 </label>
+                                                    <div class="inline-block">
+                                                        <select id="search-assetCategory" name="assetCategory"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="资产类别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">固定资产</option>
+                                                            <option value="1">低值</option>
+                                                            <option value="2">在建</option>
+                                                            <option value="3">附件</option>
+                                                            <option value="4">零值</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-repairState"
+                                                           class="control-label asset-style-width-label">维修状态 </label>
+                                                    <div class="inline-block">
+                                                        <select id="search-repairState" name="repairState"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="维修状态">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">维修中</option>
+                                                            <option value="1">已完成</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <div>
+                                                        <label for="" class="control-label asset-style-width-label"
+                                                               style="vertical-align:top;">启用日期 </label>
+                                                        <div class="inline-block">
+                                                            <div class="input-group date asset-style-width-sen">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </div>
+                                                                <input type="text" name="enableTimeRange"
+                                                                       class="form-control pull-right"
+                                                                       id="search-enableTime" style="width: 100%">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4  flex-row-center">
+                                                    <label for="useType" class="control-label asset-style-width-label">用途 </label>
+                                                    <div class="inline-block">
+                                                        <select id="useType" name="useType"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="用途">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">科研类</option>
+                                                            <option value="1">生产类</option>
+                                                            <option value="2">测量类</option>
+                                                            <option value="3">办公类</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="search-asset-heading-four">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse"
+                                           data-parent="#search-asset-accordion" href="#search-asset-collapse-four"
+                                           aria-expanded="false"
+                                           aria-controls="search-asset-collapse-four">
+                                            其它信息
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="search-asset-collapse-four" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="search-asset-heading-four">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-country" class="control-label asset-style-width-label"
+                                                    >国别 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-country" maxlength="30"
+                                                               name="country" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入国别">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-manufactor" class="control-label asset-style-width-label"
+                                                    >厂家 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-manufactor" maxlength="30"
+                                                               name="manufactor" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入厂家">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-topicNo" class="control-label asset-style-width-label"
+                                                    >课题号 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-topicNo" maxlength="30"
+                                                               name="topicNo" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入课题号">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-warrantyPeriod" class="control-label asset-style-width-label"
+                                                    >保修期 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-warrantyPeriod"
+                                                               name="warrantyPeriod" maxlength="11"
+                                                               class="form-control asset-style-width-sen" placeholder="保修期">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-depreciationYear" class="control-label asset-style-width-label"
+                                                    >折扣年限 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-depreciationYear" maxlength="10"
+                                                               name="depreciationYear" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入折扣年限">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-depreciationRate" class="control-label asset-style-width-label"
+                                                    >年折旧率 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-depreciationRate" maxlength="10"
+                                                               name="depreciationRate" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入年折旧率">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-instrumentCategory" class="control-label asset-style-width-label"
+                                                    >仪器设备类别 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-instrumentCategory"
+                                                                name="instrumentCategory"
+                                                                class="form-control select  asset-style-width-sen"
+                                                                data-placeholder="仪器设备类别">
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">普通</option>
+                                                            <option value="1">精大贵稀</option>
+                                                            <option value="2">进口普通</option>
+                                                            <option value="3">进口精大贵稀</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">开箱日期 </label>
+                                                    <div class="inline-block" >
+                                                        <div class="input-group date asset-style-width-sen">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="unpackingDateRange"
+                                                                   class="form-control pull-right"
+                                                                   id="search-unpackingDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">检定日期 </label>
+                                                    <div class="inline-block  asset-style-width-sen" >
+                                                        <div class="input-group date">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="examineDateRange"
+                                                                   class="form-control pull-right"
+                                                                   id="search-examineDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-dueDate" class="control-label asset-style-width-label"
+                                                           style="vertical-align:top;">到期检定 </label>
+                                                    <div class="inline-block   asset-style-width-sen" >
+                                                        <div class="input-group date">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                            <input type="text" name="dueDateRange"
+                                                                   class="form-control pull-right" id="search-dueDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-isMilitary" class="control-label asset-style-width-label"
+                                                    >军工设备 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-isMilitary" name="isMilitary"
+                                                                class="form-control select asset-style-width-sen"
+                                                                data-placeholder="军工设备"  >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-checker" class="control-label asset-style-width-label"
+                                                    >验收人 </label>
+                                                    <div class="inline-block text-left" >
+                                                        <input type="text" id="search-checker" name="checker"
+                                                               maxlength="11" class="form-control  asset-style-width-sen"
+                                                               placeholder="请输入验收人">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-isOverdue" class="control-label asset-style-width-label"
+                                                    >是否过期 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-isOverdue" class="form-control select  asset-style-width-sen"
+                                                                name="isOverdue" data-placeholder="是否过期" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-isOverdue" class="control-label asset-style-width-label"
+                                                    >是否需要计量 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-isMeasure" class="form-control select  asset-style-width-sen"
+                                                                name="isMeasure" data-placeholder="是否需要计量" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-completeStatus" class="control-label asset-style-width-label"
+                                                    >完好状态 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-completeStatus" class="form-control select  asset-style-width-sen"
+                                                                name="completeStatus" data-placeholder="完好状态" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">完好</option>
+                                                            <option value="1">不完好</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-isLend" class="control-label asset-style-width-label"
+                                                    >是否借出 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-isLend" class="form-control select  asset-style-width-sen"
+                                                                name="isLend" data-placeholder="是否借出" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-ScrapState" class="control-label asset-style-width-label"
+                                                    >报废状态 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-ScrapState" class="form-control select  asset-style-width-sen"
+                                                                name="scrapState" data-placeholder="报废状态" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">待报废</option>
+                                                            <!--<option value="1">报废</option>-->
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-isConnectCloud" class="control-label asset-style-width-label"
+                                                    >是否连接云网 </label>
+                                                    <div class="inline-block" >
+                                                        <select id="search-isConnectCloud" class="form-control select  asset-style-width-sen"
+                                                                name="isConnectCloud" data-placeholder="是否连接云网" >
+                                                            <option value="">----请选择----</option>
+                                                            <option value="0">是</option>
+                                                            <option value="1">否</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-weight" class="control-label asset-style-width-label">重量 </label>
+                                                    <div class="margin-width-self flex-row-center div-shade">
+                                                        <input type="text" id="search-weight" name="weight1"
+                                                               maxlength="11" class="form-control asset-style-width-originValue"
+                                                               placeholder="请输入重量" value=""/>&nbsp;~&nbsp;
+                                                        <input type="text" id="search-weight2" name="weight2"
+                                                               maxlength="11" class="form-control asset-style-width-originValue"
+                                                               placeholder="请输入重量" value=""/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 flex-row-center">
+                                                    <label for="search-installedCapacity" class="control-label asset-style-width-label"
+                                                    >装机容量 </label>
+                                                    <div class="inline-block">
+                                                        <input type="text" id="search-installedCapacity" maxlength="30"
+                                                               name="installedCapacity" class="form-control asset-style-width-sen"
+                                                               placeholder="请输入装机容量">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-4 flex-row-center" style="width: 1200px">
+                                                    <label for="search-remark" class="control-label asset-style-width-label" >备注 </label>
+                                                    <div class="inline-block" style="vertical-align: middle; height: 79px;">
+                                                            <textarea rows="3"
+                                                                      cols="145.5"
+                                                                      id="search-remark"
+                                                                      class="form-control"
+                                                                      style="width: 1049px;"
+                                                                      name="remark"
+                                                                      data-placeholder="备注"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="resetForm" type="reset" value="重置" onclick="clearForm();"
+                           class="btn btn-primary pull-left"/>
+                    <button type="button" class="btn btn-default pull-center" data-dismiss="modal">取消</button>
+
+                    <button id="confirm-search" type="button" class="btn btn-primary pull-right">确定</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--自定义表格-->
+<div class="modal fade" id="changeModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div id="checkAllClass">
+                    <label>
+                        <input type="checkbox" class="" id="checkAll">
+                        全选/反选
+                     </label>
+                </div>
+            </div>
+            <div class="modal-body" >
+                <div class="form-horizontal">
+                    <div class="box-body" id="checkParent">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">基本信息</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="5">
+                                            类别
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="1" checked="checked">
+                                            统一编号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="2" checked="checked">
+                                            名称
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="24" checked="checked">
+                                            出厂日期
+                                         </label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="3" checked="checked">
+                                            型号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="4" checked="checked">
+                                            规格
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="10" checked="checked">
+                                            出厂编号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="9" checked="checked">
+                                            原值
+                                         </label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="6" checked="checked">
+                                            使用单位
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="7" checked="checked">
+                                            责任人
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="8" checked="checked">
+                                            借用日期
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="11">
+                                            归还日期
+                                         </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">经费信息</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="12">
+                                            合同号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="13">
+                                            批件序号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="14">
+                                            供货单位
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="15">
+                                            项目名称
+                                         </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="16">
+                                            资金来源
+                                         </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">管理信息</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="17">功率
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="18">
+                                            台时信息
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="19" checked="checked">
+                                            管理状态
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="20">
+                                            管理级别
+                                         </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="21">
+                                            资产类别
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="22" checked="checked">
+                                            维修状态
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="23" checked="checked">
+                                            启用日期
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="34">
+                                            用途
+                                         </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">其他信息</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="25" checked="checked">
+                                            国别
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="26" checked="checked">
+                                            厂家
+                                         </label>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="27">
+                                            课题号
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="45" checked="checked">
+                                            存放位置
+                                         </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="28">
+                                            保修期
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="29">
+                                            折旧年限
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="30">
+                                            年折旧率
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="31">
+                                            开箱日期
+                                         </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="32">
+                                            检定日期
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="33">
+                                            到期检定日期
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="35">
+                                            验收人
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="36">
+                                            是否过期
+                                         </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="37">
+                                            军工设备
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="38" checked="checked">
+                                            连接云网
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="39" checked="checked">
+                                            报废状态
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="40">
+                                            技术指标
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="41" checked="checked">
+                                            是否借用
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="42">
+                                            仪器设备类别
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="43" checked="checked">
+                                            完好状态
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="48">
+                                            备注
+                                         </label>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="49">
+                                            是否需要计量
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="46">
+                                            重量
+                                         </label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>
+                                            <input type="checkbox" value="47">
+                                                装机容量
+                                         </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+                <button id="confirm-change" onclick="checkNum();" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--删除框-->
+<div id="dialogOperation" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">确认操作</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        确定要<span id="operationData"></span>资产吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okOperation" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 校验失败弹窗 -->
+<div id="importWrong" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true"
+     style="position:absolute; height:96%; overflow-y:auto">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"><font color="red">注意</font></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <font color="red">错误信息:</font>
+                            </div>
+                            <div class="col-sm-10" id="res"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+        </div>
+    </div>
+</div>
+
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading-asset" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-backdrop='static'>
+    <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+        <div class="modal-content" style="background:transparent;">
+
+            <div class="modal-body">
+                <div class="loading-box">
+                    <div class="sk-fading-circle">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                    <div class="text-center" style="padding-bottom:5px;">正在处理中，请稍后...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="loading-asset-export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-backdrop='static'>
+    <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+        <div class="modal-content" style="background:transparent;">
+
+            <div class="modal-body">
+                <div class="loading-box">
+                    <div class="sk-fading-circle">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                    <div class="text-center" style="padding-bottom:5px;">正在导出，请稍后...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="margin: 250px auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+            </div>
+            <div class="modal-body" id="inputText"
+                 style="height:280px;overflow-y: auto;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;"
+                        data-dismiss="modal">确定
+                </button>
+                <!-- <button id="" type="button" class="btn btn-primary">确定</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        var url2 = window.location.pathname;
+        var url;
+        if (url2.indexOf("scrap") == -1){
+            url = "${base}/asset/info/data";
+            $("#exportScrapState").val('');
+        }else {
+            url = "${base}/asset/scrap/data";
+        }
+        datatable = $('#assetTable').DataTable({
+            "dom": 'Brtip',			// 去掉以后,可以显示每页显示多少条数据功能
+            "searching": false,	// 是否开启本地搜索
+            "processing": false,	// 是否显示过程信息
+            "serverSide": true,		// 是否开启服务端模式
+            "autoWidth": true,		// 表格是否自动分配
+            "select": true,
+            "ordering": true,		// 是否排序
+            "scrollX": true,		// 是否可以水平滑动
+            "aLengthMenu": [15],// 每页显示多少条数据
+            "limit": 15,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            /* "preDrawCallback": function () {
+                 sublime.showLoadingbar($(".main-content"));
+             },
+             "drawCallback": function (settings) {
+                 sublime.closeLoadingbar($(".main-content"));
+             }, */
+
+            "ajax": {
+
+                "url": url,
+                "type": "post",
+                "data": function (d) {
+
+                }
+            },
+            "order": [[44, "desc"]],
+            "columns": [
+                {"data": null, "width": "30px"}, 														//序号0
+                {"data": "assetcode", "bSortable": true, "width": "100px"}, 							//统一编号1
+                {"data": "assetname", "bSortable": true, "width": "120px"},							    //名称2
+                {"data": "deviceversion", "bSortable": true, "width": "90px"}, 						    //型号3
+                {"data": "ggname", "bSortable": true, "width": "120px"},							    //规格4
+                {"data": "assettype", "bSortable": true, "width": "80px"},	        //类别5
+                {"data": "borrowdepart", "bSortable": true, "width": "110px"},						    //使用单位6
+                {"data": "chargeperson", "bSortable": true, "width": "100px"},						    //责任人7
+                {"data": "lenddate", "bSortable": true, "width": "120px"}, 					            //借用日期8
+                {"data": "originalvalue", "bSortable": true, "width": "70px"},						    //原值9
+                {"data": "serialnumber", "bSortable": true, "width": "90px"},						    //出厂编号10
+                {"data": "returndate", "bSortable": true, "width": "120px"},		    //归还日期11
+
+                {"data": "contractcode", "bSortable": true, "width": "90px"}, 		//合同号12
+                {"data": "batchcode", "bSortable": true, "width": "90px"},	        //批件序号13
+                {"data": "supplier", "bSortable": true, "width": "90px"},	            //供货单位14
+                {"data": "projectname", "bSortable": true, "width": "120px"},	        //项目名称15
+                {"data": "fundsources", "bSortable": true, "width": "90px"}, 	        //资金来源16
+
+                {"data": "power", "bSortable": true, "width": "90px"},	            //功率17
+                {"data": "machour", "bSortable": true, "width": "90px"},	            //台时信息18
+                {"data": "managestatus", "bSortable": true, "width": "60px"},					        //管理状态19
+                {"data": "managelevel", "bSortable": true, "width": "90px"}, 	        //管理级别20
+                {"data": "assetcategory", "bSortable": true, "width": "90px"}, 	    //资产类别21
+                {"data": "repairstate", "bSortable": true, "width": "60px"},	                        //维修状态22
+                {"data": "enabletime", "bSortable": true, "width": "120px"}, 						    //启用日期23
+                {"data": "factorytime", "bSortable": true, "width": "120px"},						    //出厂日期24
+
+                {"data": "country", "bSortable": true, "width": "70px"}, 							    //国别25
+                {"data": "manufactor", "bSortable": true, "width": "70px"}, 						    //厂家26
+                {"data": "topicno", "bSortable": true, "width": "90px"}, 	            //课题号27
+                {"data": "warrantyperiod", "bSortable": true, "width": "90px"},	    //保修期28
+                {"data": "depreciationyear", "bSortable": true, "width": "90px"},	    //折扣年限29
+                {"data": "depreciationrate", "bSortable": true, "width": "90px"}, 	//年折旧率30
+                {"data": "unpackingdate", "bSortable": true, "width": "120px"}, 	    //开箱日期31
+                {"data": "examinedate", "bSortable": true, "width": "120px"}, 	    //检定日期32
+                {"data": "duedate", "bSortable": true, "width": "120px"}, 	        //到期检定日期33
+                {"data": "usetype", "bSortable": true, "width": "90px"},          	//用途34
+                {"data": "checker", "bSortable": true, "width": "90px"},	            //验收人35
+                {"data": "isoverdue", "bSortable": true, "width": "80px"}, 	        //是否过期36
+                {"data": "ismilitary", "bSortable": true, "width": "60px"}, 	        //军工设备37
+                {"data": "isconnectcloud", "bSortable": true, "width": "60px"}, 						//是否链接云网38
+                {"data": "scrapstate", "bSortable": true, "width": "60px"}, 						    //报废状态39
+                {"data": "technicalindex", "bSortable": true, "width": "90px"}, 	                    //技术指标40
+                {"data": "islend", "bSortable": true, "width": "60px"}, 							    //是否借用41
+                {"data": "instrumentcategory", "bSortable": true, "width": "90px"},	                    //仪器设备类别42
+                {"data": "completestatus", "bSortable": true, "width": "60px"},						    //完好状态43
+                {"data": "opat", "bSortable": true, "width": "60px", "visible": false},				    //时间 44
+                {"data": "locationinfo", "bSortable": true, "width": "150px"}, 					        //位置信息45
+                {"data": "weight", "bSortable": true, "width": "60px"}, 					            //重量46
+                {"data": "installedcapacity", "bSortable": true, "width": "60px"}, 					    //装机容量47
+                {"data": "remark", "bSortable": true, "width": "100px"},				                //备注48
+                {"data": "ismeasure", "bSortable": true, "width": "60px"},			                    //是否计量49
+                {"data": "isorder", "bSortable": true, "width": "60px", "visible": false},			    //是否可预约 50
+                {"width": "100px", "target": 51, "bSortable": false}									//操作51
+            ],
+
+            "columnDefs": [
+                {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        return "<a class='self-hover' style='cursor:pointer;' onclick='showDetail(" + row.id + ");'>" + data + "</a>"
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        //if(data == null || "" == data) {return "--"}else {return data};
+                        var str = "--";
+                        if (data && data.length != 0) {
+                            str = subStrCustom(data, 15);
+                        }
+                        return str;
+                    },
+                    "targets": [4]
+                },
+
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-red'>--</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>设备</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-light-blue'>仪器</span>"
+                        } else if (data == 3) {
+                            return "<span class='label bg-red'>工具量</span>"
+                        }
+                    },
+                    "targets": 5
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data != null) {
+                            str = data.split(" ")[0];
+                        }
+                        return str;
+                    },
+                    "targets": [8, 11]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = data;
+                        if (data == null || data == '') {
+                            str = 0;
+                        }
+                        return str;
+                    },
+                    "targets": 9
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data != null) {
+                            str = data.split(" ")[0];
+                        }
+                        return str;
+                    },
+                    "targets": [10, 23, 24, 31, 32, 33, 45]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [6, 7, 8, 12, 13, 14, 15]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data && data.length != 0) {
+                            str = subStrCustom(data, 9);
+                        }
+                        return str;
+                    },
+                    "targets": [2, 3]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class=''>拨款</span>"
+                        } else if (data == 1) {
+                            return "<span class=''>自购</span>"
+                        } else if (data == 2) {
+                            return "<span class=''>科研费</span>"
+                        } else if (data == 3) {
+                            return "<span class=''>馈赠或无偿调入</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 16
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [17, 18]
+                },
+                {
+                    "render": function (data, type, row) {
+                        /* if(data == null || "" == data){return "--"}else  */
+                        if (data == 0) {
+                            return "<span class='label bg-red'>在用</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>封存</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-purple'>闲置</span>"
+                        }else if (data == 3) {
+                            return "<span class='label bg-purple'>禁用</span>"
+                        }else {
+                            return "<span>--</span>"
+                        }
+                    },
+                    "targets": 19
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "<span class='label bg-red'>厂(所)管</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>院管</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-teal'>总公司部管</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 20
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-red'>固定资产</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>低值</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-aqua'>在建</span>"
+                        } else if (data == 3) {
+                            return "<span class='label bg-teal'>附件</span>"
+                        } else if (data == 4) {
+                            return "<span class='label bg-light-blue'>零值</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 21
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-purple'>维修中</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-light-blue'>已完成</span>"
+                        }
+                    },
+                    "targets": 22
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || data == '') {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [25, 26]
+                },
+
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || data == '') {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [27, 28, 29, 30]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "<span class='label bg-red'>科研类</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>生产类</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-light-blue'>测量类</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 34
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": [35]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-red'>过期</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>未过期</span>"
+                        }
+                    },
+                    "targets": 36
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "<span class='label bg-red'>是</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-gray'>否</span>"
+                        } else {
+                            return "<span class='label bg-gray'>否</span>"
+                        }
+                    },
+                    "targets": [37, 38]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "<span class='label bg-purple'>待报废</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-light-blue'>报废</span>"
+                        } else {
+                            return "<span >--</span>"
+                        }
+                    },
+                    "targets": 39
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null || "" == data) {
+                            return "--"
+                        } else {
+                            return data
+                        }
+                        ;
+                    },
+                    "targets": 40
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == 0) {
+                            return "<span class='label bg-red'>是</span>"
+                        } else if (data == 1 || data == null) {
+                            return "<span class='label bg-gray'>否</span>"
+                        }
+                    },
+                    "targets": [41, 49]
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-red'>普通</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-purple'>精大贵稀</span>"
+                        } else if (data == 2) {
+                            return "<span class='label bg-teal'>进口普通</span>"
+                        } else if (data == 3) {
+                            return "<span class='label bg-light-blue'>进口精大贵稀</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 42
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data == null) {
+                            return "--"
+                        } else if (data == 0) {
+                            return "<span class='label bg-maroon'>完好</span>"
+                        } else if (data == 1) {
+                            return "<span class='label bg-gray'>不完好</span>"
+                        } else {
+                            return "--"
+                        }
+                    },
+                    "targets": 43
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data && data.length != 0) {
+                            str = subStrCustom(data, 7);
+                        }
+                        return str;
+                    },
+                    "targets": 48
+                },
+                {
+                    "render": function (data, type, row) {
+                        var dataUrl = window.location.pathname;
+                        if (dataUrl.indexOf('scrap') != -1) {//报废产
+                                return '<a class="btn btn-xs btn-primary"  onclick="showDetail(' + row.id + ');" ><i class="glyphicon glyphicon-sunglasses"></i> 查看</a>';
+                            /* '&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="javascript:;" onclick="del(\'' + row.id + '\')"><i class="glyphicon glyphicon-trash"></i> 删除</a>'; */
+                        } else {
+                            return '<a class="btn btn-xs btn-primary"  onclick="showDetail(' + row.id + ');" ><i class="glyphicon glyphicon-sunglasses"></i> 查看</a>' +
+                                '&nbsp;&nbsp;<a class="btn btn-xs btn-success updateButton"  onclick="showEdit(' + row.id + ');" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';
+                        }
+
+                    },
+                    "targets": 51
+                }
+            ]
+        });
+        //添加行号
+        datatable.on('draw.dt', function () {
+            datatable.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function (cell, i) {
+                //i 从0开始，所以这里先加1
+
+                i = i + 1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+                var page = datatable.page.info();
+                //当前第几页，从0开始
+
+                var pageno = page.page;
+                //每页数据
+
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i + pageno * length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+        /* 点击选中 */
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#confirm-search").on('click', function () {
+            var obj = {};
+            var formArray = $("#customAssetSearch").serializeArray();
+            $.each(formArray, function () {
+                if (obj[this.name] !== undefined) {
+                    if (!obj[this.name].push) {
+                        obj[this.name] = [obj[this.name]];
+                    }
+                    obj[this.name].push(this.value || '');
+                } else {
+                    obj[this.name] = this.value || '';
+                }
+            });
+            console.log(obj)
+            datatable.settings()[0].ajax.data = obj;
+            datatable.ajax.reload();
+            hidenSearch();
+        });
+    }
+    var showArray = new Array();
+    var hideArray = new Array();
+    $(function () {
+        $('.collapse').collapse({
+            toggle: false
+        });
+
+        //加载使用单位和责任人
+        loadUnitAndUser("edit-borrowDepart", "edit-chargePerson", null);
+        // 获取项目列表
+        getJGProjectInfoList("#search-projectName");
+        setDateRange("search-factoryTime");
+        setDateRange("search-lendDate");
+        setDateRange("search-returnDate");
+        setDateRange("search-enableTime");
+        setDateRange("search-unpackingDate");
+        setDateRange("search-dueDate");
+        setDateRange("search-examineDate");
+
+        // 自定义表格
+        $("#change-see-btn").on('click', function () {
+            $("#changeModal").modal('show');
+        });
+        $("#confirm-change").on('click', function () {
+            $("#changeModal").modal('hide');
+        });
+
+        var pathname = window.location.pathname;
+        if (pathname.indexOf('scrap') != -1){
+            $("#hidenAssetOperation").css("display","none");
+            $("#hideDiv").css("display","none");
+
+            $('#exportScrapState').val('exportScrapInfo');
+            $("#titleName").html("报废资产");
+            $("#breadLineName").html("报废资产");
+
+        }
+
+        $("#dialogGatewayDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        // 显示测试弹框
+        $('#homeDetail').on('hidden.bs.modal', function () {
+            $(this).removeData("bs.modal");
+        });
+
+        //全选/反选
+        $("#checkAll").click(function () {
+            if (this.checked) {
+                $("#checkParent :checkbox").prop("checked", true);
+            } else {
+                $("#checkParent :checkbox").prop("checked", false);
+            }
+        });
+
+        //报废(待报废操作)
+        $("#scrap").click(function () {
+            scrap();
+        });
+        $("#confirmScrap").click(function () {
+            confirmScrap();
+        });
+        //封存
+        $("#sealed").click(function () {
+            sealed();
+        });
+        //在用
+        $("#unsealed").click(function () {
+            unsealed();
+        });
+        //闲置
+        $("#unUsed").click(function () {
+            unUsed();
+        });
+        //禁用
+        $("#forbidden").click(function () {
+            forbidden();
+        });
+
+        /*setTimeout(function(){
+
+
+        },500);*/
+
+
+    });
+/*----请选择--------请选择--------分割线----请选择--------请选择--------请选择--------请选择------*/
+    // 跳转值增加页面
+    $("#addManagement").on('click', function () {
+    <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.info.add") != -1){%>
+            $("#homeDetail").modal('show');
+            $("#homeDetail").load('${base}/asset/info/add')
+            <%}else{%>
+            Toast.warning(NOPERMISSION);
+        <%}%>
+    });
+
+    $("#showReturnRecode").on('click', function () {
+        var ids = [];
+        var flag = true;
+        var ck = datatable.rows('.selected').data();
+        console.info(ck);
+        if (ck.length == 0) {
+            $("#homeDetail").modal('show');
+            $("#homeDetail").load('${base}/asset/recode/returnRecode');
+        } else {
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                if (n.islend == 1) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已经归还");
+                } else if (n.scrapstate == 1) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已报废，不能归还");
+                } else if (n.managestatus == 1) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已封存，不能归还");
+                } else {
+                    ids.push(n.assetcode);
+                }
+
+            });
+
+            if (flag) {
+                ids = ids.toString();
+                $("#homeDetail").modal('show');
+                $("#homeDetail").load('${base}/asset/recode/returnRecode/' + ids);
+
+            }
+        }
+    });
+
+    $("#showlendRecode").on('click', function () {
+        var ids = [];
+        var flag = true;
+        var ck = datatable.rows('.selected').data();
+        if (ck.length == 0) {
+            $("#homeDetail").modal('show');
+            $("#homeDetail").load('${base}/asset/recode/lendRecode');
+        } else {
+            //封存1、禁用3、闲置2、报废1、维修0时不能借出
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                if (n.islend == 0) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                } else if (n.scrapstate == 1) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已报废，不能借出");
+                } else if (n.managestatus == 1) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产已封存，不能借出");
+                } else if (n.managestatus == 2) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产闲置，不能借出");
+                } else if (n.managestatus == 3) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产禁用，不能借出");
+                } else if (n.repairstate == 0) {
+                    flag = false;
+                    Toast.warning("当前第" + (i + 1) + "个选中资产正在维修中，不能借出");
+                }else if (n.isorder == 1) {
+                    flag = false;
+                    /*$.post("${base}/asset/info/review/",{"assetCode":n.assetcode.toString(),"message":"借出"},function (data) {
+                    });*/
+                    Toast.warning("当前第" + (i + 1) + "个选中资产被占用，请预约归还后在进行借出");
+                }
+                else {
+                    ids.push(n.assetcode);
+                }
+
+            });
+
+            if (flag) {
+                ids = ids.toString();
+                $("#homeDetail").modal('show');
+                $("#homeDetail").load('${base}/asset/recode/lendRecode/' + ids);
+            }
+        }
+    });
+
+    var checkNum = function () {
+        //确认自定义表格选项
+        showArray = [];
+        hideArray = [];
+        // 隐藏未选中的
+        $("#checkParent input[type='checkbox']:unchecked").each(function () {
+            hideArray.push($(this).val());
+        });
+        $("#checkParent input[type='checkbox']:checked").each(function () {
+            showArray.push($(this).val())
+        });
+        if (hideArray == null || hideArray == '') {
+            hideArray = "isNull";
+        }
+        $.ajax({
+            url: "${base}/asset/info/saveCheckNums/"+hideArray,
+            type: "post",
+            data: {"hideArray": hideArray.toString()},
+            dataType: "json",
+            success: function (data) {
+                if (data.msg != '') {
+                    var hideDatas = data.msg.toString().split(",");
+                    //隐藏那些类
+                    datatable.columns(hideDatas).visible(false, true);
+                    datatable.columns.adjust().draw(false); // 调整列的大小,重新绘制表格 */
+                }
+                var showArray = new Array();
+                showArray = [];
+                $("#checkParent input[type='checkbox']:checked").each(function () {
+                    showArray.push($(this).val())
+                });
+                //显示那些列
+                datatable.columns(showArray).visible(true, false);
+                datatable.columns.adjust().draw(false); // 调整列的大小,重新绘制表格 /
+            }
+        });
+        $("#change-see-btn").modal('hide');
+        return showArray;
+
+    }
+
+    //条形码
+    function makeBarcode() {
+
+        $('#loading-asset-export').modal('show');
+        var ids = new Array();
+        $("#checkParent input[type='checkbox']:checked").each(function () {
+            ids.push($(this).val())
+        });
+        $("#ids").val(ids);
+        var data = $("#customAssetSearch").serialize();
+        setTimeout(function () {//解决loading页面不显示问题
+            $.ajax({
+                type: "post",
+                url: "${base}/asset/recode/export",
+                data:data,
+                async: false,
+                success: function (data) {
+                    downloadBarCode(data);
+                    $('#loading-asset-export').modal('hide');
+                }
+            });
+        }, 500);
+    }
+
+    function downloadBarCode(urlData) {
+        console.log(urlData);
+        var url = "${base}/asset/recode/downloadBarCode";
+        var form = $("<form></form>").attr("action", url).attr("method", "post");
+        form.append($("<input></input>").attr("type", "hidden").attr("name", "url").attr("value", urlData));
+        form.appendTo('body').submit().remove();
+    }
+    //导出资产列表信息
+    var list = {};
+    function exportAssetsInfo() {
+    <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.info.add") != -1){%>
+            var ids = new Array();
+            $("#checkParent input[type='checkbox']:checked").each(function () {
+                ids.push($(this).val())
+            });
+            $("#ids").val(ids);
+            var data = $("#customAssetSearch").serialize();
+
+            if (ids != undefined && ids != null) {
+                $('#loading-asset-export').modal('show');
+                setTimeout(function () {
+                    $.ajax({
+                        type: "post",
+                        data: data,
+                        dataType: "JSON",
+                        url: "${base}/asset/info/exportAssetsInfo/",
+                        async: false,
+                        success: function (data) {
+                            if (data != 'error'){
+                                exportAssetsInfoByUrl(data);
+                                $('#loading-asset-export').modal('hide');
+                                Toast.success("导出成功");
+                            }else {
+                                Toast.error("导出失败");
+                                $('#loading-asset-export').modal('hide');
+                            }
+                        }
+                    });
+                }, 200);
+            } else {
+                Toast.warning("自定义查看:请至少选择一项进行导出");
+            }
+        <%}else{%>
+            Toast.warning(NOPERMISSION);
+        <%}%>
+    }
+
+    // 导出资产信息列表根据URL
+    function exportAssetsInfoByUrl(urlData) {
+        var url = "${base}/asset/info/exportAssetsInfoByUrl";
+        var form = $("<form></form>").attr("action", url).attr("method", "post");
+        form.append($("<input></input>").attr("type", "hidden").attr("name", "url").attr("value", urlData));
+        form.appendTo('body').submit().remove();
+    }
+
+    function showCheckExcel(msg) {
+        //alert(msg)
+        var excel = $("#checkExcel");
+        excel.find("#inputText").html("");
+        excel.modal("show");
+        excel.find("#inputText").html("").append(msg)
+    }
+
+    /*
+     * 报废校验：只有未被借出，且报废状态为空 的资产才可以通过（0待报废1报废）
+     */
+    function scrap() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("待报废");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (n.scrapstate == 1 || n.scrapstate == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被报废，无法再进行报废操作");
+                    }
+                    if (flag && n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    $.post("${base}/asset/info/scrap", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            dialog.modal("hide");
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要报废的项！");
+        }
+    }
+    //确认报废
+    function confirmScrap() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("报废");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (n.scrapstate != 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产不处于待报废状态，无法进行确认报废操作");
+                    }
+                    if (flag && n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+                    if (flag && n.isorder == 1) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被预约借用，请预约归还后再进行操作");
+                    }
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    $.post("${base}/asset/info/confirmScrap", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            dialog.modal("hide");
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要确认报废的项！");
+        }
+    }
+
+    //管理状态：1封存
+    function sealed() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("封存");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (n.managestatus == 1) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已处于封存状态");
+                    }
+                    if (flag && n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+                    if (flag && n.isorder == 1) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被预约借用，请预约归还后再进行操作");
+                    }
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    dialog.modal("hide");
+                    $.post("${base}/asset/info/sealed", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要封存的项！");
+        }
+    }
+    //闲置
+    function unUsed() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("闲置");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+                    if (flag && n.isorder == 1) {
+                        flag = false;
+                        dialog.modal("hide");
+
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被预约借用，请预约归还后再进行操作");
+                    }
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    dialog.modal("hide");
+                    $.post("${base}/asset/info/unUsed", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要闲置的项！");
+        }
+    }
+    //禁用
+    function forbidden() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("禁用");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+                    if (flag && n.isorder == 1) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被预约借用，请预约归还后再进行操作");
+                    }
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    dialog.modal("hide");
+                    $.post("${base}/asset/info/forbidden", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            console.log("OK")
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要禁用的项！");
+        }
+    }
+    //0在用
+    function unsealed() {
+        var ck = datatable.rows('.selected').data();
+        var ids = [];
+        var flag = true;
+        if (ck.length > 0) {
+            //弹框提醒
+            var dialog = $("#dialogOperation");
+            $("#operationData").html("在用");
+            dialog.modal("show");
+            dialog.find("#okOperation").unbind("click");
+            dialog.find("#okOperation").bind("click", function(event) {
+                $.each(datatable.rows('.selected').data(), function (i, n) {
+                    if (flag && n.islend == 0) {
+                        flag = false;
+                        dialog.modal("hide");
+                        Toast.warning("当前第" + (i + 1) + "个选中资产已被借出，请归还后再进行操作");
+                    }
+
+                    ids.push(n.id);
+                });
+                if (flag) {
+                    dialog.modal("hide");
+                    $.post("${base}/asset/info/unsealed", {ids: ids.toString()}, function (data) {
+                        if (data.code == 0) {
+                            Toast.success(data.msg);
+                            datatable.ajax.reload();
+                        } else {
+                            if ("没有权限" != data.msg) {
+                                Toast.error(data.msg);
+                            }
+                        }
+                    }, "json");
+                }
+            });
+        } else {
+            Toast.warning("请先选择要在用的项！");
+        }
+    }
+
+    /*
+    * * 转账校验：只有在库房未借出资产不可以转账
+    */
+    $("#transferAccounts").on('click' , function () {
+        
+        var id = [];
+        var flag = true;
+        var ck = datatable.rows(".selected").data();
+        console.log(ck);
+        if (ck.length == 0) {
+           // $("#homeDetail").modal('show');
+           // $("#homeDetail").load('${base}/asset/recode/transferAccounts');
+            flag = false;
+            Toast.warning("请先选择一条资产后才可以进行转账操作!")
+        } else if (ck.length > 1){
+            flag = false;
+            Toast.warning("业务规定只支持单个资产转账,请选择一条资产!")
+        } else {
+            $.each(datatable.rows(".selected").data(), function (i, n) {
+                if (n.islend == null || n.islend == 1) {
+                    flag = false;
+                    Toast.warning("当前选中资产在库房中，不能进行转账操作,如果想使用,请走借出流程!");
+                }
+                id.push(n.assetcode);
+
+            });
+
+            if (flag) {
+                id = id.toString();
+                $("#homeDetail").modal('show');
+                $("#homeDetail").load('${base}/asset/recode/transferAccounts/' + id);
+
+            }
+        }
+    });
+
+    $(function () {
+        initDatatable();
+        initSelectCheck();
+
+    });
+
+
+    //显示自定义查询按钮
+    function showSearch() {
+        $("#custom-modal").modal('show');
+    }
+
+    function showAddRecode1() {
+        $("#recode_modal").modal('show');
+    }
+
+    function hidenSearch() {
+        $("#custom-modal").modal('hide');
+    }
+
+    function showEdit(id) {
+        <%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.info.edit") != -1){%>
+            $("#homeDetail").modal('show');
+            $("#homeDetail").load('${base}/asset/info/edit/' + id);
+        <%}else{%>
+            Toast.warning(NOPERMISSION);
+            return;
+        <%}%>
+    }
+
+    function showDetail(id) {
+        $("#homeDetail").modal('show');
+        $("#homeDetail").load('${base}/asset/info/detail/' + id);
+    }
+
+    //导入完成后重新加载datatable
+    function reloadWindow() {
+        datatable.ajax.reload();
+    }
+
+    //初始化checkBox
+    function initSelectCheck() {
+        $.ajax({
+            url: "${base}/asset/info/initSelectCheck/1",
+            type: "post",
+            data: {"id": "1"},
+            dataType: "json",
+            success: function (data) {
+                //(将checkBox赋值)
+                $("#checkParent input[type='checkbox']").prop('checked', 'true');
+                if (data.msg != '') {
+                    var hideDatas = data.msg.toString().split(",");
+                    //填充自定义表格的checked
+                    console.log(data.msg)
+                    $("#checkParent input[type='checkbox']").each(function(){
+                        for (var index in hideDatas) {
+                            //$("#checkParent input[type='checkbox']").eq(hideDatas[index]).prop('checked', '');
+                            if($(this).val() == hideDatas[index]){
+                                $(this).prop('checked', '');
+                            }
+                        }
+                    });
+                    //隐藏那些类
+                    datatable.columns(hideDatas).visible(false, false);
+                    datatable.columns.adjust().draw(false); // 调整列的大小,重新绘制表格 */
+                }
+            }
+        });
+    }
+
+    // 批量导入
+    function submitImportFile() {
+        if ($("#assetFile").val() != null) {
+            if (!/.(xls|xlsx)$/.test($("#assetFile").val())) {
+                Toast.error("文件类型必须是.xls,.xlsx中的一种");
+                //datatable.ajax.reload();
+                return false;
+            }
+        }
+        $('#loading-asset').modal('show');
+        $.ajaxFileUpload({
+            url: "${base}/asset/info/upload/",
+            type: 'POST',
+            secureuri: false,
+            fileElementId: 'assetFile',
+            dataType: 'JSON',
+            success: function (data, status, e) {
+                $("#assetFile").val("");
+                console.log(data);
+                var obj = $.parseJSON(data);
+                if (obj.code == 0) {
+                    //loading(false);
+                    $('#loading-asset').modal('hide');
+                    Toast.success("导入成功");
+                    $("#ladda-btn").button("reset");
+                    setTimeout(function () {
+                        datatable.ajax.reload();
+                    }, 500);
+                } else {
+                    var obj = $.parseJSON(data);
+                    $('#loading-asset').modal('hide');
+                    //Toast.error(obj.msg)
+                    showCheckExcel(obj.msg);
+                }
+            },
+            error: function (data, status, e) {
+                alert(error)
+            }
+        });
+    }
+    // 批量修改
+    function submitUpdateImportFile() {
+        if ($("#updateAssetFile").val() != null) {
+            if (!/.(xls|xlsx)$/.test($("#updateAssetFile").val())) {
+                Toast.error("文件类型必须是.xls,.xlsx中的一种");
+                //datatable.ajax.reload();
+                return false;
+            }
+        }
+        $('#loading-asset').modal('show');
+        $.ajaxFileUpload({
+            url: "${base}/asset/info/uploadWithUpdate/" ,
+            type: 'POST',
+            secureuri: false,
+            fileElementId: 'updateAssetFile',
+            dataType: 'JSON',
+            success: function (data, status) {
+                $("#updateAssetFile").val("");
+                var obj = $.parseJSON(data);
+                if (obj.code == 0) {
+                    //loading(false);
+                    $('#loading-asset').modal('hide');
+                    Toast.success("修改成功")
+                    $("#ladda-btn").button("reset");
+                    setTimeout(function () {
+                        datatable.ajax.reload();
+                    }, 500);
+                } else {
+                    var obj = $.parseJSON(data);
+                    $('#loading-asset').modal('hide');
+                    //Toast.error(obj.msg)
+                    showCheckExcel(obj.msg);
+                }
+            },
+            error: function (data, status, e) {
+                alert(error)
+            }
+        });
+    }
+
+    //履历填充
+    function submitImportResumeFile() {
+        if ($("#resumeFile").val() != null) {
+            if (!/.(xls|xlsx)$/.test($("#resumeFile").val())) {
+                Toast.error("文件类型必须是.xls,.xlsx中的一种");
+                //datatable.ajax.reload();
+                return false;
+            }
+        }
+        $('#loading-asset').modal('show');
+        $.ajaxFileUpload({
+            url: "${base}/asset/info/resumeUpload",
+            type: 'POST',
+            secureuri: false,
+            fileElementId: 'resumeFile',
+            dataType: 'JSON',
+            success: function (data, status) {
+                $('#loading-asset').modal('hide');
+            },
+            error: function (data, status, e) {
+                $('#loading-asset').modal('hide');
+            }
+        });
+        // 请求错误信息
+        setTimeout(function () {
+            // 延迟2秒执行，否则导出操作还未完成，无法得到错误数据信息
+            $('#loading-asset').modal('hide');
+            errorMessages();
+        }, 2000);
+    }
+
+    function errorMessages() {
+        $.post("${base}/asset/info/errorMessages", function (data, status) {
+            if (status == "success") {
+                // 履历填充错误信息
+                if (data != "" && data != "0") {
+                    var faildialog = $("#importWrong");
+                    faildialog.modal("show");
+                    $("#res").html(data);
+                }
+            } else {
+                Toast.error(data);
+            }
+        }, "json");
+    }
+
+    //对表单进行reset操作
+    function clearForm() {
+
+        var formObj = document.forms[0];
+        var formEl = formObj.elements;
+
+        for (var i = 0; i < formEl.length; i++) {
+
+            var element = formEl[i];
+            elementId = element.id;
+
+            if (elementId != null && elementId != "") {
+                if (document.getElementById(elementId).value != "重置") {
+                    $(".sp_clear_btn").hide();
+                    document.getElementById(elementId).value = "";
+                }
+            }
+
+            if (element.type == 'submit') {
+                continue;
+            }
+            if (element.type == 'reset') {
+                continue;
+            }
+            if (element.type == 'button') {
+                continue;
+            }
+            if (element.type == 'hidden') {
+                continue;
+            }
+            if (element.type == 'text') {
+                element.value = "";
+            }
+            if (element.type == 'textarea') {
+                element.value = "";
+            }
+            if (element.type == 'checkbox') {
+                element.checked = false;
+            }
+            if (element.type == 'radio') {
+                element.checked = false;
+            }
+            if (element.type == 'select-multiple') {
+                element.selectedIndex = -1;
+            }
+            if (element.type == 'select-one') {
+                element.selectedIndex = -1;
+            }
+
+        }
+    }
+
+</script>
+<%}%>

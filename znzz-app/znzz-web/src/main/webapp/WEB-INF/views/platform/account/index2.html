@@ -1,0 +1,835 @@
+<!-- 引用头部 -->
+<% layout("head.html"){ %>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper container-bgc" style="margin-left: 0;">
+    <section class="content-header section-content-header">
+        <div class="text-center">
+            监控综合统计
+            <!--<small>Control panel</small>-->
+        </div>
+
+        <ol class="breadcrumb pull-left" style="top: -7px;font-size: 14px;margin-right: 25px;">
+            <li><a href="${base!}/platform/account/indexNew"><i class="fa fa-dashboard"></i> 监控台</a></li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <div class="opac-line"></div>
+    <!-- <div style="width:100%;height:3px;background-image: url('dist/img/bgc-line.png');background-repeat: no-repeat;background-size: cover;"></div> -->
+    <section class="content" style="padding-top: 42px;">
+        <!-- Small boxes (Stat box) -->
+        <div style="border:none;background-color: transparent;height: 320px;">
+            <div class="chart-responsive">
+                <!--接入设备-->
+                <div class="col-sm-3" style="cursor: pointer;">
+                    <div class="text-center home-body" style="box-shadow: 10px 5px 15px rgba(0,0,0,0.3);height: 320px;">
+                        <div class="home-body-header">接入设备</div>
+                        <div class="home-body-content" onclick="openSecondPageNew();">
+                                <span class="inline-block text-center vertical-middle">
+                                    <img src="${base!}/assets/dist/img/home-device-icon.png" width="100" height="100">
+								</span>
+                            <span class="vertical-middle" style="color: #fff;font-size: 65px;margin-left: 3%;">${obj.collectNum}台</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-5">
+                    <div id="rateFont_bg" class="text-center home-body home-usage-box"
+                         style="height:321px;box-shadow: 10px 5px 15px rgba(0,0,0,0.3);border-radius: 5px;position: relative;">
+                        <div class="text-left usage-header">
+                            <span class="header-border vertical-middle"></span>
+                            <span class=" vertical-middle">各类设备当月使用率</span>
+                        </div>
+
+
+                        <div id="rateFont" class="box-body no-padding"
+                             style="margin-left:9%;margin-right: 0%; margin-top:1px;">
+
+                            <% for(var item in obj.deviceUseRate){ %>
+
+                            <div class="flex-center" style="padding-top: 25px;">
+                                <span class="text-right" title="${item.name}"
+                                      style="font-size: 16px;margin-right: 15px; flex:0 0 114px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</span>
+                                <div class="progress progress-xs progress-striped active flex-width"
+                                     style="margin-bottom: 0;height: 12px;">
+                                    <div class="progress-bar ${item.class}" style="width: ${item.rate}%"></div>
+                                </div>
+                                <span class="badge bg-red" style="margin-left: 18px;">${item.rate}%</span>
+                            </div>
+
+                            <%}%>
+
+
+                        </div>
+                        <!--  <div>
+                             <div class="chevron-box chevron-progress-left">
+                                 <div class="progress-icon-left"></div>
+                             </div>
+                             <div class="chevron-box chevron-progress-right">
+                                 <div class="progress-icon-right"></div>
+                             </div>
+                         </div> -->
+                    </div>
+                </div>
+
+
+                <div class="col-sm-4">
+                    <div class="text-center home-box status-count">
+                        <div class="text-left usage-header">
+                            <span class="header-border vertical-middle"></span>
+                            <span class=" vertical-middle">实时状态统计</span>
+                        </div>
+                        <div id="monitorRate" style="height: 260px;"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <div class="device-use-state">
+            <div class="box-body chart-responsive clearfix" style="padding: 10px 16px 10px 16px;">
+                <div class="inline-block home-box device-use-content pull-right" style="width: 48%;height: 100%">
+                    <div class="text-left usage-header itemMargin">
+                        <span class="header-border vertical-middle"></span>
+                        <span class=" vertical-middle">部门设备实时使用情况分析</span>
+                    </div>
+                    <div id="departUseLine2" style="width: 100%;height: 320px;"></div>
+                </div>
+
+
+                <div class="inline-block" style="width: 3%;"></div>
+                <!--
+                 <div class="inline-block home-box device-use-trend " style="display: none;">
+                     <div class="text-left usage-header itemMargin" >
+                         <span class="header-border vertical-middle"></span>
+                         <span class=" vertical-middle" >24小时设备使用趋势图</span>
+                     </div>
+                     <div id="bar-chart" style="width: 100%;height: 320px;"></div>
+                 </div> -->
+
+                <!--各类设备当月使用率-->
+                <!--<div class="inline-block home-box device-use-trend pull-left" >
+                <div id="rateFont_bg" class="text-center home-body home-usage-box" style="height:374px;box-shadow: 10px 5px 15px rgba(0,0,0,0.3);border-radius: 5px;position: relative;">
+                    <div class="text-left usage-header">
+                        <span class="header-border vertical-middle"></span>
+                        <span class=" vertical-middle" >各类设备当月使用率</span>
+                    </div>
+
+
+                    <div id="rateFont" class="box-body no-padding" style="margin-left:9%;margin-right: 0%; margin-top:15px;">
+
+                    <% for(var item in obj.deviceUseRate){ %>
+
+                      <div class="flex-center" style="padding-top: 25px;">
+                            <span class="text-right" title="${item.name}" style="font-size: 16px;margin-right: 15px; flex:0 0 114px;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</span>
+                            <div class="progress progress-xs progress-striped active flex-width" style="margin-bottom: 0;height: 12px;">
+                              <div class="progress-bar ${item.class}" style="width: ${item.rate}%"></div>
+                            </div>
+                            <span class="badge bg-red" style="margin-left: 18px;">${item.rate}%</span>
+                      </div>
+
+                      <%}%>
+
+
+
+                    </div>
+                   &lt;!&ndash;  <div>
+                        <div class="chevron-box chevron-progress-left">
+                            <div class="progress-icon-left"></div>
+                        </div>
+                        <div class="chevron-box chevron-progress-right">
+                            <div class="progress-icon-right"></div>
+                        </div>
+                    </div> &ndash;&gt;
+                </div>
+            </div>
+            -->
+
+                <div class="inline-block home-box device-use-trend pull-left" style="width: 48%;height: 370px">
+                        <div class="text-left usage-header itemMargin">
+                            <span class="header-border vertical-middle"></span>
+                            <span class=" vertical-middle">各部门近一周内的开机率</span>
+                        </div>
+                        <div id="departUseLine" style="width: 100%;height: 320px;"></div>
+                </div>
+
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </section>
+    <!-- /.content -->
+
+</div>
+<div class="control-sidebar-bg"></div>
+
+
+<script>
+
+    $(function () {
+
+
+        initEchartPlugin();
+        refreshData();
+        setInterval('refreshData()', 1000 * 60 * 5);
+    })
+
+    function openSecondPage() {
+        //window.open("${base}/platform/home/byDepart") ;
+        window.location.href = "${base}/platform/account/monitor";
+    }
+
+    var departOptionTemp;
+
+    //实时刷新部门设备使用情况分析
+    function refreshData() {
+        var powerMinnuteChart = echarts.init(document.getElementById('departUseLine'));
+        $.ajax({
+            type: "post",
+            url: "${base}/platform/account/statusData",
+            success: function (data) {
+                /* alert("123");
+                alert(data); */
+                var option = getDepartUseLineOption(data.uname, data.powerOnRate);
+                departOptionTemp = data;
+                powerMinnuteChart.setOption(option);
+            },
+            error: function (e) {
+
+            }
+
+        });
+        refreshData2();
+
+    }
+
+    var departOptionTemp2;
+
+    //实时刷新部门设备使用情况分析
+    function refreshData2() {
+        var powerMinnuteChart = echarts.init(document.getElementById('departUseLine2'));
+        $.ajax({
+            type: "post",
+            url: "${base}/platform/account/statusData2",
+            success: function (data) {
+                /* alert("123");
+                alert(data); */
+                var option = getDepartUseLineOption2(data.uname, data.dePowerOnNum, data.dePowerOffNum, data.dePoutLineNum);
+                departOptionTemp2 = data;
+                powerMinnuteChart.setOption(option);
+            },
+            error: function (e) {
+
+            }
+
+        });
+
+
+    }
+
+
+    function initEchartPlugin() {
+
+        // 基于准备好的dom，初始化echarts实例
+        var monitorRateChart = echarts.init(document.getElementById('monitorRate'));
+        var departUseLine = echarts.init(document.getElementById('departUseLine'));
+        //  var barChart = echarts.init(document.getElementById('bar-chart'));
+        // 使用刚指定的配置项和数据显示图表。
+        monitorRateChart.setOption(getOption('监控率', ${obj.powerOnNum}, ${obj.powerOffNum}, ${obj.outLineNum}, '开机数', '关机数', '离线数'));
+        departUseLine.setOption(getDepartUseLineOption());
+
+        var lineList = '${obj.lineList}';
+        var lineArr = JSON.parse(lineList);
+        //  barChart.setOption(getBarOption(getDetailOption(lineArr)));
+
+
+        window.onresize = function () {
+            monitorRateChart.resize();
+            departUseLine.resize();
+            //barChart.resize();
+        }
+    }
+
+
+    function setBrackets(str, num) {
+        return str + "(" + num + ")";
+    }
+
+
+    function getOption(name, rate1, rate2, rate3, ratename1, ratename2, ratename3) {
+        option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                top: 10,
+                data: [
+                    {name: ratename1, textStyle: {color: '#3C9ACF'}},
+                    {name: ratename2, textStyle: {color: '#D85F43'}},
+                    {name: ratename3, textStyle: {color: '#DB961F'}}
+                ]
+            },
+            grid: {
+                /*   left: '8%',
+                  right: '5%', */
+                /* bottom: '20%', */
+                containLabel: true
+            },
+            series: [
+                {
+                    name: name,
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['40%', '50%'],
+                    label: {
+                        normal: {
+                            formatter: "{b}" + "({c})",
+                            show: true,
+                            // position: 'inner',//文字显示位置
+                            textStyle: {
+                                fontSize: '14',
+                                fontWeight: 'normal'
+                            }
+                        }
+                    },
+                    data: [
+                        {value: rate1, name: ratename1},
+                        {value: rate2, name: ratename2},
+                        {value: rate3, name: ratename3}
+
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    },
+                    color: ['#3C9ACF', '#D75F42', '#DF951A']
+                }
+            ]
+        };
+
+        return option;
+
+    }
+
+
+    //24小时设备使用趋势图
+    function getBarOption(dataJson) {
+        var barOption = {
+
+            baseOption: {
+                timeline: {
+                    //loop: false,
+                    axisType: 'category',
+                    show: true,
+                    autoPlay: false,
+                    playInterval: 2000,
+                    realtime: true,
+                    currentIndex: 4,
+                    padding: [10, 10, 16, 10],
+                    // orient:'vertical',
+                    // controlPosition:'right',
+                    data: ${obj.fiveDays},
+                    //      	                    symbol: 'emptyDiamond',
+                    symbol: consoleSymbol,
+                    symbolSize: 15,
+                    // symbolOffset:['20%',0],
+                    color: colorTemp,
+                    lineStyle: {
+                        color: colorTemp,
+                        width: 1,
+                        type: 'solid',
+                    },
+                    controlStyle: {
+                        showPrevBtn: true,
+                        showNextBtn: true,
+                        normal: {
+                            color: colorTemp,
+                            borderColor: colorTemp
+                        },
+                        emphasis: {
+                            color: colorTemp,
+                            borderColor: colorTemp
+                        }
+                    },
+                    label: {
+                        normal: {
+                            color: colorTemp,
+                        },
+                        emphasis: {
+                            color: colorTemp,
+                            fontFamily: 'Microsoft YaHei'
+                        },
+                    },
+                    checkpointStyle: {
+                        symbol: 'diamond',
+                        animation: true
+                    }
+                },
+
+                grid: {
+                    left: '8%',
+                    right: '5%',
+                    bottom: '25%',
+                    top: '5%',
+                    containLabel: true
+                },
+                // title: {
+                //         text: '24小时设备运行图',
+                //         // subtext: '单位:台',
+                //         x:'left'
+                //     },
+                xAxis: [
+                    {
+                        type: 'category',
+//        	                        boundaryGap : false,
+//        	                    name: '时间',
+                        data: [
+                            '0:00', '\n1:00', '2:00', '\n3:00', '4:00', '\n5:00', '6:00', '\n7:00', '8:00', '\n9:00', '10:00', '\n11:00', '12:00', '\n13:00', '14:00', '\n15:00', '16:00', '\n17:00', '18:00', '\n19:00', '20:00', '\n21:00', '22:00', '\n23:00'
+                        ],
+                        axisLabel: {
+//        	                        showMinLabel:true,
+                            interval: '0',
+//        	                         rotate:30,
+                            show: true,
+                            textStyle: {
+                                color: colorTemp
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: colorTemp,
+                                // width:8,
+                            }
+                        }
+
+                    }
+                ],
+                yAxis: {
+                    type: 'value',
+//        	                            data:['100','200','300','400','500'],
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: colorTemp,
+                            // width:8,
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    // name: '台数',
+                    axisLabel: {
+                        formatter: '{value} 台',
+                        show: true,
+                        textStyle: {
+                            color: colorTemp
+                        }
+                    }
+                },
+                series: [
+                    {
+                        type: 'bar',
+                    },
+                ],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                }
+            },
+            //变量则写在options中需要加载的数据
+            options: dataJson
+
+        }
+
+        return barOption;
+    }
+
+    //拼接dataJson
+    function getDetailOption(dataJson) {
+        var arr = new Array();
+        for (var i in dataJson) {
+            var collectData = [];
+            var powerOnData = [];
+            var obj = dataJson[i];
+            if (obj.collectStrData) {
+                collectData = obj.collectStrData.split(",");
+            }
+            if (obj.powerOnData) {
+                powerOnData = obj.powerOnData.split(",");
+            }
+
+            var str = {series: [{name: '运行台数', type: 'line', data: powerOnData, color: ['#3C9ACF']}]};
+            arr.push(str);
+        }
+
+        return arr;
+
+
+    }
+
+    // 各部门近一周内的开机率
+    function getDepartUseLineOption(uname, powerOnNum) {
+        if (!uname) {
+            uname = "${obj.uname}";
+        }
+        if (!powerOnNum) {
+            powerOnNum = "${obj.powerOnRate}";
+        }
+        uname = uname.split(",");
+        powerOnNum = powerOnNum.split(",");
+
+        option = {
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                },
+                formatter: function (params) {
+                    var num = 0;
+                    var res = '<div>部门：' + params[0].name + '</div>';
+                    for (var i = 0; i < params.length; i++) {
+                        res += "<span style='display:inline-block;width:10px;height:10px;border-radius:10px;background:" + params[i].color + ";'></span>" + params[i].seriesName + ' : ' + params[i].data + '%<br>'
+                    }
+                    return res;
+                }
+            },
+            legend: {
+                x: 'right',
+                // y: -10,
+                padding: [10, 70, 200, 0],
+                data: [
+                    {
+                        name: '开机率',
+                        icon: 'circle',
+                        textStyle: {color: '#3C9ACF'}
+                    }
+                ]
+            },
+            grid: {
+                left: '10%',
+                right: '10%',
+                top: '10%',
+                // containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: uname,
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: colorTemp,
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: colorTemp
+                        }
+                    }
+                }
+            ],
+            yAxis: {
+                type: 'value',
+//			                            data:['100','200','300','400','500'],
+                axisLine: {
+                    show: false,
+                    lineStyle: {
+                        color: colorTemp,
+                        // width:8,
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                // name: '台数',
+                axisLabel: {
+                    formatter: '{value} %',
+                    show: true,
+                    textStyle: {
+                        color: colorTemp
+                    }
+                }
+            },
+            // yAxis : [
+            //     {
+            //         type: 'value',
+            //         name: '台',
+            //         axisLabel: {
+            //             formatter: '{value} 台',
+            //             show: true,
+            //             textStyle: {
+            //                 color: '#333'
+            //             }
+            //         },
+            //         axisTick: {
+            //                     show: false
+            //                 },
+            //         axisLine: {
+            //             lineStyle: {
+            //                 color: '#333',
+            //                 // width:8,
+            //             }
+            //         }
+            //     }
+            // ],
+            dataZoom: [
+                {
+                    show: true,
+                    start: 0,
+                    end: 15,
+                    showDetail: false,
+                    zoomLock: true
+                },
+                {
+                    type: 'inside',
+                    start: 0,
+                    end: 15,
+                    textStyle: false,
+                    zoomOnMouseWheel: false
+                },
+//			                {
+//			                    show: true,
+//			                    yAxisIndex: 0,
+//			                    filterMode: 'empty',
+//			                    width: 30,
+//			                    height: '80%',
+//			                    showDataShadow: false,
+//			                    left: '93%'
+//			                }
+            ],
+            series: [
+                {
+                    name: '开机率',
+                    type: 'bar',
+                    stack: '开机率',
+                    data: powerOnNum,
+                    color: ['#3C9ACF'],
+                    barWidth: 30
+                }
+
+            ]
+
+
+        };
+
+        return option;
+    }
+
+    function reloadIndexData() {
+        initEchartPlugin();
+
+        var powerMinnuteChart = echarts.init(document.getElementById('departUseLine'));
+        var powerMinnuteChart2 = echarts.init(document.getElementById('departUseLine2'));
+        if (departOptionTemp) {
+            var data = departOptionTemp;
+            var data2 = departOptionTemp2;
+            var option = getDepartUseLineOption(data.uname, data.powerOnRate);
+            var option2 = getDepartUseLineOption2(data2.uname, data2.dePowerOnNum, data2.dePowerOffNum, data2.dePoutLineNum);
+            powerMinnuteChart.setOption(option);
+            powerMinnuteChart2.setOption(option2);
+        } else {
+            refreshData();
+        }
+    }
+
+
+    //部门实时状况使用分析
+    function getDepartUseLineOption2(uname, powerOnNum, powerOffNum, outLineNum) {
+        if (!uname) {
+            uname = "${obj.uname}";
+        }
+        if (!powerOnNum) {
+            powerOnNum = "${obj.dePowerOnNum}";
+        }
+        if (!powerOffNum) {
+            powerOffNum = "${obj.dePowerOffNum}";
+        }
+        if (!outLineNum) {
+            outLineNum = "${obj.dePoutLineNum}";
+        }
+        uname = uname.split(",");
+        powerOnNum = powerOnNum.split(",");
+        powerOffNum = powerOffNum.split(",");
+        outLineNum = outLineNum.split(",");
+
+        option = {
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                },
+                formatter: function (params) {
+                    var num = 0;
+                    var res = '<div>部门：' + params[0].name + '</div>';
+                    for (var i = 0; i < params.length; i++) {
+                        res += "<span style='display:inline-block;width:10px;height:10px;border-radius:10px;background:" + params[i].color + ";'></span>" + params[i].seriesName + ' : ' + params[i].data + '台<br>'
+                        num += parseInt(params[i].data);
+                    }
+                    res += '总计 : ' + num;
+                    return res;
+                }
+            },
+            legend: {
+                x: 'right',
+                // y: -10,
+                padding: [10, 70, 200, 0],
+                data: [
+                    {
+                        name: '关机数',
+                        icon: 'circle',
+                        textStyle: {color: '#D85F43'}
+                    },
+                    {
+                        name: '离线数',
+                        icon: 'circle',
+                        textStyle: {color: '#DB961F'}
+                    },
+                    {
+                        name: '开机数',
+                        icon: 'circle',
+                        textStyle: {color: '#ACE4FF'}
+                    }
+                ]
+            },
+            grid: {
+                left: '10%',
+                right: '10%',
+                top: '10%',
+                // containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: uname,
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: colorTemp,
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: colorTemp
+                        }
+                    }
+                }
+            ],
+            yAxis: {
+                type: 'value',
+//	                            data:['100','200','300','400','500'],
+                axisLine: {
+                    show: false,
+                    lineStyle: {
+                        color: colorTemp,
+                        // width:8,
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                // name: '台数',
+                axisLabel: {
+                    formatter: '{value} 台',
+                    show: true,
+                    textStyle: {
+                        color: colorTemp
+                    }
+                }
+            },
+            // yAxis : [
+            //     {
+            //         type: 'value',
+            //         name: '台',
+            //         axisLabel: {
+            //             formatter: '{value} 台',
+            //             show: true,
+            //             textStyle: {
+            //                 color: '#333'
+            //             }
+            //         },
+            //         axisTick: {
+            //                     show: false
+            //                 },
+            //         axisLine: {
+            //             lineStyle: {
+            //                 color: '#333',
+            //                 // width:8,
+            //             }
+            //         }
+            //     }
+            // ],
+            dataZoom: [
+                {
+                    show: true,
+                    start: 0,
+                    end: 15,
+                    showDetail: false,
+                    zoomLock: true
+                },
+                {
+                    type: 'inside',
+                    start: 0,
+                    end: 15,
+                    textStyle: false,
+                    zoomOnMouseWheel: false
+                },
+//	                {
+//	                    show: true,
+//	                    yAxisIndex: 0,
+//	                    filterMode: 'empty',
+//	                    width: 30,
+//	                    height: '80%',
+//	                    showDataShadow: false,
+//	                    left: '93%'
+//	                }
+            ],
+            series: [
+                {
+                    name: '关机数',
+                    type: 'bar',
+                    stack: '开机数',
+                    data: powerOffNum,
+                    color: ['#D85F43'],
+                    barWidth: 30
+                },
+                {
+                    name: '离线数',
+                    type: 'bar',
+                    stack: '开机数',
+                    color: ['#DB961F'],
+                    data: outLineNum,
+                    barWidth: 30,
+                },
+                {
+                    name: '开机数',
+                    type: 'bar',
+                    stack: '开机数',
+                    color: ['#ACE4FF'],
+                    data: powerOnNum,
+                    barWidth: 30,
+                }
+
+            ]
+
+
+        };
+
+        return option;
+    }
+
+
+</script>
+<%}%>

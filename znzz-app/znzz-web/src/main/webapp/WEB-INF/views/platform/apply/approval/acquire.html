@@ -1,0 +1,299 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<div>
+    <section class="content-header">
+        <a href="${base!}/asset/apply/approve" data-pjax>
+            <button type="button" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </a>
+        <h4>确认领取</h4>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-info">
+                    <div class="box-body">
+                        <form id="acquireConfirmModal" role="form" class="form-horizontal parsley-form"
+                              data-parsley-validate
+                              action="${base}/asset/apply/approve/doAcquire" method="post" data-backdrop="static"
+                              data-keyboard="false">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" role="tab" id="headingOne">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                资产信息
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="one" class="panel-collapse" role="tabpanel"
+                                         aria-labelledby="headingFour">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label for="assetCode" class="col-sm-1 control-label">统一编号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="assetCode"
+                                                           value="${obj.assetCode}"
+                                                           disabled>
+                                                    <input type="hidden" name="assetCode" value="${obj.assetCode}">
+                                                </div>
+
+                                                <label for="assetName" class="col-sm-1 control-label">资产名称：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="assetName"
+                                                           value="${obj.assetName}"
+                                                           disabled>
+                                                    <input type="hidden" name="assetName" value="${obj.assetName}">
+                                                </div>
+                                                <label for="deviceVersion" class="col-sm-1 control-label">资产型号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="deviceVersion"
+                                                           value="${obj.deviceVersion}" disabled>
+                                                    <input type="hidden" name="deviceVersion"
+                                                           value="${obj.deviceVersion}">
+                                                </div>
+                                                <label for="serialNumber" class="col-sm-1 control-label">出厂编号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="serialNumber"
+                                                           value="${obj.serialNumber}" disabled>
+                                                    <input type="hidden" name="serialNumber"
+                                                           value="${obj.serialNumber}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="enableTime" class="col-sm-1 control-label">启用日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="enableTime"
+                                                           name="enableTime"
+                                                           value="${@date.formatDate(obj.enableTime)}" disabled>
+                                                </div>
+
+                                                <label for="powerOffTime" class="col-sm-1 control-label">离线日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="powerOffTime"
+                                                           name="powerOffTime"
+                                                           value="${@date.formatDate(obj.powerOffTime)}" disabled>
+                                                </div>
+                                                <label for="ggName" class="col-sm-1 control-label">规格：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="ggName"
+                                                           value="${obj.ggName}"
+                                                           disabled>
+                                                    <input type="hidden" name="specifications" value="${obj.ggName}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" role="tab" id="headingTwo">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                申请信息
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="two" class="panel-collapse" role="tabpanel"
+                                         aria-labelledby="headingFour">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label for="applyId" class="col-sm-1 control-label">申请编号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="applyId"
+                                                           value="${obj.applyId}"
+                                                           disabled>
+                                                    <input type="hidden" name="applyId" value="${obj.applyId}">
+                                                </div>
+
+                                                <label for="proposer" class="col-sm-1 control-label">申请人：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="proposer"
+                                                           value="${obj.proposer}"
+                                                           disabled>
+                                                    <input type="hidden" id="proposerId" value="${obj.proposerId}"
+                                                           name="proposer">
+                                                    <input type="hidden" value="${obj.id}" name="id">
+                                                    <input type="hidden" name="lenderUnit" value="${obj.lenderUnit}">
+                                                </div>
+                                                <label for="entryNumber" class="col-sm-1 control-label">工号：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="entryNumber"
+                                                           name="entryNumber"
+                                                           value="${obj.entryNumber}" disabled>
+                                                    <input type="hidden" name="entryNumber" value="${obj.entryNumber}">
+                                                </div>
+                                                <label for="phoneNumber" class="col-sm-1 control-label">联系电话：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="phoneNumber"
+                                                           name="number" disabled
+                                                           value="${obj.phoneNumber}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="lendDate" class="col-sm-1 control-label">借用日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="lendDate"
+                                                           value="${@date.formatDate(obj.lendDate)}"
+                                                           disabled>
+                                                    <input type="hidden" name="lendDate" value="${@date.formatDate(obj.lendDate)}">
+                                                </div>
+
+                                                <label for="returnDate" class="col-sm-1 control-label">归还日期：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="returnDate"
+                                                           value="${@date.formatDate(obj.returnDate)}"
+                                                           disabled>
+                                                    <input type="hidden" name="returnDate" value="${@date.formatDate(obj.returnDate)}">
+                                                </div>
+
+                                                <label for="accessary" class="col-sm-1 control-label">附件：</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="accessary"
+                                                           name="accessary" value="${obj.accessary}"
+                                                           disabled>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="remark" class="col-sm-1 control-label">备注：</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="remark" name="remark"
+                                                           value="${obj.remark}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading" role="tab" id="headingApp">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                领取信息
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="apply" class="panel-collapse" role="tabpanel"
+                                         aria-labelledby="headingFour">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label for="applyId" class="col-sm-1 control-label">审批人：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="operator"
+                                                           value="${obj.operator}" disabled>
+                                                    <input type="hidden" name="operator" value="${obj.operatorId}">
+                                                </div>
+
+                                                <label for="proposer" class="col-sm-1 control-label">联系电话：</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" id="cancelPhone"
+                                                           value="${obj.cancelPhone}" name="number">
+                                                </div>
+
+                                                <label for="others" class="col-sm-1 control-label">附件：</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="others"
+                                                           name="accessary">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="rem" class="col-sm-1 control-label">备注：</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="rem"
+                                                           name="remark">
+                                                </div>
+
+                                                <div class="col-sm-3 pull-right">
+                                                    <button type="button" class="btn btn-danger" onclick="clearAcquire()"
+                                                            style="width:120px">请空
+                                                    </button>
+                                                    <button class="btn btn-primary btn_All"
+                                                            data-loading-text="正在领取..."
+                                                            style="width:120px">确认领取
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<a class="exit-offscreen"></a>
+<script language="JavaScript">
+
+    $(function () {
+        acquireConfirm();
+    });
+
+    // 确认领取
+    function acquireConfirm() {
+        $('#acquireConfirmModal').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                if (!theOtherChecks()) {
+                    return false;
+                }
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    setTimeout(function () {
+                        window.location.href = "${base}/asset/apply/approve";
+                    }, 1000);
+                } else {
+                    if ("没有权限" != data.msg) {
+                        Toast.error(data.msg);
+                    }
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    }
+
+
+    // 电话号码,附件、备注长度
+    function theOtherChecks() {
+        var regx = /^1[3|4|5|7|8][0-9]\d{8}$/;
+        var number = $("#cancelPhone").val();
+        var remark = $("#rem").val();
+        var accessary = $("#others").val();
+        if (accessary.length > 200) {
+            Toast.error("附件最多允许输入200个字符!");
+            return false;
+        }
+        if (remark.length > 200) {
+            Toast.error("备注最多允许输入200个字符!");
+            return false;
+        }
+        if (number != "" && !regx.test(number)) {
+            Toast.error("请填写正确的手机号码");
+            return false;
+        }
+        return true;
+    }
+
+    // 请空
+    function clearAcquire() {
+        $("#cancelPhone").val("");
+        $("#others").val("");
+        $("#rem").val("");
+    }
+
+</script>
+
+<%}%>

@@ -1,0 +1,401 @@
+<style>
+  .modal-bgc{
+            background-image: url('${base!}/assets/dist/img/modal-bgc.png');
+            background-repeat: no-repeat;
+            -webkit-background-size: cover;
+            background-size: cover;
+        }
+        .modal-top-bgc {
+            background-image: url('${base!}/assets/dist/img/modal-top.png');
+            background-repeat:no-repeat;
+            -webkit-background-size: 100% 334px;
+            background-size: 100% 334px;
+        }
+</style>
+
+<form class="modal fade" id="addModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width: 1100px;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #333333;color: #fff;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="opacity: 1;">
+                    <span aria-hidden="true" style="color: #ffffff;">&times;</span>
+                </button>
+                <h4 class="modal-title" >详细信息</h4>
+            </div>
+            <div class="modal-body modal-bgc">
+                <div class="form-horizontal">
+
+                        <div style="padding: 25px 25px;">
+                            <div class="modal-top-bgc" style="height: 334px;border-left: 2px solid #5E90C2;display: flex;align-items: center;">
+                                <div class="" style="display: flex;align-items: center;justify-content: center;width:24%;padding-left:20px;">
+                                    <img src="${base!}/assets/dist/img/home-device-icon.png" width="92", height="93">
+                                    <div style="color: #fff;padding-left: 10px;">
+                                        <div style="font-size: 20px;" id="t_code">W70657362</div>
+                                        <div id="t_name">函数/任意波发生器</div>
+                                        <div id="t_version">HP33120A</div>
+                                    </div>
+                                </div>
+                                <div class="" style="width:38%;">
+                                    <div id="listMonthPie" style="width:370px;height: 300px;"></div>
+                                </div>
+                                <div class="" style="width:38%;">
+                                    <div id="listYearPie" style="width: 370px;height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 25px 25px;">
+                            <div class="modal-top-bgc" style="height: 334px;border-left: 2px solid #F38551;display: flex;align-items: center;">
+                                <div class="col-sm-6">
+                                    <div id="facilityDayLine" style="width: 450px;height: 300px;"></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div id="facilityYearLine" style="width: 450px;height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+$(function(){
+	//设备统一编码
+	var deviceCode ='${obj.deviceCode}';
+	var deviceObj = deviceVersionAndName[deviceCode] ;
+	$("#t_code").html(subStrCustom(deviceCode,10)) ;
+	if(deviceObj){
+		$("#t_name").html(subStrCustom(deviceObj.name,6)) ;
+		$("#t_version").html(subStrCustom(deviceObj.version,6)) ;
+	}
+	
+	
+	 // 基于准备好的dom，初始化echarts实例
+    var facilityDay = echarts.init(document.getElementById('facilityDayLine'));
+     var facilityYear = echarts.init(document.getElementById('facilityYearLine'));
+    var listMonthPie = echarts.init(document.getElementById('listMonthPie'));
+    var listYearPie = echarts.init(document.getElementById('listYearPie')); 
+    facilityDay.setOption(getFacilityDayOption());
+    facilityYear.setOption(getFacilityYearOption());
+    var listMonth ='${obj.listMonth}';
+    var listYear = '${obj.listYear}' ;
+    var listMonthJson =[{name:"无时长",value:0}] ;
+    var listMonthYear =[{name:"无时长",value:0}] ;
+    if(listMonth){
+    	if(listMonth!="[]"){
+       		listMonthJson = JSON.parse(listMonth) ;
+    	}
+    }
+    if(listYear){
+    	if(listYear!="[]"){
+        	listMonthYear = JSON.parse(listYear) ;
+    	}
+    }
+    
+    listMonthPie.setOption(getPieOption("最近一月项目使用时长所占比例",listMonthJson));
+    listYearPie.setOption(getPieOption("最近一年项目使用时长所占比例",listMonthYear));  
+	
+});
+
+//日使用时长
+function getFacilityDayOption(){
+	option = {
+			title: {
+		        text: '日使用时长',
+		        x:'center',
+		        textStyle: {
+		            fontWeight: 'normal',              //标题颜色
+		            color: '#fff'
+		        },
+		    },
+		    tooltip : {
+		        trigger: 'axis',
+		        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+		            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+		        },
+		        formatter: "{a} <br/>{b} : {c}分钟 "
+		    },
+		    toolbox: {
+		        show: false,
+		        feature: {
+		            dataZoom: {
+		                yAxisIndex: 'none'
+		            },
+		            restore: {},
+		            saveAsImage: {}
+		        }
+		    },
+		    legend: {
+		        x:'center',
+		        bottom:-10,
+//		        right:50,
+		        padding:10,
+//		        align:'middle',
+		        data:[{name:'日使用时长',icon:'roundRect',textStyle:{color:'#fff'}}]
+		    },
+		    grid: {
+		        top:'15%',
+		        left: '3%',
+//		        right: '15%',
+		        bottom: '10%',
+		        containLabel: true
+		    },
+		    // toolbox: {
+		    //     feature: {
+		    //         saveAsImage: {}
+		    //     }
+		    // },
+		    xAxis: {
+		        type: 'category',
+		        boundaryGap: true,
+		        data: ${obj.facilityDate},
+		        splitLine: {show: true},
+		        axisLabel:{
+		            show: true,
+		            textStyle: {
+		                color: '#fff'
+		            }
+		        },
+		        axisLine:{
+		            lineStyle:{
+		                color:'#fff',
+		                // width:8,
+		            }
+		        }
+
+		    },
+		    yAxis: {
+		        type: 'value',
+		        axisLabel:{
+		            show: true,
+		            textStyle: {
+		                color: '#fff'
+		            }
+		        },
+		        axisLine:{
+		            lineStyle:{
+		                color:'#fff',
+		                // width:8,
+		            }
+		        }
+		    },
+		    series: [
+		        {
+		            name:'日使用时长',
+		            type:'line',
+		            stack: '总量',
+		            data:${obj.durationList},
+		            color:['#d75f42']
+		        }
+		    ]
+		};
+	
+	
+	return option ;
+}
+
+//月使用时长
+function getFacilityYearOption(){
+	option = {
+			title: {
+		        text: '月使用时长',
+		        x:'center',
+		        textStyle: {
+		            fontWeight: 'normal',              //标题颜色
+		            color: '#fff'
+		        },
+		    },
+		    tooltip : {
+		        trigger: 'axis',
+		        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+		            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+		        },
+		        formatter: "{a} <br/>{b} : {c}分钟 "
+		    },
+		    toolbox: {
+		        show: false,
+		        feature: {
+		            dataZoom: {
+		                yAxisIndex: 'none'
+		            },
+		            restore: {},
+		            saveAsImage: {}
+		        }
+		    },
+		    legend: {
+		        x:'center',
+		        bottom:-10,
+//		        right:50,
+		        padding:10,
+//		        align:'middle',
+		        data:[{name:'月使用时长',icon:'roundRect',textStyle:{color:'#fff'}}]
+		    },
+		    grid: {
+		        top:'15%',
+		        left: '3%',
+//		        right: '15%',
+		        bottom: '10%',
+		        containLabel: true
+		    },
+		    // toolbox: {
+		    //     feature: {
+		    //         saveAsImage: {}
+		    //     }
+		    // },
+		    xAxis: {
+		        type: 'category',
+		        boundaryGap: true,
+		        data: ${obj.facilityMonthDate},
+		        splitLine: {show: true},
+		        axisLabel:{
+		            show: true,
+		            textStyle: {
+		                color: '#fff'
+		            }
+		        },
+		        axisLine:{
+		            lineStyle:{
+		                color:'#fff',
+		                // width:8,
+		            }
+		        }
+
+		    },
+		    yAxis: {
+		        type: 'value',
+		        axisLabel:{
+		            show: true,
+		            textStyle: {
+		                color: '#fff'
+		            }
+		        },
+		        axisLine:{
+		            lineStyle:{
+		                color:'#fff',
+		                // width:8,
+		            }
+		        }
+		    },
+		    series: [
+		        {
+		            name:'月使用时长',
+		            type:'line',
+		            stack: '总量',
+		            data:${obj.monthDurationList},
+		            color:['#d75f42']
+		        }
+		    ]
+			
+			
+		};
+	
+	
+	return option ;
+}
+
+
+//饼图 
+function getPieOption(name,data){
+	option = {
+			tooltip : {
+    	        trigger: 'item',
+    	        formatter: "{a} <br/>{b} : {c}分钟 ({d}%)"
+    	    },
+    	    title : {
+    	        text: name,
+    	        x:'center',
+    	        textStyle: {
+    	            fontWeight: 'normal',              //标题颜色
+    	            color: '#fff'
+    	        },
+    	    },
+    	    
+    	    grid:{
+    	    	/* left:'50%', */
+    	    	
+    	    	containLabel: true,
+    	    	tooltip : {
+        	        trigger: 'item',
+        	        formatter: "{a} <br/>{b} : {c}分钟 ({d}%)",
+        	        padding: 10
+        	    },
+    	    },
+    	    /* legend: [
+    	          {
+		        	data:[ratename1],
+		       		 x:"right",
+		       		 top:'5%'
+		         },
+		         {
+			        	data:[ratename2],
+			       		 x:"right",
+			       		 top:'10%'
+			         },
+		    ], */
+    	    series : [
+    	        {
+    	            name: name,
+    	            type: 'pie',
+    	            radius : '45%',
+    	            center: ['55%', '50%'],
+    	            label: {
+    	            	normal: {
+    	            	formatter: "{b}"+"({c}分钟)",
+    	            	show: true,
+    	            	// position: 'inner',//文字显示位置
+    	            	textStyle: {
+    	            	      fontSize: '12',
+    	            	      fontWeight: 'normal'
+    	            	    }
+    	            	}
+    	            },
+    	            data:data,
+    	            itemStyle: {
+    	                emphasis: {
+    	                    shadowBlur: 10,
+    	                    shadowOffsetX: 0,
+    	                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+    	                },
+    	                 normal: {
+    	                    color: function(params) {
+    	                     var value = params.data.value;
+    	                     var name = params.data.name;
+    	                     if(!value||value==0||name=="未分配时长"){
+    	                    	 return "#ADD8E6" ;
+    	                     }else{
+	    	                      return    getRandomColor(params.dataIndex);
+    	                     }
+    	                }
+    	              } 
+    	            }
+    	        }
+    	    ]
+    	};
+	
+	return option ;
+	
+}
+//获取随机颜色
+var customColor=['#3C9ACF','#D75F42','#DF951A','#FFE4C4','#CD5C5C','#FFB6C1','#DA70D6','#9932CC','#6A5ACD','#4169E1','#87CEFA','#4682B4','#5F9EA0','#00FFFF','#3CB371','#BDB76B','#DAA520'] ;
+var getRandomColor = function(index){
+    if(customColor.length>index){
+		return customColor[index];
+    }else{
+		return '#'+('00000'+(Math.random()*0x1000000<<0).toString(16)).slice(-6);
+    }
+}
+//截取字符串省略展示
+var subStrCustom =  function(data , length){
+	var div= data ;
+	if(data.length>length){
+		str = data.substr(0,length) +"...";
+		div='<div  style="overflow: hidden;text-overflow: ellipsis;cursor: pointer;" '+
+		'title="'+data +'">'+str +'</div>'  ;
+	}
+			 
+	return div ;
+}	
+	
+</script>

@@ -1,0 +1,443 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+	<h1>规格型号</h1>
+	<ol class="breadcrumb pull-left">
+		<!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+		<li class="active"><a href="${base}/asset/rule#">资产台账管理</a></li>
+		<li class="active">规格型号</li>
+	</ol>
+</section>
+
+<section class="content">
+	<!-- Small boxes (Stat box) -->
+	<!-- 查询条件内容 -->
+	<div class="row">
+		<div style="padding: 15px 15px;">
+			<div class="box">
+				<!--<div class="box-header with-border">-->
+				<!--<h3 class="box-title">Horizontal Form</h3>-->
+				<!--</div>-->
+				<!-- /.box-header -->
+				<!-- form start -->
+				<div class="box-body" style="padding: 0 15px auto;">
+					<div role="form" class="form-horizontal parsley-form"
+						data-parsley-validate>
+
+						<div class="form-group">
+							<label for="gateWayNum" class="col-sm-2 control-label">型号：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" name="deviceVersion"
+									id="deviceVersion" placeholder="请输入型号">
+							</div>
+							<label for="assetName" class="col-sm-2 control-label">资产名称：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" name="assetName"
+									id="assetName" placeholder="请输入型号名称">
+							</div>
+						</div>
+						<div class="form-group">
+
+							<label class="col-sm-2 control-label">添加时间：</label>
+							<div class="col-sm-3">
+								<div class="input-group date">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+									<input type="text" class="form-control pull-right"
+										name="createTime" id="timeRange" readonly="readonly"
+										style="background-color: white;">
+								</div>
+							</div>
+						</div>
+						<div class="box-footer" style="height: 30px;">
+							<button id="searchBtn" class="btn btn-primary pull-right"
+								data-loading-text="搜索..." style="width: 80px">搜索</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<!-- 添加  -->
+				<div class="box-header">
+					<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.rule.add")!=-1){%>
+					<a id="add" class="btn btn-md btn-success"
+						href="${base}/asset/rule/add" data-pjax><i
+						class="fa fa-fw fa-plus"></i> 添加</a> <%}%>
+					<!--<button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+						 <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button> -->
+				</div>
+
+				<!-- /.box-header -->
+				<div class="box-body">
+
+					<table id="unittable"
+						class="table table-bordered table-striped table-hover">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>型号</th>
+								<th>资产名称</th>
+								<th>添加时间</th>
+								<th>图片</th>
+								<th style="width: 100px;">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2"
+	role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">×</button>
+				<h4 class="modal-title">删除型号</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除后无法恢复； <br /> 请谨慎操作！ <br />确定要删除吗？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取
+					消</button>
+				<button id="okDel" type="button" class="btn btn-primary"
+					data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm"
+	tabindex="-3" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="border-radius: 5px;"></div>
+	</div>
+</div>
+<!-- 图片容器 -->
+<div class="modal fade bs-example-modal-lg" id="showPic"
+	data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-lg"
+		style="margin: 250px auto; width: 500px">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">图片信息</h4>
+			</div>
+			<div class="modal-body" id="show2">
+				<!--  http://temp.im/180x200/4CD964/fff -->
+				<img src="" alt="找不到图片..." width="350px" height="300px">
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	var datatable;
+	/* var datatable1; */
+	$(function() {
+		initDatatable();
+		$("#dialogGatewayDetail").on("hidden.bs.modal", function() {
+			$(this).removeData("bs.modal");
+		});
+		$('#pic').on('hidden.bs.modal', function() {
+			$(this).removeData("bs.modal");
+		});
+		datatable.on('draw.dt', function() {
+			datatable.column(0, {
+				search : 'applied',
+				order : 'applied'
+			}).nodes().each(function(cell, i) {
+				//i 从0开始，所以这里先加1
+
+				i = i + 1;
+				//服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+				var page = datatable.page.info();
+				//当前第几页，从0开始
+
+				var pageno = page.page;
+				//每页数据
+
+				var length = page.length;
+				//行号等于 页数*每页数据长度+行号
+
+				var columnIndex = (i + pageno * length);
+				cell.innerHTML = columnIndex;
+			});
+		});
+	});
+	function initDatatable() {
+		datatable = $('#unittable')
+				.DataTable(
+						{
+							"dom" : '<"toolbar">frtip',
+							"searching" : false,
+							"processing" : false,
+							"serverSide" : true,
+							"select" : false,
+							"ordering" : true,
+							"language" : {
+								"url" : "${base}/assets/plugins/datatables/cn.json"
+							},
+
+							"preDrawCallback" : function() {
+								sublime.showLoadingbar($(".main-content"));
+							},
+							"drawCallback" : function(settings) {
+								sublime.closeLoadingbar($(".main-content"));
+							},
+
+							"ajax" : {
+								"url" : "${base}/asset/rule/data",
+								"type" : "post",
+								"data" : function(d) {
+									d.deviceVersion = $('#deviceVersion').val();
+									d.assetName = $('#assetName').val();
+									d.createTime = $('#timeRange').val();
+								}
+
+							},
+							"order" : [ [ 3, "desc" ] ],
+							"columns" : [ {
+								"data" : null,
+								"width" : "30px"
+							}, {
+								"data" : "deviceVersion",
+								"bSortable" : true
+							}, {
+								"data" : "assetName",
+								"bSortable" : true
+							}, {
+								"data" : "createTime",
+								"bSortable" : true
+							}, {
+								"data" : "urlImage",
+								"bSortable" : true
+							} ],
+
+							"columnDefs" : [
+									{
+										"searchable" : false,
+										"orderable" : false,
+										"targets" : 0
+									},
+									{
+										"render" : function(data, type, row) {
+											if (data != '' && data != null) {
+												var arr = data.split(".");
+												var d = arr[arr.length - 1];//数据库存储的图标后缀 
+											}
+											return data == '' || data == null ? "--"
+													: "<a class='self-hover' style='cursor:pointer;' onclick='showpic("
+															+ row.id
+															+ ")'>"
+															+ row.deviceVersion
+															+ "." + d + "</a>";
+										},
+										"targets" : 4
+									},
+									{
+										"render" : function(data, type, row) {
+											return data == '' || data == null ? "--"
+													: data;
+										},
+										"targets" : [ 1, 2, 3 ]
+									},
+									{
+										"render" : function(data, type, row) {
+											return '<a class="btn btn-xs btn-success update" href="${base}/asset/rule/edit/'
+													+ row.id
+													+ '" onclick="showEdit();" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';
+											/* return '<a class="btn btn-xs btn-primary " href="${base}/asset/rule/detail/' + row.id + '" data-toggle="modal" data-target="#dialogGatewayDetail"><i class="glyphicon glyphicon-sunglasses"></i> 查看</a>'+
+											 '&nbsp;&nbsp;<a class="btn btn-xs btn-success" href="${base}/asset/rule/edit/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>'; */
+
+										},
+										"targets" : 5
+									}
+
+							]
+
+						});
+
+		/* 点击选中 */
+		datatable.on('click', 'tr', function() {
+			$(this).toggleClass('selected');
+		});
+
+		$("#searchBtn").on('click', function() {
+			//datatable.fnDraw();
+			datatable.ajax.reload();
+		});
+	}
+
+	function showEdit() {
+		<%if(@shiro.getPrincipalProperty('userPermissionData').indexOf("asset.auth.rule.edit")==-1){%>
+		$(".update").attr("href", "#");
+		Toast.warning(NOPERMISSION);
+		return;
+		<%}%>
+	}
+
+	function showpic(id) {
+		pic(id);
+		$("#showPic").modal('show');
+		//$("#pic").load('${base}/asset/rule/detail/'+id);
+	}
+	function pic(id) {
+		$.post('${base}/asset/rule/detail/' + id, {}, function(data) {
+			// <img alt="" src="data:image/*;base64,${obj.urlImage!}" width="100px" higth="100px">
+			$("#show2").children("img").attr("src",
+					"data:image/png;base64," + data.urlImage + "");
+		}, "json");
+	}
+
+	/* function datas(){
+	 datatable1 = $("#unittable").treetable({
+	 expandable: true,
+	 onNodeExpand : function(){
+	 var node = this;
+	 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+	 datatable1.treetable("loadBranch", node, rows);
+	 //alert(node+"============="+rows);
+	 $.post("${base}/platform/sys/unit/child/"+node.id,{}, function(data){
+	 datatable1.treetable("unloadBranch", node);
+	 datatable1.treetable("loadBranch", node, data);
+	 });
+	 }
+	 });
+	 } */
+	function delCheck() {
+		var chks = datatable.rows('.selected').data();
+		if (chks.length > 0) {
+			var ids = [];
+			$.each(datatable.rows('.selected').data(), function(i, n) {
+				ids.push(n.id);
+			});
+			var dialog = $("#dialogDelete");
+			dialog.modal("show");
+			dialog.find("#okDel").unbind("click");
+			dialog.find("#okDel").bind("click", function(event) {
+				var btn = $(this);
+				btn.button("loading");
+				$.post("${base}/asset/rule/delete", {
+					ids : ids.toString()
+				}, function(data) {
+					if (data.code == 0) {
+						datatable.ajax.reload(null, false);
+						Toast.success(data.msg);
+					} else {
+						if ("没有权限" != data.msg) {
+							Toast.error(data.msg);
+						}
+					}
+					btn.button("reset");
+					dialog.modal("hide");
+				}, "json");
+			});
+		} else {
+			Toast.warning("请先选择要删除的项！");
+		}
+	}
+	function del(id) {
+		var dialog = $("#dialogDelete");
+		dialog.modal("show");
+		dialog.find("#okDel").unbind("click");
+		dialog.find("#okDel").bind("click", function(event) {
+			var btn = $(this);
+			btn.button("loading");
+			$.post("${base}/asset/rule/delete/" + id, {}, function(data) {
+				if (data.code == 0) {
+					datatable.ajax.reload(null, false);
+				} else {
+					if ("没有权限" != data.msg) {
+						Toast.error(data.msg);
+					}
+				}
+				//重置按钮状态，关闭提示框
+				btn.button("reset");
+				dialog.modal("hide");
+			}, "json");
+		});
+	}
+</script>
+<script>
+	$(function() {
+		var locale = {
+			format : 'YYYY/MM/DD HH:mm:ss',
+			separator : ' - ',
+			applyLabel : '确认',
+			cancelLabel : '清除',
+			fromLabel : '开始时间',
+			toLabel : '结束时间',
+			customRangeLabel : '自定义',
+			weekLabel : "W",
+			daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+			monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月',
+					'九月', '十月', '十一月', '十二月' ],
+			firstDay : 1
+        }
+        $('#timeRange').daterangepicker({
+					//            language: 'zh-CN',
+					"autoUpdateInput" : false,
+					"timePickerSeconds" : true,
+					"locale" : locale,
+					"ranges" : {
+						// '今日': [moment(), moment()],
+						// '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+						// '最近7日': [moment().subtract(6, 'days'), moment()],
+						// '最近30日': [moment().subtract(29, 'days'), moment()],
+						'本月' : [ moment().startOf('month'),
+								moment().endOf('month') ],
+						'上月' : [
+								moment().subtract(1, 'month').startOf('month'),
+								moment().subtract(1, 'month').endOf('month') ]
+					},
+					"opens" : "left",
+					"timePicker" : true,
+					"timePicker24Hour" : true
+				});
+		$("#timeRange").on(
+				'apply.daterangepicker',
+				function(ev, picker) {
+					$("#timeRange").val(
+							picker.startDate.format('YYYY/MM/DD HH:mm:ss')
+									+ ' - '
+									+ picker.endDate
+											.format('YYYY/MM/DD HH:mm:ss'));
+				});
+
+		$("#timeRange").on('cancel.daterangepicker', function(ev, picker) {
+			$("#timeRange").val('')
+		})
+
+		/*         $("#addTimeRange").datepicker({
+		 language: "zh-CN",
+		 todayHighlight: true,
+		 weekStart: 1,
+		 autoclose: true,//选中之后自动隐藏日期选择框
+		 clearBtn: true,//清除按钮
+		 //            todayBtn: true,//今日按钮
+		 format: "yyyy/mm/dd"//日期格式，详见 http://bootstrap-datepicker.readthedocs.org/en/release/options.html#format
+		 }); */
+	});
+</script>
+<%}%>
+

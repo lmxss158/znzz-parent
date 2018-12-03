@@ -1,0 +1,140 @@
+<% layout("/layouts/platform.html"){ %>
+
+
+	<section class="content-header">
+		<h1>单位管理</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> 系统</a></li>
+			<li><a href="#">系统管理</a></li>
+			<li class="active">单位管理</li>
+		</ol>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+
+				<!-- box -->
+				<div class="box">
+					<div class="box-header">
+						<button type="button" class="btn btn-primary btn-flat" onclick="openModule('modal/modal-add.html')">
+							<i class="fa fa-fw fa-plus"></i>新增
+						</button>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table id="unitTreeTable" class="table table-bordered table-striped  table-hover">
+							<thead>
+								<tr>
+									<th>单位名称</th>
+									<th>地址</th>
+									<th>电话</th>
+									<th>邮箱</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% for(o in obj){ %>
+								<tr data-tt-id="${o.id}" data-tt-parent-id="${o.parentId}" data-tt-branch="${o.hasChildren}">
+									<td>${o.name!}</td>
+									<td>${o.address!}</td>
+									<td>${o.telephone!}</td>
+									<td>${o.email!}</td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-flat btn-xs">操作</button>
+											<button type="button" class="btn btn-default btn-flat dropdown-toggle btn-xs" data-toggle="dropdown">
+												<span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a href="${base}/platform/sys/unit/detail/${o.id}" data-toggle="modal" data-target="#dialogUnitDetail">查看</a></li>
+												<li><a href="${base}/platform/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
+												<li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
+												<li class="divider"></li>
+												<li><a href="${base}/platform/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+								<% }%>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除单位</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除后无法恢复，并且用户也将失去此单位的关系； <br /> 如果选中的是父级单位，那么父级单位下面的所有子单位也全部会删除，请谨慎操作！ <br />确定要删除吗？
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+  var unitTreeTable;
+  $(function () {
+      $("#unitTreeTable").DataTable();
+      
+      $('#datepicker').datepicker({
+        autoclose: false
+    });      
+      $("#dialogUnitDetail").on("hidden.bs.modal", function() {
+          $(this).removeData("bs.modal");
+      });
+      unitTreeTable= $("#unitTreeTable").treetable({
+          expandable: true,
+          onNodeExpand : function(){
+              var node = this;
+              var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+              unitTreeTable.treetable("loadBranch", node, rows);
+              $.post("${base}/platform/sys/unit/child/"+node.id,{}, function(data){
+                  unitTreeTable.treetable("unloadBranch", node);
+                  unitTreeTable.treetable("loadBranch", node, data);
+              });
+          }
+      });
+  });
+  function del(id){
+      var dialog = $("#dialogDelete");
+      dialog.modal("show");
+      dialog.find("#ok").unbind("click");
+      dialog.find("#ok").bind("click", function(event){
+          var btn = $(this);
+          btn.button("loading");
+          $.post("${base}/platform/sys/unit/delete/"+id,{},function(data){
+              //重置按钮状态，关闭提示框
+              dialog.modal("hide");
+              if(data.code==0){
+                  Toast.success(data.msg);
+                  unitTreeTable.treetable("removeNode", id);
+                  //$("#unitTreeTable").dataTable().fnDraw(false);  
+                  //从表格中移除此行
+              }else{
+                  Toast.error(data.msg);
+              }
+              btn.button("reset");
+          },"json");
+      });
+  	}
+
+</script>
+
+<%}%>

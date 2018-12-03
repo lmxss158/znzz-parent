@@ -1,0 +1,70 @@
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 60%;top:35%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+              	  查看
+                </h4>
+            </div>
+            
+            
+            <!-- 列表 -->
+            <div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					
+					<div class="box-body">
+					
+						<table id="unitRecordTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+							<thead>
+								<tr>
+									<th>统一编码</th>
+									<th>资产名称</th>
+									<th>型号规格</th>
+									<th>事件类型</th>
+									<th>执行动作</th>
+									<th>责任单位</th>
+									<th>责任人</th>
+									<th>使用单位</th>
+									<th>使用人</th>
+									<th>操作时间</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+							  <%for(item in obj.list){%>
+								<tr>
+									<td>${item.assetcode}</td>
+									<td>${item.assetname}</td>
+									<td>${item.deviceversion}</td>
+									<td>
+									<%if(item.operatetype==1){%>借入<%}else{%>归还<%}%>
+									</td>
+									<td>
+									<%if(item.status==0||item.pid==0){%>申请<%}else if(item.status==1){%>
+									审批通过<%}else{%>审批驳回<%}%>
+									</td>
+									<td>${item.chargedepartname}</td>
+									<td>${item.chargemanname}</td>
+									<td>${item.usedepartname}</td>
+									<td>${item.usemanname}</td>
+									<td>${item.operatetime}</td>
+								</tr>
+							<%}%>	
+								
+							</tbody>
+							
+							
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+            
+            
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,32 @@
+<%layout("/layouts/platform.html"){
+%>
+<style>
+#centerFont{ 
+ position: fixed;
+ top: 50%;
+ left: 66%;
+ width:50%;
+ height: 50%;
+-webkit-transform: translateX(-50%) translateY(-50%);
+-moz-transform: translateX(-50%) translateY(-50%);
+-ms-transform: translateX(-50%) translateY(-50%);
+transform: translateX(-50%) translateY(-50%);
+}
+
+
+</style>
+<section class="content-header">
+    <ol class="breadcrumb pull-left">
+        <li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>home</a></li>
+        <li class="active"><a href="javascript:void(0);">首页</a></li>
+    </ol>     
+</section>   
+<section class="content" style="background-image:url('${base!}/assets/dist/img/home.jpg');background-repeat:no-repeat;background-size:100% 100%;position:absolute;top:0;bottom:51px;left:0;right:0;">
+	<div id="divBg" >
+		<div id="centerFont">
+	       <h1 style="font-style: oblique;font-family: YouYuan;">欢迎访问   仪器设备管理系统<font style="font-size: 30px;margin-left:16px;color:green">>>></font></h1>
+		   <h2 style="margin-left: 251px">————<span style="font-style: oblique;font-family: YouYuan;">综合监控   <a href="${base}/platform/account/indexNew">进入</a></span></h2>
+		</div>
+	</div>
+</section>
+<%}%>

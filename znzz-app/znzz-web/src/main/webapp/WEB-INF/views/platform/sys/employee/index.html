@@ -1,0 +1,602 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-header">
+		<h1>职工管理</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> 系统</a></li>
+			<li><a href="#">系统管理</a></li>
+			<li class="active">职工管理</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+        <div class="col-md-2">
+ 			<div class="wrapper2">
+            	<div class="m5">
+                	<div id="jsTreeUnit"></div>
+            	</div>
+        	</div>
+        </div>
+        <div class="col-md-10">
+        	  <div class="box" >
+                        <div class="box-body" style="padding: 0 5px auto;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+                                    <label for="username" class="col-sm-2 control-label">职工姓名：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="username"  id="username" placeholder="请输入职工姓名">
+                                    </div>
+                                    <label for="idNumber" class="col-sm-2 control-label">身份证号：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="idNumber" id="idNumber" placeholder="请输入身份证号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="entryNumber" class="col-sm-2 control-label">出入证号：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control"  name="entryNumber" id="entryNumber"   placeholder="请输入出入证号">
+                                    </div>
+                                    <label for="is_service" class="col-sm-2 control-label">职工详情：</label>
+                                    <div class="col-sm-3">
+                                       <select name="is_service" id="is_service" class="form-control select1"
+                                                   style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                                <option value="" selected="selected">请选择</option>
+                                                <option value ="1">出站</option>
+                                                <option value ="2">辞职</option>
+                                                <option value ="3">返聘停聘</option>
+                                                <option value ="4">挂职</option>
+                                                <option value ="5">借调</option>
+                                                <option value ="6">进站工作</option>
+                                                <option value ="7">开始工作</option>
+                                                <option value ="8">开始工作借调</option>
+                                                <option value ="9">开始实习</option>
+                                                <option value ="10">死亡</option>
+                                                <option value ="11">调出</option>
+                                                <option value ="12">调入</option>
+                                                <option value ="13">停聘</option>
+                                                <option value ="14">停止挂职</option>
+                                                <option value ="15">退休</option>
+                                                <option value ="16">终止实习</option>
+                                                <option value ="17">转入</option>
+                                                <option value ="18">高校毕业生</option>
+                                                
+                                                
+                                                <!-- <option value ="0">所内正式职工</option>
+                                                <option value ="1">返聘职工</option>
+                                                <option value ="2">外聘职工</option>
+                                                <option value ="3">劳务派遣</option>
+                                                <option value ="4">外包人员</option>
+                                                <option value ="5">在读研究生</option>
+                                                <option value ="6">实习生</option> -->
+                                          </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telephone" class="col-sm-2 control-label">电话：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control"  name="telephone" id="telephone"   placeholder="请输入电话">
+                                    </div>
+                                     <label for="userStatus" class="col-sm-2 control-label">职工状态：</label>
+                                    <div class="col-sm-3">
+                                       <select name="userStatus" id="userStatus" class="form-control select1"
+                                                   style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                                <option value="" selected="selected">请选择</option>
+                                                <option value ="10">在职</option>
+                                                <option value ="4">离职</option>
+                                                <option value ="5">未知</option>
+                                          </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="box-footer" style="height: 30px;">
+                                   <!--  <a href="${base}/yun/configure/yungateway" class="btn btn-default pull-left" style="width: 90px;">重置 / 刷新</a> -->
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+        
+        
+        
+        	<div class="box">
+					<div class="box-header">
+						<a id="add" class="btn btn-primary btn-flat" href="${base}/platform/sys/employee/add" data-pjax><i class="fa fa-fw fa-plus"></i> 添加职工</a>
+					 	<button class="btn btn-danger" onclick="delCheck()"><i class="ti-close"></i> 批量离职</button>
+					 	<a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('employeeFile').click();">
+                            	<span class="glyphicon glyphicon-arrow-down"></span> 导入
+                         </a>
+                         <a class="btn btn-primary"  data-loading-text="下载中..." href="${base}/platform/sys/employee/downLoad">
+                            	<span class="glyphicon glyphicon-arrow-down"></span> 模板下载
+                         </a>
+                         <input type="file" style="display:none;" id="employeeFile" name="employeeFile" onchange="submitImportFile();" />
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+					<input id="unitid" type="hidden">
+						<table id="unittable" class="table table-bordered table-striped mg-t datatable">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>职工姓名</th>
+				                    <th>身份证号</th> 
+				                   <th>出入证号</th>
+				                    <th>职工详情</th>
+				                    <th>电话</th>
+				                    <th>插入顺序</th>
+				                    <th>操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+        </div>
+        </div>
+	</section>
+<!-- <div class="cd-panel from-right">
+    <header class="cd-panel-header">
+        <h4>高级筛选</h4>
+    </header>
+    <div class="cd-panel-container">
+        <div class="cd-panel-content shadow">
+            <div class="form-group">
+                <label for="loginname">职工名</label>
+                <input type="text" id="loginname" name="loginname" onclick="this.value=''" class="form-control" placeholder="职工名" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="username">姓名/昵称</label>
+                <input type="text" id="username" name="username" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
+            </div>
+            <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+        </div>
+    </div>
+</div> -->
+<!-- 删除职工 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">职工离职</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                      职工离职后无法恢复，请慎重操作！ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                 <div class="modal-header">
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                </div> 
+            </div>
+        </div>
+</div> 
+<!-- 删除选中职工 -->
+<div id="dialogDeleteCheck" class="modal fade bs-modal-lg" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">职工离职</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 mb10">
+                           职工离职后无法恢复，请慎重操作！
+                    </div>
+                    <div class="col-xs-12">
+                        <ul id="checkedUser" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 职工详情 -->
+<div id="dialogUserDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+<div id="dialogUserRightDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+<div id="dialogPaasword" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">重置密码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/employee/data",
+                "type": "post",
+                "data": function (d) {
+                    d.unitid = $('#unitid').val();
+                    d.username = $('#username').val();
+                    d.idNumber = $('#idNumber').val();
+                    d.entryNumber = $('#entryNumber').val();
+                    d.telephone = $('#telephone').val();
+                    d.is_service = $('#is_service').val();
+                    d.userStatus = $('#userStatus').val();
+                }
+            },
+            "order": [[6, "asc"]], 
+            "columns": [
+				{"data": null,"width":"30px"}, 	
+                {"data": "username", "bSortable": true},
+                {"data": "idNumber", "bSortable": true},
+                {"data": "entryNumber", "bSortable": true},
+                {"data": "is_service", "bSortable": true},
+                {"data": "telephone", "bSortable": true},
+                {"data": "orderby", "bSortable": true,"bVisible":false}
+            ],
+            "columnDefs": [
+				{
+					"searchable": false,
+					"orderable": false,
+					"targets": 0
+				},	
+                {
+                    "render": function (data, type, row) {
+                    	// if(row.userStatus==4){
+                    	// 	return '<span style="color:red">已离职</span>'
+                    	// }else if(row.userStatus==5){
+                    	// 	return '<span style="color:red">未知</span>'
+                    	// }else
+                        if(row.userStatus==2){
+                    		return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="${base}/platform/sys/employee/detail/' + row.id + '" data-toggle="modal" data-target="#dialogUserDetail">基本信息</a></li>' +
+                            '<li class="divider"></li>' +
+                            '<li><a href="${base}/platform/sys/employee/edit/' + row.id + '" data-pjax>修改信息</a></li>' +
+                            '<li class="divider"></li>' +
+                            '</ul></div>';
+                    	}else{
+                        	return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/platform/sys/employee/detail/' + row.id + '" data-toggle="modal" data-target="#dialogUserDetail">基本信息</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="${base}/platform/sys/employee/edit/' + row.id + '" data-pjax>修改信息</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">离职</a></li>' +
+                                '<li class="divider"></li>' +
+                                '</ul></div>';
+                    		
+                    	}
+                    },
+                    "targets": 7
+                },
+                {
+                    "render": function (data, type, row) {
+                    	 if(data==1){
+                    		 return "出站"
+                    	 }else if(data==2){
+                    		 return "辞职"
+                    	 }else if(data==3){
+                    		 return "返聘停聘"
+                    	 }else if(data==4){
+                    		 return "挂职"
+                    	 }else if(data==5){
+                    		 return "借调"
+                    	 }else if(data==6){
+                    		 return "进站工作"
+                    	 }else if(data==7){
+                    		 return "开始工作"
+                    	 }else if(data==8){
+                    		 return "开始工作借调"
+                    	 }else if(data==9){
+                    		 return "开始实习"
+                    	 }else if(data==10){
+                    		 return "死亡"
+                    	 }else if(data==11){
+                    		 return "调出"
+                    	 }else if(data==12){
+                    		 return "调入"
+                    	 }else if(data==13){
+                    		 return "停聘"
+                    	 }else if(data==14){
+                    		 return "停止挂职"
+                    	 }else if(data==15){
+                    		 return "退休"
+                    	 }else if(data==16){
+                    		 return "终止实习"
+                    	 }else if(data==17){
+                    		 return "转入"
+                    	 } else if(data==18){
+                    	     return "高校毕业生";
+                         }
+                    	 else{
+                    		 return "---"
+                    	 };
+                    },
+                    "targets": 4
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    var unitTreeTable;
+    var selected = [];
+    
+    function initTreeView() {
+        $("#jsTreeUnit").jstree({
+            plugins: ["wholerow"],
+            core: {
+                data: {
+                    url: function (node) {
+                        return node.id === "#" ? "${base}/platform/sys/employee/tree" : "${base}/platform/sys/employee/tree?pid=" + node.id
+                    }
+                },
+                multiple: false
+            }
+        }).on("select_node.jstree", function (node, selected) {
+            var id = selected.selected;
+            $("#unitid").val(id);
+            $("#add").attr("href","${base}/platform/sys/employee/add?unitid="+id);
+            $("#searchForm").find("input[type='text']").val("");
+            if (datatable) {
+                $(".cd-panel-content").find("input").val("");
+                datatable.ajax.reload();
+            } else {
+                initDatatable();
+            }
+        }).on("loaded.jstree", function (node, jstree) {
+            $(node.target).find("li:first div").addClass("jstree-wholerow-clicked");
+        });
+    }
+    
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/employee/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        var flag = true;
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(chks, function (i, n) {
+            	if(n.userStatus==2){
+            		Toast.warning("当前选中第"+(i+1)+"个职工已关联用户，请删除用户后再进行离职操作...");
+            		flag = false;
+            	}else{
+            		ids.push(n.id);
+            	}
+                
+            });
+         if(flag){
+            var dialog = $("#dialogDeleteCheck");
+            dialog.modal("show");
+            dialog.find("#ok").unbind("click");
+            dialog.find("#ok").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/sys/employee/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                        Toast.success(data.msg);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+         }
+        } else {
+            Toast.warning("请先选择要删除的职工！");
+        }
+        
+    }
+    function enableUser(id) {
+        $.post("${base}/platform/sys/user/enable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function disableUser(id) {
+        $.post("${base}/platform/sys/user/disable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    $(document).ready(function () {
+        initDatatable();
+        initTreeView();
+        $("#dialogUserDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogUserRightDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogPaasword").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        datatable.on('draw.dt',function() {
+        	datatable.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function(cell, i) {
+                //i 从0开始，所以这里先加1
+
+                i = i+1;
+                //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+                var page = datatable.page.info();
+                //当前第几页，从0开始
+
+                var pageno = page.page;
+                //每页数据
+
+                var length = page.length;
+                //行号等于 页数*每页数据长度+行号
+
+                var columnIndex = (i+pageno*length);
+                cell.innerHTML = columnIndex;
+            });
+        });
+    });
+    function submitImportFile(){
+    	if($("#employeeFile").val()!=null){
+    		if(!/.(xls|xlsx)$/.test($("#employeeFile").val())){
+    			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+    			return false;
+    		}
+    	}
+    		$('#loading').modal('show');
+    		$.ajaxFileUpload({  
+    		url:"${base}/platform/sys/employee/importfile",
+            type:'POST',
+            secureuri : false,  
+            fileElementId : 'employeeFile',
+            dataType : 'JSON', 
+            success : function (data, status){
+            	$("#employeeFile").val('');	//解决谷歌相同文件二次上传失效问题
+            	$('#loading').modal('hide'); 
+            	var obj = $.parseJSON(data);
+            	if(obj.code == 0){
+           			loading(false);
+            		Toast.success("导入成功")
+           			$("#ladda-btn").button("reset");
+            		setTimeout(function(){
+            			datatable.ajax.reload();
+            		},1000);
+            	}else {
+            		var obj = $.parseJSON(data);
+                	loading(false);
+            		//Toast.error(obj.msg)
+            		showCheckExcel(obj.msg);
+            	}
+            },
+            error: function(data, status, e){
+            	$('#loading').modal('hide');
+            	alert(error)
+            }
+        });
+    }
+    function showCheckExcel(msg){
+     	var excel = $("#checkExcel");
+    	excel.modal("show");
+    	excel.find("#inputText").html('').append(msg); 
+    }
+
+</script>
+<%}%>

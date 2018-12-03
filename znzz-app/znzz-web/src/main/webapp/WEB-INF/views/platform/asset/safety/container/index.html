@@ -1,0 +1,687 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+	<h1>容器设备</h1>
+	<ol class="breadcrumb">
+		<li class="active">安全生产设备检定</li>
+		<li class="active">容器设备</li>
+	</ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li id="annualInspection">
+						<a href="#one" data-toggle="tab">年检</a>
+					</li>
+					<li id="completeInspection">
+						<a href="#two" data-toggle="tab">全检</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="row" style="vertical-align: middle; text-align: center;">
+						<div style="padding: 15px 15px;">
+							<div class="box" >
+								<div class="box-body" style="padding-top: 21px; padding-bottom:0px;">
+									<div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+										<form id="InspectionCycleSearch">
+											<div class="form-group">
+												<div class="col-sm-5">
+													<label for="checkNo" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">检测号：</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="checkNo" placeholder="请输入检测号">
+													</div>
+												</div>
+												<div class="col-sm-5" style="padding-left: 0; padding-left: 25px;">
+													<label for="chargePerson" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0; width: 155px">负责人：</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="chargePerson" name="chargePerson" placeholder="请输入负责人">
+													</div>
+												</div>
+												<div class="col-sm-2" style="padding-left: 110px; height: 30px;">
+													<input id="clearSearchReload" type="reset" style="width:60px" value="清空" onclick="clearSearch();" class="btn btn btn-warning pull-left"/>
+												</div>
+
+											</div>
+										</form>
+										<div class="form-group">
+											<div class="col-sm-5">
+												<label for="containerCode" class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">统一编号：</label>
+												<div class="col-sm-9">
+													<input type="text" class="form-control" id="containerCode" placeholder="请输入统一编号">
+												</div>
+											</div>
+
+											<div class="form-group col-sm-5" style="padding-left: 110px; padding-right: 0;">
+												<label for="inspectionCycleBeginTime" class="col-sm-1 control-label" style="padding-right: 63px;white-space: nowrap;">检索周期 : </label>
+												<div class="col-sm-2" style="padding-left: 23px; height: 30px;width:224px;">
+													<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inspectionCycleBeginTime" id="inspectionCycleBeginTime" placeholder="请输入检索开始时间">
+												</div>
+												<label for="inspectionCycleEndTime" class="col-sm-1 control-label" style="width:auto">至</label>
+												<div class="col-sm-2" style="height: 30px; width:224px;">
+													<input type="text" style="border-radius:5px;" class="form-control date input-group pull-left" name="inspectionCycleEndTime" id="inspectionCycleEndTime"  placeholder="请输入检索结束时间">
+												</div>
+											</div>
+
+											<div class="col-sm-2" style="padding-left: 77px; height: 30px;">
+												<button id="searchBtnA" class="btn btn-primary" data-loading-text="搜索..." style="width:60px">搜索</button>
+												<button id="searchBtnC" class="btn btn-primary" data-loading-text="搜索..." style="width:60px">搜索</button>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="active tab-pane" id="one">
+						<!-- 列表 -->
+						<div class="box">
+							<div class="box-header">
+								<a id="addAnnualInspection" class="btn btn-md btn-success" href="${base}/asset/safety/container/addAnnualInspection" data-pjax><i class="fa fa-fw fa-plus"></i> 新增记录</a>
+								<a class="btn btn-primary" data-loading-text="下载中..." href="${base}/asset/safety/container/containerAnnualInspectionDownload">
+									<span class="glyphicon glyphicon-download-alt"></span> 模板下载
+								</a>
+								<a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('containerAnnualInspectionFile').click();">
+									<span class="glyphicon glyphicon-arrow-down"></span> 批量导入
+								</a>
+								<a class="btn btn-primary" id="exportContainerAnuualInspection" data-loading-text="导出中..." onclick="exportContainerAnuualInspection()">
+									<span class="glyphicon glyphicon-open"></span> 批量导出
+								</a>
+								<input type="file" style="display:none;" id="containerAnnualInspectionFile" name="containerAnnualInspectionFile" onchange="submitAnnualImportFile();" />
+								<button id="deleteAnnualInspection" class="btn btn-danger" onclick="deleteAnnualInspection()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+							</div>
+							<div class="box-body">
+								<table class="table table-bordered table-striped mg-t datatableAnnualInspection" style="width:100%;">
+									<thead>
+										<tr>
+											<th>检测号</th>
+											<th>统一编号</th>
+											<th>容器位置</th>
+											<th>负责人</th>
+											<th>介质</th>
+											<th>压力</th>
+											<th>罐体大小</th>
+											<th>年检日期</th>
+											<th>下次年检日期</th>
+											<th>提前提醒天数</th>
+											<th style="width:40px;">操作</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="two">
+						<!-- 列表 -->
+						<div class="box">
+							<div class="box-header">
+								<a id="addCompleteInspection" class="btn btn-md btn-success" href="${base}/asset/safety/container/addCompleteInspection" data-pjax><i class="fa fa-fw fa-plus"></i> 新增记录</a>
+								<a class="btn btn-primary" data-loading-text="下载中..." href="${base}/asset/safety/container/containerCompleteInspectionDownload">
+									<span class="glyphicon glyphicon-download-alt"></span> 模板下载
+								</a>
+								<a class="btn btn-primary"  data-loading-text="导入中..." href="javascript:document.getElementById('containerCompleteInspectionFile').click();">
+									<span class="glyphicon glyphicon-arrow-down"></span> 批量导入
+								</a>
+								<a class="btn btn-primary" id="exportInspectionCycleInfo" data-loading-text="导出中..." onclick="exportContainerCompleteInspection()">
+									<span class="glyphicon glyphicon-open"></span> 批量导出
+								</a>
+								<input type="file" style="display:none;" id="containerCompleteInspectionFile" name="containerCompleteInspectionFile" onchange="submitCompleteImportFile();" />
+								<button id="deleteCompleteInspection" class="btn btn-danger" onclick="deleteCompleteInspection()"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+							</div>
+							<div class="box-body">
+								<table class="table table-bordered table-striped mg-t datatableCompleteInspection" style="width:100%;">
+									<thead>
+										<tr>
+											<th>检测号</th>
+											<th>统一编号</th>
+											<th>容器位置</th>
+											<th>负责人</th>
+											<th>介质</th>
+											<th>压力</th>
+											<th>罐体大小</th>
+											<th>全检日期</th>
+											<th>下次全检日期</th>
+											<th>提前提醒天数</th>
+											<th style="width:40px;">操作</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- 删除年检记录-->
+<div id="dialogDeleteA" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除容器年检记录</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除容器年检记录信息后无法恢复 , 请谨慎操作 ! <br/>确定要删除吗?
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDelA" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 删除全检记录-->
+<div id="dialogDeleteC" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">删除容器全检记录</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						删除容器全检记录信息后无法恢复 , 请谨慎操作 ! <br/>确定要删除吗?
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+				<button id="okDelC" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog" style="margin: 250px auto;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<button class="modal-title btn btn-danger"><span>错误提示</span></button>
+			</div>
+			<div class="modal-body" id="inputText">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script language="JavaScript">
+	//年检datatable
+	var datatableAnnualInspection;
+	//全检datatable
+    var datatableCompleteInspection;
+	//年检initDatatableAnnualInspection
+	function initDatatableAnnualInspection() {
+
+		datatableAnnualInspection = $('.datatableAnnualInspection').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/safety/container/containerAnnualInspectionData",
+                "type": "post",
+                "data": function (d) {
+                    d.checkNo = $("#checkNo").val();
+                    d.containerCode=$("#containerCode").val();
+                    d.chargePerson=$("#chargePerson").val();
+                    d.inspectionCycleBeginTime=$("#inspectionCycleBeginTime").val();
+                    d.inspectionCycleEndTime=$("#inspectionCycleEndTime").val();
+                }
+            },
+            "order": [[8, "desc"]],
+            "columns": [
+                {"data": "checkno", "bSortable": true},
+                {"data": "containercode", "bSortable": true},
+                {"data": "containersite", "bSortable": true},
+                {"data": "chargeperson", "bSortable": true},
+                {"data": "medium", "bSortable": true},
+                {"data": "pressure", "bSortable": true},
+                {"data": "tanksize", "bSortable": true},
+                {"data": "annualinspectiondate", "bSortable": true},
+                {"data": "nextannualinspectiondate", "bSortable": true},
+                {"data": "daysnotice", "bSortable": true}
+            ],
+
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '&nbsp;&nbsp;<a class="btn btn-xs btn-success" href="${base}/asset/safety/container/editAnnualInspection/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';
+                    },
+                    "targets": 10
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str ="" ;
+                        if(data!=null){
+                            var day = data.split(" ")[0] ;
+                            var yearM = day.split("-") ;
+                            str=yearM[0]+"-"+yearM[1]+"-"+yearM[2];
+                        }
+                        return str ;
+                    },
+                    "targets": [7,8]
+                },
+            ]
+		});
+        /* 点击选中 */
+        datatableAnnualInspection.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#searchBtnA").on('click', function () {
+            datatableAnnualInspection.ajax.reload();
+        });
+    }
+
+	//全检initDatatableCompleteInspection
+	function initDatatableCompleteInspection() {
+		datatableCompleteInspection = $('.datatableCompleteInspection').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/asset/safety/container/completeInspectionData",
+                "type": "post",
+                "data": function (d) {
+                    d.checkNo = $("#checkNo").val();
+                    d.containerCode=$("#containerCode").val();
+                    d.chargePerson=$("#chargePerson").val();
+                    d.inspectionCycleBeginTime=$("#inspectionCycleBeginTime").val();
+                    d.inspectionCycleEndTime=$("#inspectionCycleEndTime").val();
+                }
+            },
+            "order": [[8, "desc"]],
+            "columns": [
+                {"data": "checkno", "bSortable": true},
+                {"data": "containercode", "bSortable": true},
+                {"data": "containersite", "bSortable": true},
+                {"data": "chargeperson", "bSortable": true},
+                {"data": "medium", "bSortable": true},
+                {"data": "pressure", "bSortable": true},
+                {"data": "tanksize", "bSortable": true},
+                {"data": "completeinspectiondate", "bSortable": true},
+                {"data": "nextcompleteinspectiondate", "bSortable": true},
+                {"data": "daysnotice", "bSortable": true}
+            ],
+
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '&nbsp;&nbsp;<a class="btn btn-xs btn-success" href="${base}/asset/safety/container/editCompleteInspection/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 修改</a>';
+                    },
+                    "targets": 10
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str ="" ;
+                        if(data!=null){
+                            var day = data.split(" ")[0] ;
+                            var yearM = day.split("-") ;
+                            str=yearM[0]+"-"+yearM[1]+"-"+yearM[2];
+                        }
+                        return str ;
+                    },
+                    "targets": [7,8]
+                },
+            ]
+		});
+
+        /* 点击选中 */
+        datatableCompleteInspection.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#searchBtnC").on('click', function () {
+            datatableCompleteInspection.ajax.reload();
+        });
+	};
+
+    //对查询清空操作
+    function clearSearch() {
+        $("#checkNo").val("");
+        $("#containerCode").val("");
+        $("#chargePerson").val("");
+        $("#inspectionCycleBeginTime").val("");
+        $("#inspectionCycleEndTime").val("");
+        datatableAnnualInspection.ajax.reload();
+        datatableCompleteInspection.ajax.reload();
+    };
+
+    //年检导入
+	function submitAnnualImportFile() {
+		if ($("#containerAnnualInspectionFile").val() != null){
+		    if (!/.(xls|xlsx)$/.test($("#containerAnnualInspectionFile").val())){
+				Toast.error("文件类型必须是.xls,.xlsx中的一种");
+				return false;
+			}
+		}
+		$("#loading").modal("show");
+		$.ajaxFileUpload({
+			url:"${base}/asset/safety/container/annualUpload/",
+			type:"POST",
+			secururi:false,
+			fileElementId:"containerAnnualInspectionFile",
+			dataType:"JSON",
+			success:function (data,status,xhr) {
+				$("#containerAnnualInspectionFile").val("");
+				var obj = $.parseJSON(data);
+				if (obj.code == 0){
+				    $("#loading").modal("hide");
+				    Toast.success("导入成功");
+				    $("#ladda-btn").button("reset");
+				    setTimeout(function () {
+						datatableAnnualInspection.ajax.reload();
+                    },500);
+				}else {
+				    $("#loading").modal("hide");
+				    showCheckExcel(obj.msg);
+				}
+            },
+			error:function (data, status, e) {
+				var obj = $.parseJSON(data);
+				Toast.error(obj.msg);
+				$("#loading").modal("hide");
+            }
+		});
+    }
+
+    //全检导入
+	function submitCompleteImportFile() {
+		if ($("#containerCompleteInspectionFile").val() != null){
+		    if (!/.(xls|xlsx)$/.test($("#containerCompleteInspectionFile").val())){
+		        Toast.error("文件类型必须是.xls,.xlsx中的一种");
+		        return false;
+			}
+		}
+		$("#loading").modal("show");
+		$.ajaxFileUpload({
+			url:"${base}/asset/safety/container/completeUpload/",
+			type:"POST",
+			secururi:false,
+			fileElementId:"containerCompleteInspectionFile",
+			dataType:"JSON",
+			success:function (data, status, xhr) {
+				$("#containerCompleteInspectionFile").val("");
+				var obj = $.parseJSON(data);
+				if (obj.code == 0){
+				    $("#loading").modal("hide");
+				    Toast.success("导入成功");
+				    $("#ladda-btn").button("reset");
+				    setTimeout(function () {
+						datatableCompleteInspection.ajax.reload();
+                    },500);
+				}else {
+				    $("#loading").modal("hide");
+				    showCheckExcel(obj.msg);
+				}
+            },
+			error:function (data, status, e) {
+				var obj = $.parseJSON(data);
+				Toast.error(obj.msg);
+				$("#loading").modal("hide");
+            }
+		});
+    }
+
+    //展示错误信息
+    function showCheckExcel(msg) {
+	    var excel = $("#checkExcel");
+	    excel.modal("show");
+	    excel.find("#inputText").html(msg);
+    }
+
+
+    //年检导出
+	function exportContainerAnuualInspection() {
+	    setTimeout(function () {
+			$.ajax({
+				type:"post",
+				data:{
+				    "checkNo":$("#checkNo").val(),
+					"containerCode":$("#containerCode").val(),
+					"chargePerson":$("#chargePerson").val(),
+					"inspectionCycleBeginTime":$("#inspectionCycleBeginTime").val(),
+					"inspectionCycleEndTime":$("#inspectionCycleEndTime").val(),
+				},
+				dataType:"JSON",
+				url:"${base}/asset/safety/container/exportContainerAnnualInspection/",
+				async:false,
+				success:function (data) {
+					if ("error" == data) {
+						Toast.error("导出失败");
+						$("#loading-export").modal("hide");
+						return;
+					}
+                    exportContainerAnnualInspectionByUrl(data);
+					$("#loading-export").modal("hide");
+                }
+			});
+        },500);
+	    $("#searchBtnA").on('click',function () {
+			datatableAnnualInspection.ajax.reload();
+        });
+    }
+
+    //根据URL将年检信息导出
+	function exportContainerAnnualInspectionByUrl(urlData) {
+		var url = "${base}/asset/safety/container/exportContainerAnnualInspectionByUrl/";
+		var form = $("<form></form>").attr("action",url).attr("method","post");
+		form.append($("<input></input>").attr("type","hidden").attr("name","url").attr("value",urlData));
+		form.appendTo('body').submit().remove();
+    }
+
+    //全检导出
+	function exportContainerCompleteInspection() {
+	    setTimeout(function () {
+			$.ajax({
+				type:"post",
+				data:{
+				    "checkNo":$("#checkNo").val(),
+					"containerCode":$("#containerCode").val(),
+                    "chargePerson":$("#chargePerson").val(),
+					"inspectionCycleBeginTime":$("#inspectionCycleBeginTime").val(),
+					"inspectionCycleEndTime":$("#inspectionCycleEndTime").val(),
+				},
+				dataType:"JSON",
+				url:"${base}/asset/safety/container/exportContainerCompleteInspection/",
+				async:false,
+				success:function (data) {
+					if ("error" == data) {
+						Toast.error("导出失败");
+						$("#loading-export").modal("hide");
+						return;
+					}
+                    exportContainerCompleteInspectionByUrl(data);
+					$("#loading-export").modal("hide");
+                }
+			});
+        },500);
+	    $("#searchBtnC").on('click',function () {
+			datatableCompleteInspection.ajax.reload();
+        });
+    }
+
+    //根据URL将全检信息导出
+	function exportContainerCompleteInspectionByUrl(urlData) {
+		var url = "${base}/asset/safety/container/exportContainerCompleteInspectionByUrl/";
+		var form = $("<form></form>").attr("action",url).attr("method","post");
+		form.append($("<input></input>").attr("type","hidden").attr("name","url").attr("value",urlData));
+		form.appendTo('body').submit().remove();
+    }
+
+    //年检信息删除
+    function deleteAnnualInspection(){
+	    var chks = datatableAnnualInspection.rows('.selected').data();
+	    if (chks.length > 0){
+	        var ids = [];
+	        $.each(datatableAnnualInspection.rows('.selected').data(),function (i,n) {
+	            ids.push(n.id);
+            });
+	        var dialogA = $("#dialogDeleteA");
+	        dialogA.modal("show");
+	        dialogA.find("#okDelA").unbind("click");
+	        dialogA.find("#okDelA").bind("click",function (event) {
+				var btn = $(this);
+				btn.button("loading");
+				$.post("${base}/asset/safety/container/deleteAnnualInspection",{ids:ids.toString()},function (data) {
+					if (data == 1) {
+						datatableAnnualInspection.ajax.reload(null,false);
+						Toast.success("操作成功");
+					}else if (data.code == 1){
+					    if ("没有权限"!=data.msg){
+					        Toast.error(data.msg);
+						}
+					}else if (data.code == 0) {
+					    Toast.success(data.msg);
+					    datatableAnnualInspection.ajax.reload(null,false);
+					}
+					btn.button("reset");
+					dialogA.modal("hide");
+                },"json");
+            });
+		}else {
+	        Toast.warning("请先选择要删除的项!");
+		}
+	}
+
+    //全检信息删除
+    function deleteCompleteInspection(){
+        var chks = datatableCompleteInspection.rows('.selected').data();
+        if (chks.length > 0){
+            var ids = [];
+            $.each(datatableCompleteInspection.rows('.selected').data(),function (i,n) {
+                ids.push(n.id);
+            });
+            var dialogC = $("#dialogDeleteC");
+            dialogC.modal("show");
+            dialogC.find("#okDelC").unbind("click");
+            dialogC.find("#okDelC").bind("click",function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/asset/safety/container/deleteCompleteInspection",{ids:ids.toString()},function (data) {
+                    if (data == 1) {
+                        datatableCompleteInspection.ajax.reload(null,false);
+                        Toast.success("操作成功");
+                    }else if (data.code == 1){
+                        if ("没有权限"!=data.msg){
+                            Toast.error(data.msg);
+                        }
+                    }else if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatableCompleteInspection.ajax.reload(null,false);
+                    }
+                    btn.button("reset");
+                    dialogC.modal("hide");
+                },"json");
+            });
+        }else {
+            Toast.warning("请先选择要删除的项!");
+        }
+    }
+
+	//时间控件
+	$(function() {
+        //切换标签
+        changeTable();
+        //搜索按钮隐藏
+        btnShow();
+		//datatable初始化
+		initDatatableAnnualInspection();
+		initDatatableCompleteInspection();
+        //加载责任人
+        loadUnitAndUser(null, "chargePerson", null);
+        $('#inspectionCycleBeginTime').datetimepicker({
+            language : 'zh-CN',//显示中文
+            format : 'yyyy-mm-dd',//显示格式
+            minView : "month",//设置显示到天
+            initialDate : new Date(),//初始化当前日期
+            autoclose : true,//选中自动关闭
+            todayBtn : true
+            //显示今日按钮
+        }).on("changeDate",function(){
+            $("#inspectionCycleEndTime").datetimepicker("setStartDate",$("#inspectionCycleBeginTime").val());
+        });
+        $('#inspectionCycleEndTime').datetimepicker({
+            language : 'zh-CN',//显示中文
+            format : 'yyyy-mm-dd',//显示格式
+            minView : "month",//设置显示到天
+            initialDate : new Date(),//初始化当前日期
+            autoclose : true,//选中自动关闭
+            todayBtn : true//显示今日按钮
+        }).on("changeDate",function(){
+            $("#inspectionCycleBeginTime").datetimepicker("setEndDate",$("#inspectionCycleEndTime").val());
+        });
+
+	});
+
+	// 切换标签
+	function changeTable() {
+        if($.cookie('forActive') == 1) {
+            $("#completeInspection").addClass("active");
+            $("#annualInspection").removeClass("active");
+		} else{
+            $("#completeInspection").removeClass("active");
+            $("#annualInspection").addClass("active");
+		}
+		$.cookie("forActive", '0');
+    }
+
+	function btnShow(){
+		$("#searchBtnC").hide();
+		//切换搜索按钮
+		$("#annualInspection").on('click',function () {
+			$("#searchBtnC").hide();
+			$("#searchBtnA").show();
+		});
+		$("#completeInspection").on('click',function () {
+			$("#searchBtnA").hide();
+			$("#searchBtnC").show();
+		});
+	}
+
+</script>
+<%}%>

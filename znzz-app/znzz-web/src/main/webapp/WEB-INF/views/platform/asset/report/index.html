@@ -1,0 +1,258 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+            <h1>
+                    月度报告
+                <!--<small>Control panel</small>-->
+            </h1>
+
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+                <li class="active"><a href="${base}/asset/report#">资产台账管理</a></li>
+                <li class="active">月度报告</li>
+            </ol>
+</section>
+        
+        <!-- Main content -->
+<section class="content">
+            <!-- 查询搜索框 -->
+            <div class="row">
+                <div style="padding: 15px 15px -10;">
+                    <div class="box" >
+                        <div class="box-body" style="padding: 0 15px auto;">
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                            	<div class="form-group">
+                                        <label for="fileName" class="col-sm-2 control-label">文件名称</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control" id="fileName" placeholder="文件名称">
+                                        </div>
+                                        
+                                        
+                                         <label class="col-sm-1 control-label">月度</label>
+			                                    <div class="col-sm-3">
+			                                        <div class="input-group date">
+			                                         
+			                                            <div class="input-group-addon">
+			                                                <i class="fa fa-calendar"></i>
+			                                            </div>
+			                                        <input type="text" class="form-control pull-right" name="month" id="selectTimeOne" readonly="readonly" style="background-color: white;" placeholder="请输入时间" value=""/>
+			                                        </div>
+			                                    </div>
+                                        
+                                 </div>
+                                
+                                <!-- /.box-body -->
+                                <div class="box-footer">
+                                  <!--   <a href="${base}/asset/report" class="btn btn-default pull-left" style="width: 90px;">重置 / 刷新</a> -->
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="margin: 10px 10px 10px; width:80px">搜索</button>
+                                    <button type="button" id="manuallyGeneratedBtn" class="btn btn-md btn-success" data-toggle="modal"
+                                            data-target="#modal-default" style="margin: 10px 10px 10px; width:80px">
+                                        <span class="glyphicon"></span>手动生成
+                                    </button>
+                                </div>
+                   		</div>
+                    </div>
+                    </div>
+             </div>
+            </div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box">
+                       
+                    <div class="box-body">
+                            <table id="monthReport" class="table table-bordered table-striped table-hover">
+                            <thead>
+	                                <tr>
+	                                    <!-- <th >id</th> -->
+	                                    <th style="width:600px;">文件名称</th>
+	                                    <th>月度</th>
+	                                    <th style="width:100px;">操作</th> 
+	                                </tr>
+                                </thead>
+                            </table>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+ </section>
+        <!-- /.content -->
+<div class="control-sidebar-bg"></div>
+
+<!-- load页面 -->
+<div id="homeDetail" class="modal fade" data-backdrop="static" data-keyboard="false">
+
+</div>
+
+
+<script>
+    var datatable;
+    var curMonth ;//正在分配的当前月份
+    function initMonthReportDatatable() {
+    	curMonth="";
+        datatable = $('#monthReport').DataTable({
+        	//"destroy": true,
+	        "dom": '<"toolbar">frtip',
+	        "searching": false,
+	        "responsive": true,
+	        "processing": false,
+	        "serverSide": true,
+	        "select": false,
+	        "ordering": true, 
+	        "language": {
+	            "url": "${base}/assets/plugins/datatables/cn.json"
+	        },
+	        
+	        "preDrawCallback": function () {
+	            sublime.showLoadingbar($(".main-content"));           
+	        },
+	        "drawCallback": function (settings) {
+	            sublime.closeLoadingbar($(".main-content"));           
+	        },
+             
+            "ajax": {
+                "url": "${base}/asset/report/data",
+                "type": "post",
+                "data": function (d) {     
+                	d.fileName = $('#fileName').val();
+                	d.month = $("#selectTimeOne").val() ;
+                }
+            },
+           "order": [[1, "desc"]],
+            "columns": [
+                   /*  {"data": "id", "bSortable": true},    */
+                    {"data": "fileName", "bSortable": true},
+                    {"data": "month", "bSortable": true}
+     
+            ],
+         "columnDefs": [
+                        
+                        {
+                            "render": function (data, type, row) {
+                            	var str ="" ;
+                            	if(data!=null){
+                            		var day = data.split(" ")[0] ;
+                            		var yearM = day.split("-") ;
+                            		str=yearM[0]+"-"+yearM[1] ;
+                            	}
+                               return str ;
+                            },
+                            "targets": 1
+                        },
+                           {
+                               "render": function (data, type, row) {
+                            	   
+                               	return '<a class="btn btn-xs btn-primary " href="${base}/asset/report/downLoad/' + row.id + '"data-toggle="modal" ><i class="glyphicon glyphicon-download-alt"></i> 下载</a>'
+ 
+                               },
+                               "targets": 2
+                           }
+                       ] 
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        }); 
+    }
+    
+$(function () {
+	initMonthReportDatatable();
+	initTime();
+	initTimeOne();
+	//facilityadd('.btn-facility-add');
+	childtable=null;//需要赋值null 不然子弹窗有问题
+});
+
+var locale = {
+        format: 'YYYY/MM/DD ',
+        separator: ' - ',
+        applyLabel: '确认',
+        cancelLabel: '清除',
+        fromLabel: '开始时间',
+        toLabel: '结束时间',
+        customRangeLabel: '自定义',
+        weekLabel: "W",
+        daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+        monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        firstDay: 1
+}
+//初始化时间
+function initTime(){
+	
+	 $('#selectTime').daterangepicker({
+	        "autoUpdateInput": false,
+	        "locale": locale,
+	        "ranges": {
+	            '本月': [moment().startOf('month'), moment().endOf('month')]
+	           // '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+	        },
+	        "opens": "right",
+	       // "timePicker":true,//设置到秒
+	        "timePicker24Hour": true
+	    });
+	    $('#selectTime').on('apply.daterangepicker', function(ev, picker) {
+	        $('#selectTime').val(picker.startDate.format('YYYY/MM/DD ') + ' - ' + picker.endDate.format('YYYY/MM/DD '));
+	    });
+	    
+	    $('#selectTime').on('cancel.daterangepicker', function (ev, picker) {
+	        $('#selectTime').val('')
+	    })
+}
+//设置时间控件只有月份
+function initTimeOne(){
+	$.fn.datepicker.dates['zh-CN'] = {
+		    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+		    daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+		    daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+		    months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+		    monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+		    today: "Today",
+		    clear: "清除",
+		    format: "mm/dd/yyyy",
+		    titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+		    weekStart: 0
+	};
+	 $('#selectTimeOne').datepicker({
+		 language: "zh-CN",
+         todayHighlight: true,
+         format: 'yyyy-mm',
+         autoclose: true,
+         clearBtn:true,
+         startView: 'months',
+         maxViewMode:'years',
+         minViewMode:'months'
+	    });
+}
+
+$("#manuallyGeneratedBtn").on('click', function () {
+    $("#homeDetail").modal('show');
+    $("#homeDetail").load('${base}/asset/report/add')
+});
+
+
+function validateMonth(rangeTime){
+	var timeRange = rangeTime.split("-") ;
+	var startT = timeRange[0];
+	var endT = timeRange[1];
+	var ms = startT.split("/")[0]+"-"+startT.split("/")[1] ;
+	var me = endT.split("/")[0]+"-"+endT.split("/")[1] ;
+	ms = ms.replace(/(^\s*)|(\s*$)/g, "") ;
+	me = me.replace(/(^\s*)|(\s*$)/g, "") ;
+	/* console.log(ms);
+	console.log(me);
+	console.log(ms==me);
+	console.log(ms==curMonth); */
+	if((ms==me)&&(ms==curMonth)){
+		return true ;
+	}
+	return false ;
+	
+}
+
+</script>
+
+
+<%}%>

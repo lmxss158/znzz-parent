@@ -1,0 +1,425 @@
+<div class="modal-dialog" style="width:1200px;">
+    <form id="addModal" role="form" class="form-horizontal parsley-form" data-parsley-validate
+          action="${base}/platform/sys/export/addDo" method="post" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="width:1200px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">新增报表</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="panel-group" id="add-accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="addHeadingFour">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#add-accordion"
+                                                   href="#addCollapseFour" aria-expanded="true"
+                                                   aria-controls="addCollapseFour">
+                                                    常用字段
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="addCollapseFour" class="panel-collapse collapse in" role="tabpanel"
+                                             aria-labelledby="addHeadingFour">
+                                            <div class="panel-body">
+                                                <div class="form-group" style="padding-left:10px;">
+                                                    <div class="row">
+                                                        <div>
+                                                            <div style="padding-left:10px;">
+                                                                <div class="flex-row-center form-group">
+                                                                	<div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="add-instrument-category"
+                                                                               class="control-label"
+                                                                               style="flex: 0 0 90px;margin-right:10px;">报表编码<span style="color: red">*</span></label>
+                                                                         <div style="margin-right:15px;">
+                                                                            <input type="text" style="width:169px;"
+                                                                                   id="code" name="code"
+                                                                                   maxlength="160" class="form-control"
+                                                                                   placeholder="请输入报表编码" value=""/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="add-unified-num"
+                                                                               class="control-label text-left"
+                                                                               style=" flex: 0 0 100px;margin-right:10px;">导出文件类型<span style="color: red">*</span></label>
+                                                                          <div class="inline-block" style="width: 196px">
+                                                                		<select id="type" name="type"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="导出文件类型" style="width: 90%;">
+                                                                        		<option value="" selected="selected">全部</option>
+                                                                   			 	<option value="1">xlsx</option>
+                                                                    			<option value="2">xls</option>
+                                                                    			<option value="3">pdf</option>
+                                                                    			<option value="4">docx</option>
+                                                                		</select>
+                                                            				</div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="add-instrument-name"
+                                                                               class="control-label"
+                                                                               style=" flex: 0 0 80px;margin-right:10px;">文件名称<span style="color: red">*</span></label>
+                                                                        <div style="margin-right:15px;">
+                                                                            <input type="text" id="file_name" 
+                                                                                   name="file_name" maxlength="80"
+                                                                                   class="form-control"
+                                                                                   placeholder="请输入文件名称">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%">
+                                                                        <label for="add-instrument-name" class="control-label"
+                                                                               style="flex: 0 0 80px;margin-right:10px;">sheet名称<span style="color: red">*</span></label>
+                                                                       <div style="margin-right:15px;">
+                                                                            <input type="text" id="sheet_name" 
+                                                                                   name="sheet_name" maxlength="80"
+                                                                                   class="form-control"
+                                                                                   placeholder="请输入sheet名称">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="flex-row-center form-group">
+                                                                	<div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="deviceVersion" class="control-label"
+                                                                               style="flex: 0 0 90px;margin-right:10px;">标题</label>
+                                                                        <div style="margin-right:15px;">
+                                                                            <input type="text" id="title"
+                                                                                   name="title" maxlength="80"
+                                                                                   class="form-control"
+                                                                                   placeholder="请输入标题">
+                                                                        </div>
+                                                                    </div>
+                                                                     <div class="flex-row-center" style="width: 30%;margin-left: 40px">
+                                                                        <label for="add-specifications"
+                                                                               class="control-label"
+                                                                               style="margin-right:15px;">标题高度</label>
+                                                                        <div style="margin-right:15px;">
+                                                                            <input type="text" id="title_height" name="title_height"
+                                                                                   maxlength="80" class="form-control"
+                                                                                   placeholder="请输入标题高度">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: -35px">
+                                                                        <label for="serialNumber"
+                                                                               class="control-label"
+                                                                               style="width: 80px; flex: 0 0 80px;margin-right:15px;">标题颜色</label>
+                                                                        <div style="margin-right:15px;">
+                                                                            <input type="text" id="color"
+                                                                                   name="color" maxlength="80"
+                                                                                   class="form-control"
+                                                                                   placeholder="请输入标题颜色"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-row-center" style="width: 30%;margin-left: 5px">
+                                                                        <label for="deviceVersion" class="control-label"
+                                                                               style="flex: 0 0 90px;text-align:left;">是否模板导出</label>
+                                                                         <div class="inline-block" style="width: 170px;">
+                                                                		<select id="is_template" name="is_template"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否模板导出" style="width: 100%;">
+                                                                        		<option value="" selected="selected">全部</option>
+                                                                   			 	<option value="0">否</option>
+                                                                    			<option value="1">是</option>
+                                                                		</select>
+                                                            				</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-row-center form-group">
+                                                                    <div class="flex-row-center" style="width: 100%;margin-left: 8px">
+                                                                        <label for="add-position-message"
+                                                                               class="control-label text-left"
+                                                                               style="flex: 0 0 80px;margin-right:15px;">模板地址</label>
+                                                                        <div style="flex:1; margin-right:10px;">
+                                                                            <input type="text" id="template_url"
+                                                                                   name="template_url" maxlength="100"
+                                                                                   class="form-control"
+                                                                                   placeholder="请输入模板地址"
+                                                                                   style="width: 95%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading" role="tab" id="addHeadingOne">
+                                            <h4 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#add-accordion"
+                                                   href="#addCollapseOne" aria-expanded="false"
+                                                   aria-controls="addCollapseOne">
+                                                    其他字段
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="addCollapseOne" class="panel-collapse collapse" role="tabpanel"
+                                             aria-labelledby="addHeadingOne">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: 5px">
+                                                            <label for="add-contract-num" class="control-label"
+                                                                   style="width:100px">导出sheet号</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" id="sheet_num" maxlength="80"
+                                                                       name="sheet_num" class="form-control"
+                                                                       placeholder="请输入导出sheet号">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -50px">
+                                                            <label for="add-documents-num" class="control-label"
+                                                                   style="width: 100px;">是否需要序列号</label>
+                                                            				<div class="inline-block" style="width: 170px;margin-left: 5px">
+                                                                		<select id="addindex" name="addindex"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否需要序列号" style="width: 100%;">
+                                                                   			 	<option value="" selected="selected">全部</option>
+                                                                   			 	<option value="0">否</option>
+                                                                    			<option value="1">是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -40px">
+                                                            <label for="add-supply-unit" class="control-label"
+                                                                   style="width: 60px;">序列号名</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" id="indexname" maxlength="80"
+                                                                       name="indexname" class="form-control"
+                                                                       placeholder="请输入序列号名">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3"  style="width: 19%;margin-left: -80px">
+                                                            <label for="add-project-name" class="control-label"
+                                                                   style="width: 60px;">冻结列号</label>
+                                                            <div class="inline-block" style="width: 110px;margin-left: 5px">
+                                                                <input type="text" name="freezecol"
+                                                                       class="form-control" id="freezecol"
+                                                                       style="width:160px;" placeholder="请输入冻结列号">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                	<div class="form-group">
+                                                     <div class="row">
+                                                        <div class="col-xs-3"  style="width: 30%;margin-left: 45px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">第二标题</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" name="second_title"
+                                                                       class="form-control" id="second_title"
+                                                                       maxlength="80" placeholder="请输入第二标题">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -90px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">第二标题高度</label>
+                                                            <div class="inline-block" style="width: 170px;margin-left: 5px">
+                                                                <input type="text" name="second_title_height"
+                                                                       class="form-control" id="second_title_height"
+                                                                       style="width:169px;" placeholder="请输入第二标题高度">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -40px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">排除列名</label>
+                                                            <div class="inline-block" style="width: 150px;margin-left: 5px">
+                                                                <input type="text" name="exclusions"
+                                                                       class="form-control" id="exclusions"
+                                                                       maxlength="80" placeholder="请输入排除列名">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3" style="width: 25%;margin-left: -120px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">是否创建表头</label>
+                                                            				<div class="inline-block" style="width: 160px;margin-left: 5px">
+                                                                		<select id="is_create_header" name="is_create_header"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="是否创建表头" style="width: 100%;">
+                                                                   			 	<option value="" selected="selected">全部</option>
+                                                                   			 	<option value="0">否</option>
+                                                                    			<option value="1">是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                      </div>
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <div class="col-xs-3" style="width: 30%;margin-left: -10px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                  style="width: 30%;margin-left: 5px">表头高度</label>
+                                                            <div class="inline-block" style="width: 160px;margin-left: 5px">
+                                                                <input type="text" name="header_height"
+                                                                       class="form-control" id="header_height"
+                                                                       style="width:150px;" placeholder="请输入表头高度">
+                                                            </div>
+                                                        </div>
+                                                         <div class="col-xs-3"  style="width: 30%;">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">表头颜色</label>
+                                                            <div class="inline-block" style="width: 178px;margin-left: 5px">
+                                                                <input type="text" name="header_color"
+                                                                       class="form-control" id="header_color"
+                                                                       style="width:169px;" placeholder="请输入表头颜色">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3"  style="width: 30%;margin-left: -70px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">表格高度</label>
+                                                            <div class="inline-block" style="width: 178px;margin-left: 5px">
+                                                                <input type="text" name="height"
+                                                                       class="form-control" id="height"
+                                                                       style="width:150px;" placeholder="请输入表格高度">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3"  style="width: 25%;margin-left: -110px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">表格格式类名</label>
+                                                            <div class="inline-block" style="width: 110px;margin-left: 5px">
+                                                                <input type="text" name="style"
+                                                                       class="form-control" id="style"
+                                                                       style="width:160px;" placeholder="请输入表格格式类名">
+                                                            </div>
+                                                        </div>
+                                                     </div>
+                                                      <div class="form-group">
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -10px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">数据处理类名</label>
+                                                            <div class="inline-block" style="margin-left: 5px">
+                                                                <input type="text" name="data_handler"
+                                                                       class="form-control" id="data_handler"
+                                                                       style="width:150px;" placeholder="请输入数据处理类名">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -35px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">字典处理类名</label>
+                                                            <div class="inline-block" style="width: 178px;">
+                                                                <input type="text" name="dic_handler"
+                                                                       class="form-control" id="dic_handler"
+                                                                       style="width:169px;" placeholder="请输入字典处理类名">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-3" style="width: 30%;margin-left: -75px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 100px;">先循环处理列</label>
+                                                            				<div class="inline-block" style="width: 150px; margin-left: 5px">
+                                                                		<select id="is_column_foreach" name="is_column_foreach"
+                                                                        	class="form-control select5"
+                                                                        	data-placeholder="先循环处理列" style="width: 100%;">
+                                                                        		<option value="" selected="selected">全部</option>
+                                                                   			 	<option value="0">否</option>
+                                                                    			<option value="1">是</option>
+                                                                		</select>
+                                                            				</div>
+                                                        </div>
+                                                      </div>
+                                                        <div class="col-xs-3" style="width: 100%;margin-left: 10px">
+                                                            <label for="add-funds-source" class="control-label"
+                                                                   style="width: 60px;">备注</label>
+                                                            <div class="inline-block" style="width: 91%;margin-left: 5px">
+                                                                <input type="text" name="remark" 
+                                                                       class="form-control" id="remark"
+                                                                        placeholder="请输入备注">
+                                                            </div>
+                                                        </div>
+                                                     
+                                                    </div>
+                                                
+                                            </div>
+                                        </div>
+                                    
+                               
+                                   
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!--  -->
+                    <button type="button" id="goback" class="btn btn-default pull-center" data-dismiss="modal">取消
+                    </button>
+                    <button id="confirm-add" type="button" data-loading-text="正在提交..." onclick="submitForm();"
+                            class="btn btn-primary pull-center">确定
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </form>
+</div>
+
+<script>
+    $(function () {
+        $('.collapse').collapse({
+            toggle: false
+        });
+        //去除首尾空格
+        autoDeleteSpace('input');
+       /*  $("#deviceVersion").blur(function () {
+            checkDeviceVersion();
+        });
+        getJGProjectInfoList("#projectName3");
+        setDate("factoryTime1", "enableTime1", "examineDate", "dueDate", "unpackingDate"); */
+    });
+
+    function autoDeleteSpace(obj) {//[name=LastName]
+        $(document).on('blur', obj, function () {
+            $(this).val($(this).val().trim());
+        })
+    }
+
+
+    function submitForm() {
+        if (checkNotNull()) {
+            var dataList = $("#addModal").serialize();
+
+            $.ajax({
+                type: "post",
+                data: dataList,
+                dataType: "json",
+                url: "${base}/platform/sys/export/addDo",
+                success: function (data) {
+
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
+                        //关闭当前需求，刷新父页面
+                        $("#homeDetail").modal('hide');
+                    } else {
+                        if ("没有权限" != data.msg) {
+                            Toast.error(data.msg);
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    // 非空校验
+    var checkNotNull = function () {
+    	var code = $("#code").val();
+        var type = $("#type").val();
+        var file_name = $("#file_name").val();
+        var sheet_name = $("#sheet_name").val();
+        if (code == '' || type == '' || file_name== '' || sheet_name=='') {
+            Toast.error("必填项不能为空");
+            return false;
+        }
+        return true;
+    }
+
+   
+</script>

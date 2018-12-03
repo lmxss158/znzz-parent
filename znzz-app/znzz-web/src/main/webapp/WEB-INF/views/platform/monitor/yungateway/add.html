@@ -1,0 +1,233 @@
+<% layout("/layouts/platform.html"){ %>
+	<div class="modal-content">
+		<div class="modal-header">
+               <h4 class="modal-title">添加云网</h4>
+        </div>
+		
+		<!--新增框-->
+    <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/yun/configure/yungateway/addDo" method="post">
+        <!-- <div class="modal-dialog" style="margin: 30px auto auto; ">
+            <div class="modal-content"> -->
+                <div class="modal-body">
+                 <div class="row">
+					<div class="row mb10">
+                    <div class="col-lg-12">
+                    <div class="form-horizontal">
+                    
+                        <div class="form-group">
+                            <label for="add-device-num" class="col-sm-2 control-label">统一编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="device_code" id="deviceCode" placeholder="请输入统一编号" onchange="checkCode();">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="addDeviceName" class="col-sm-2 control-label">设备名称 </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="deviceName" value="" name="deviceName" readonly placeholder="请输入设备名称" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="addDeviceVersion" class="col-sm-2 control-label">设备型号 </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="deviceVersion"  value="" name="deviceVersison" readonly placeholder="请输入设备型号">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="addDeviceDepartment" class="col-sm-2 control-label">使用单位 </label>
+                            <div class="col-sm-8">
+                            	<input type="text" class="form-control" id="borrowDepart"  value="" name="borrowDepart" readonly placeholder="使用单位">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-project-name" class="col-sm-2 control-label">设备ID</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="device_id" id="deviceId"  placeholder="请输入设备ID">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-project-type" class="col-sm-2 control-label">网关ID</label>
+                            <div class="col-sm-8">
+                                 <input type="text" class="form-control" name="gateway_id" id="gatewayId"  placeholder="请输入网关ID">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-project-type" class="col-sm-2 control-label">网关名称</label>
+                            <div class="col-sm-8">
+                                 <input type="text" class="form-control" name="gateway_name" id="gatewayName"  placeholder="请输入网关名称">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="add-project-detail" class="col-sm-2 control-label">ACCESSKEY</label>
+                            <div class="col-sm-8">
+                               <input type="text" class="form-control" name="accesskey" id="accesskey"  placeholder="请输入ACCESSKEY">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                </div>
+                </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                	<a id="goback" href="${base}/yun/configure/yungateway" data-pjax>
+				 		<button type="button" class="btn btn-default" data-dismiss="modal" style="width:120px">关闭</button>
+				 	</a>
+                    <button class="btn btn-primary" data-loading-text="正在提交..." style="width:120px">确定</button>
+                </div>
+                
+    </form>
+    
+</div>
+	
+<script language="JavaScript">
+$(function(){
+	getassetCodeInfoList();
+});
+
+    $(document).ready(function () {
+        myForm.init();
+        
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            
+            beforeSubmit: function (arr, form, options) {
+            	if($("#deviceCode").val()==""){
+            		Toast.error("统一编号不能为空");
+            		return false;
+            	}
+            	if($("#deviceId").val()==""){
+            		Toast.error("设备ID不能为空");
+            		return false;
+            	}
+            	if($("#gatewayName").val()==""){
+            		Toast.error("网关名称不能为空");
+            		return false;
+            	}
+            	if($("#gatewayId").val()==""){
+            		Toast.error("网关ID不能为空");
+            		return false;
+            	}
+            	if($("#accesskey").val()==""){
+            		Toast.error("ACCESSKEY不能为空");
+            		return false;
+            	}
+            	if(!checkCode()){
+            		return false;
+            	}
+                form.find("button:submit").button("loading");
+            },
+            
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                	if("没有权限"!=data.msg){
+                		Toast.error(data.msg);
+                	}
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+
+function checkCode(){
+	var code = $.trim($("#deviceCode").val());		//trim去除输入框两端空格
+	$("#deviceCode").val(code);
+	/* if(code == null || code == ''){
+		Toast.error("统一编号不能为空");
+		$("#deviceName").val("");
+    	$("#deviceVersion").val("");
+    	$("#borrowDepart").val("");
+		return false;
+	} */
+	var flag = $.ajax({
+    	type: "post",
+        url: "${base}/yun/configure/yungateway/cherkCode",
+        dataType: "json",
+        data:{"code":$("#deviceCode").val()},
+        async:false,
+        success:function(data){
+        	if (data==1 ) {
+                return false;
+            }else if(data==2){
+            	return false;
+            }else{
+            	$("#deviceName").val(data.deviceName);
+            	$("#deviceVersion").val(data.deviceVersion);
+            	$("#borrowDepart").val(data.borrowDepart);
+            	return true;
+            } 
+        }
+    }); 
+	var temp = flag.responseJSON;
+	if (temp==1) {
+        //该编号在云网表里已存在
+        $("#deviceName").val("");
+    	$("#deviceVersion").val("");
+    	$("#borrowDepart").val("");
+        //Toast.error("云网中已存在该统一编号");
+        return false;
+    }else if(temp==2){
+    	//在设备表里没有该编号
+    	$("#deviceName").val("");
+    	$("#deviceVersion").val("");
+    	$("#borrowDepart").val("");
+    	//Toast.error("设备中不存在该统一编号");
+    	return false;
+    }else{
+    	return true;
+    }
+}
+
+//获取统一编号下拉
+function getassetCodeInfoList(id){
+	var arrs = new Array();
+	if(!id){
+		id="#deviceCode";
+	}
+	if(arrs.length==0){
+		var arr = new Array() ;
+		$.ajax({
+			type:"post",
+			url:"${base}/yun/configure/yungateway/assetCodeListSelect",
+			async:false,
+			success:function(data){
+				var re = data.data ;
+				//console.info(re)
+				for(var i=0;i<re.length;i++){
+					var infos={} ;
+					var info = re[i] ;
+					infos["name"] = info.deviceCode;
+					arr.push(infos) ;
+					
+				}
+				arrs= arr ;
+			},
+			error:function(e){
+				
+			}
+		});
+	}
+	$(id).selectPage({
+ 	    showField : 'name',
+ 	    keyField : 'name',
+ 	    pageSize:5,
+ 	    data : arrs
+ 	});
+}
+
+
+</script>
+<%}%>
+
+

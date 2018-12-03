@@ -1,0 +1,622 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+	<h1> ${obj.opName} </h1>
+	<ol class="breadcrumb pull-left">
+
+		<!--  <li class="active"><a href="${base}/repair/add#">维修管理</a></li>
+         <li class="active">维修申请</li> -->
+
+		<!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+		<li><a href="#">设备维修管理</a></li>
+		<% if(obj.assetTypeName!="") {%>
+		<li><a href="#">处理中</a></li>
+		<li><a href="#">${obj.assetTypeName}</a></li>
+		<li class="active">${obj.opName}</li>
+		<%}else{%>
+		<li class="active">${obj.opName}</li>
+		<%}%>
+
+	</ol>
+</section>
+
+<section class="content">
+	<!-- Small boxes (Stat box) -->
+	<!-- 查询条件内容 -->
+	<input type="hidden" id="deviceCodeTemp">
+	<div class="row">
+		<div style="padding: 15px 15px -10;">
+			<div class="box">
+				<!--<div class="box-header with-border">-->
+				<!--<h3 class="box-title">Horizontal Form</h3>-->
+				<!--</div>-->
+				<!-- /.box-header -->
+				<!-- form start -->
+				<div class="box-body" style="padding: 0 15px auto;">
+					<div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label for="deviceCode" class="col-sm-3 control-label"
+									   style="padding-left: 0; padding-right: 0;">资产：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="assetCode" id="assetCode"
+										   placeholder="统一编号/资产名称/型号">
+								</div>
+							</div>
+
+
+							<div class="col-sm-6">
+								<label for="borrowDepart" class="col-sm-3 control-label"
+									   style="padding-left: 0; padding-right: 0;">申办单位：</label>
+								<div class="col-sm-9">
+									<!-- <select name="applyDepart" id="borrowDepart" class="form-control select1"
+                                            data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true" >
+
+                                    </select> -->
+									<input type="text" name="applyDepart" id="borrowDepart" style="width: 100%;"
+										   placeholder="请选择">
+								</div>
+							</div>
+
+
+						</div>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label class="col-sm-3 control-label"
+									   style="padding-left: 0; padding-right: 0;">申办人：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="applyPerson" id="applyPerson"
+										   placeholder="申办人">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<label class="col-sm-3 control-label"
+									   style="padding-left: 0; padding-right: 0;">操作时间：</label>
+								<div class="col-sm-9">
+									<div class="input-group date">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control pull-right" name="time" id="time"/>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+						<% if(obj.repairProcess==1){ %>
+						<div class="form-group">
+							<div class="col-sm-6">
+								<label class="col-sm-3 control-label">流程节点：</label>
+								<div class="col-sm-9">
+									<select id="repairProcess" class="form-control select1" data-placeholder="请选择"
+											style="width: 100%;" data-allow-clear="true" data-tags="true">
+										<option value="">请选择</option>
+										<option value="0">待接收</option>
+										<option value="2">维修中</option>
+										<option value="3">待验收</option>
+										<option value="4">计量中</option>
+										<option value="5">待领取</option>
+										<option value="6">无法维修</option>
+										<option value="7">驳回</option>
+										<option value="8">完结</option>
+									</select>
+								</div>
+							</div>
+
+						</div>
+						<%}%>
+						<div class="box-footer" style="height: 30px;">
+							<button class="btn btn-primary pull-right" id="searchBtn" data-loading-text="搜索..."
+									style="width:80px">搜索
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+
+				<div class="box-body">
+
+					<table id="repairTable" class="table table-bordered table-striped table-hover">
+						<thead>
+						<tr>
+							<th>统一编号</th>
+							<th>资产名称</th>
+							<th>型号</th>
+							<th>流程节点</th>
+							<th>申办单位</th>
+							<th>申办人</th>
+							<th>联系人</th>
+							<th>联系电话</th>
+							<th>操作时间</th>
+							<th>维修费用</th>
+							<th>操作</th>
+						</tr>
+
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 报废 -->
+	<div id="scrappedAsset" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">操作</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-12" id="tipNote">
+
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+					<button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在操作...">确 定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<input type="hidden" id="type" value="${obj.type}">
+	<input type="hidden" id="op" value="${obj.op}">
+	<input type="hidden" id="view" value="${obj.view}">
+	<%
+	var unit=@shiro.getPrincipalProperty('unit');
+	var role=@shiro.getPrincipalProperty('roles');
+	%>
+</section>
+
+
+<script>
+    //0待审批1待维修2维修中3待验收4计量中5待领取6待报废7驳回8完结'
+    var statusVar = ["待接收", "待维修", "维修中", "待验收", "计量中", "待领取", "无法维修", "驳回", "完结"];
+    $(function () {
+    	var f = true ;
+        initDatatable();
+        initTime();
+        initRepairProcess();
+        if($("#view").val()==1){
+            f = isshowDepartSelect();
+        }
+        if(f){
+            loadUnitAndUser();
+        }
+    });
+
+	function isshowDepartSelect(){
+	    var flag = true ;
+
+		var unitcode = '${unit.unitcode}';
+        var unitname = '${unit.name}';
+		var rolecode = '${role[0].code}';
+		var a ;//非仪器室
+		var b ;//非管理员
+		if(unitcode){
+			a=coverString("yq",unitcode);
+		}
+		if(rolecode){
+			b=coverString("admin",rolecode) ;
+		}
+
+    	if(!a&&!b){
+           // setValueSelect(null,unitcode,"borrowDepart",null);
+            $("#borrowDepart").attr("disabled","disabled");
+            $("#borrowDepart").val(unitname) ;
+            $("#borrowDepart").addClass("form-control") ;
+			flag =false ;
+		}
+
+		return flag ;
+
+    }
+    function  coverString(subStr,str){
+        var reg = eval("/"+subStr+"/ig");
+        return reg.test(str);
+    }
+    //流程节点初始化
+    function initRepairProcess() {
+
+        $("#repairProcess").select2();
+
+    }
+
+    //
+    function getIndex(str) {
+        return statusVar.indexOf(str);
+    }
+
+
+    var datatable;
+
+    function initDatatable() {
+        datatable = $('#repairTable').DataTable({
+            "destroy": true,
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "order": [[8, "desc"]],
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/repair/repairList",
+                "type": "post",
+                "data": function (d) {
+                    d.assetCode = $("#assetCode").val();
+                    d.applyDepart = $("#borrowDepart").val();
+                    d.applyPerson = $("#applyPerson").val();
+                    d.type = $("#type").val();
+                    var opnum = $("#op").val();
+                    if (opnum == 8) {
+                        opnum = "6,7,8";
+                    }
+                    d.opType = opnum;
+                    d.time = $("#time").val();
+                    d.view = $("#view").val();
+                    d.repairProcess = $("#repairProcess").val();
+                }
+            },
+            "order": [[8, "desc"]],
+            "columns": [
+                {"data": "assetcode"},
+                {"data": "assetname"},
+                {"data": "deviceversion"},
+                {"data": "status"},
+                {"data": "name"},
+                {"data": "username"},
+                {"data": "linkman"},
+                {"data": "linkphone"},
+                {"data": "operatortime"},
+                {"data": "repaircost"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return statusVar[data];
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        return data == null ? "--" : data;
+                    },
+                    "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                },
+                {
+                    "render": function (data, type, row) {
+                        return data == null ? "--" : data + "元";
+                    },
+                    "targets": [9]
+                },
+                {
+                    "render": function (data, type, row) {
+
+                        var view = $("#view").val();
+                        if (view) {//查看
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openProcess(' + row.id + ');" data-toggle="modal" data-target="#myModal"> 查看</button>&nbsp;&nbsp;' +
+                                '<button type="button" class="btn btn-xs btn-primary" onclick="getReport(' + row.id + ');" data-toggle="modal" data-target="#myModal">生成报告</button>';
+                        }
+
+                        if (row.status == 0) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openDetail(' + row.id + ');" data-toggle="modal" data-target="#myModal"> 接收</button>&nbsp;&nbsp;';
+                        } else if (row.status == 1) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openTip(' + row.id + ',6);" data-toggle="modal" data-target="#myModal">报废</button>&nbsp;&nbsp;' +
+                                '<button type="button" class="btn btn-xs btn-primary" onclick="openTip(' + row.id + ',2);" data-toggle="modal" data-target="#myModal"> 确认维修</button>';
+                        } else if (row.status == 2) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openTip(' + row.id + ',6);" data-toggle="modal" data-target="#myModal">无法维修</button>&nbsp;&nbsp;' +
+                                '<button type="button" class="btn btn-xs btn-primary" onclick="openResultHtml(' + row.id + ',3);" data-toggle="modal" data-target="#myModal">维修完成</button>&nbsp;&nbsp;';
+                        } else if (row.status == 3) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openAcceptHtml(' + row.id + ',1,\''+row.operatortime+'\');" data-toggle="modal" data-target="#myModal">验收</button>&nbsp;&nbsp;';
+                        } else if (row.status == 4) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openTip(' + row.id + ',5);" data-toggle="modal" data-target="#myModal">退回维修</button>&nbsp;&nbsp;' + '<button type="button" class="btn btn-xs btn-primary" onclick="openResultHtml(' + row.id + ',5);" data-toggle="modal" data-target="#myModal">计量完成</button>&nbsp;&nbsp;';
+                        } else if (row.status == 5) {
+                            return '<button type="button" class="btn btn-xs btn-primary" onclick="openAcceptHtml(' + row.id + ',2,\''+row.operatortime+'\');" data-toggle="modal" data-target="#myModal">领取</button>&nbsp;&nbsp;';
+                        } else {
+                            return "";
+                        }
+
+
+                    },
+                    "targets": 10
+                }
+
+            ]
+        });
+
+
+        /* 点击选中 */
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+
+        //非流程查看隐藏维修费用列
+        var vv = $("#view").val();
+        if (vv != 1) {
+            var column = datatable.column(9);
+            column.visible(!column.visible());
+        }
+
+    }
+
+    <!-- 获取用户所有权限 -->
+
+    //弹审批页
+    function openDetail(id) {
+    <%
+        if (@
+        shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.approveBtn") != -1
+    )
+        {%>
+            openModule("${base}/repair/approveHtml?id=" + id + "&isshow=0");
+        <%
+        }
+    else
+        {%>
+            Toast.warning(NOPERMISSION);
+        <%
+        }
+    %>
+    }
+
+    //弹审批页
+    function openResultHtml(id, reusltType) {
+        if (reusltType == 3) {//维修完成
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.repairFinishBtn") == -1
+        )
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+        }
+        if (reusltType == 5) {//计量完成
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.measureFinishBtn") == -1
+        )
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+        }
+
+
+        openModule("${base}/repair/resultHtml?id=" + id + "&reusltType=" + reusltType);
+    }
+
+    //弹出验收单或领取单
+    function openAcceptHtml(id, type,operateTime) {
+
+        if (type == 1) {//验收
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.repairCheckBtn") == -1
+        )
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+        } else {//领取
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.repairDrawBtn") == -1
+        )
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+        }
+        var timeday ;
+        if(operateTime){
+            timeday = operateTime.split(" ")[0];
+        }
+
+        openModule("${base}/repair/accpetHtml?id=" + id + "&type=" + type+"&operateTime='"+timeday+"'");
+    }
+
+
+    function getReport(id) {
+
+    <%
+        if (@
+        shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.getReportBtn") != -1
+    )
+        {%>
+
+            var form = $("<form>");
+            form.attr("style", "display:none");
+            form.attr("target", "");
+            form.attr("method", "post");
+            form.attr("action", "${base}/repair/getReport");
+            var input1 = $("<input>");
+            input1.attr("type", "hidden");
+            input1.attr("name", "id");
+            input1.attr("value", id);
+            $("body").append(form);
+            form.append(input1);
+            form.submit();
+            form.remove();
+
+
+        <%
+        }
+    else
+        {%>
+            Toast.warning(NOPERMISSION);
+            return;
+        <%
+        }
+    %>
+
+    }
+
+    //弹出流程查看
+    function openProcess(id) {
+        openModule("${base}/repair/processHtml?id=" + id);
+    }
+
+    //弹出报废
+    function openTip(id, type) {
+        $("#tipNote").html('');
+        var ustr = "";
+        if (type == 6) {
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.scrappedBtn") != -1
+        )
+            {%>
+                $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定不再修理,结束流程吗？');
+                ustr = "doScrapped";
+            <%
+            }
+        else
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+        } else if (type == 2) {
+            $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定要维修吗？');
+            ustr = "doRepair";
+        } else if (type == 3) {
+            $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定维修完成吗？');
+            ustr = "doRepairing";
+        } else if (type == 8) {
+            if ($("#type").val() == 2) {
+                $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定领取吗？');
+            } else {
+                $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定验收吗？');
+            }
+            ustr = "doFinish";
+        } else if (type == 5) {
+        <%
+            if (@
+            shiro.getPrincipalProperty('userPermissionData').indexOf("sys.manager.repair.doBackRepairBtn") != -1
+        )
+            {%>
+                $("#tipNote").html('确认后无法恢复； <br /> 请谨慎操作！ <br />确定退回维修吗？');
+                ustr = "doBackRepair";
+            <%
+            }
+        else
+            {%>
+                Toast.warning(NOPERMISSION);
+                return;
+            <%
+            }
+        %>
+
+        }
+
+
+        var dialog = $("#scrappedAsset");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.ajax({
+                type: "post",
+                url: "${base}/repair/" + ustr,
+                data: {id: id, type: $("#type").val()},
+                async: false,
+                success: function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    datatable.ajax.reload();
+
+                },
+                error: function (data) {
+                    Toast.error("网络异常");
+                }
+            });
+            //重置按钮状态，关闭提示框
+            btn.button("reset");
+            dialog.modal("hide");
+
+
+        });
+
+
+    }
+
+    //初始化时间
+    function initTime() {
+        var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+
+        $('#time').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker": true,
+            "timePicker24Hour": true
+        });
+        $("#time").on('apply.daterangepicker', function (ev, picker) {
+            $("#time").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+
+        $("#time").on('cancel.daterangepicker', function (ev, picker) {
+            $("#time").val('')
+        })
+
+
+    }
+</script>
+
+<%}%>
+

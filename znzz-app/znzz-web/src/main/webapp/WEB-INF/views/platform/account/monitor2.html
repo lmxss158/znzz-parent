@@ -1,0 +1,619 @@
+
+     <% layout("head.html"){ %>
+    
+   <div class="content-wrapper container-bgc" style="margin-left: 0;padding-top: 50px">
+        <section class="content-header section-content-header">
+            <ol class="breadcrumb pull-left second-oll">
+                <li ><a href="${base!}/platform/account/indexNew"><i class="fa fa-dashboard"></i> 监控台</a></li>
+                <li class="active">实时状况</li>
+            </ol>
+        </section>
+        <div class="row" style="margin: 0 45px;">
+            <!--部门名称-->
+            <div class="col-sm-2 "style="height: 140px;">
+                <div class="bgc-liner bgc-shadow-radius">
+                    <div class="dropdown text-center">
+                        <button  class="btn btn-default dropdown-toggle depart-name" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 100%;line-height: 140px;color: #ffffff;">
+                            <span id="DJName"></span>
+                            <span class="caret"></span>
+                        </button>
+                        
+                         <input type="hidden" name="borrowDepart" id="borrowDepart" value=""/>
+                        <ul class="dropdown-menu dropdown-menu-liner depart" aria-labelledby="dropdownMenu2"style="border:0;width:100%;overflow-y:auto;max-height:200px;">
+                        
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!--接入设备-->
+            <div class="col-sm-2" >
+                <div class=" bgc-liner bgc-shadow-radius"style="height: 140px;">
+                    <ul class="media-list no-margin">
+                        <li class="media">
+                            <div class="media-left media-middle no-padding">
+                                <a href="#">
+                                    <img class="media-object media-margin" src="${base!}/assets/dist/img/second-device.png" alt="..." width="82" height="82">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <div class="media-body-top" style="padding-top: 40px;font-size: 18px;">接入设备</div>
+                                <div class="media-body-bottom" style="padding-bottom: 45px;font-size: 18px;" id="deviceNum"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--进度条-->
+            <div class="col-sm-3">
+                <div class="bgc-liner bgc-shadow-radius"style="height: 140px;padding: 20px 0 25px 0;">
+                    <div class="row no-padding no-margin">
+                        <div class="col-sm-3 col-md-2 col-lg-3  no-padding text-center">运行台数</div>
+                        <div class="progress col-sm-9 col-md-10 col-lg-8 no-padding" style="background-color: #999;border-radius: 3px;">
+                            <div id="powerOnPencent" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" >
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row no-padding no-margin">
+                        <div class="col-sm-3 col-md-2 col-lg-3  no-padding text-center">关机台数</div>
+                        <div class="progress col-sm-9 col-md-10 col-lg-8 no-padding" style="background-color: #999;border-radius: 3px;">
+                            <div id="powerOffPencent" class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" >
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-padding no-margin">
+                        <div class="col-sm-3 col-md-2 col-lg-3  no-padding text-center">离线台数</div>
+                        <div class="progress col-sm-9 col-md-10 col-lg-8 no-padding" style="background-color: #999;border-radius: 3px;">
+                            <div id="outLinePencent" class="progress-bar  progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" >
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--开机柱状图-->
+            <div class="col-sm-5">
+                <div class="bgc-liner bgc-shadow-radius" style="height: 140px;">
+                    <div  id="unitHourLine" style="width: 100%;height: 140px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 18px 60px 0px;">
+            <div class="bgc-liner bgc-shadow-radius clearfix"style="height: 36px;">
+                <!--图例-->
+                <div style="height: 100%;line-height: 36px;display: inline-block; padding-left: 60px;">
+                    <div class="inline-block" style="padding-right: 40px;">
+                        <span style="padding-right:10px;">●</span>
+                        <span>图例</span>
+                    </div>
+                    <div class="inline-block" style="padding-right: 40px;">
+                        <img src="${base!}/assets/dist/img/shebei.png" alt="" widht="19" height="20" style="padding-right:10px;">
+                        <span>设备</span>
+                    </div>
+                    <div class="inline-block" style="padding-right: 36px;">
+                        <img src="${base!}/assets/dist/img/yiqi.png" alt="" widht="19" height="20" style="padding-right:10px;">
+                        <span>仪器</span>
+                    </div>
+                    <div class="inline-block"style="padding-right: 40px;">
+                        <img src="${base!}/assets/dist/img/glj.png" alt="" widht="19" height="20" style="padding-right:10px;">
+                        <span>工量具</span>
+                    </div>
+                    <div class="inline-block" style="padding-right: 30px;">
+                        <span class="vertical-middle" style="display:inline-block;width:10px;height:2px;background-color:#77990c;margin-right:5px;"></span>
+                        <span>开机</span>
+                    </div>
+                    <div class="inline-block" style="padding-right: 30px;">
+                        <span class="vertical-middle" style="display:inline-block;width:10px;height:2px;background-color:#e2b621;margin-right:10px;"></span>
+                        <span>关机</span>
+                    </div>
+                    <div class="inline-block">
+                        <span class="vertical-middle" style="display:inline-block;width:10px;height:2px;background-color:#666;margin-right:10px;"></span>
+                        <span>离线</span>
+                    </div>
+                </div>
+                <!--页数选择-->
+               <div class="pull-right" style="height: 36px;line-height: 36px;">
+                    <span class="inline-block" style="height: 36px;padding-right: 12px;">筛选</span>
+                    <div class="inline-block" style="height: 36px;">
+                        <select style="margin-right: 12px;color:#666;" number="10" name="assettype" id="assettype">
+
+	                    <option value="">全部</option>
+	                    <option value="1">设备</option>
+	                    <option value="2">仪器</option>
+	                    <option value="3">工量具</option>
+               		 </select>
+                      
+                             <select name="deviceState" id="deviceState" style="margin-right: 12px;color:#666;" number="10">
+			                    <option value="">全部</option>
+			                    <option value="0">开机</option>
+			                    <option value="1">关机</option>
+			                    <option value="2">离线</option>
+			                </select>  
+                     
+                        <span class="inline-block" style="height: 50px;padding-right: 12px;">页数</span>
+                       
+                            <select name="pageNo" id="pageNo" style="margin-right: 90px;color:#666;" >
+                   
+               				 </select>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+   
+        <div class="row" style="margin: 18px 54px 0px;">
+	        <div class="chevron-box chevron-second-left second-left-fade" style="display:none">
+                        <div class="chevcron-secondicon-left"></div>
+                    </div>
+                    <div class="chevron-box chevron-second-right second-right-fade" style="display:none">
+                        <div class="chevcron-secondicon-right"></div>
+                    </div>
+            <div style="position:relative;" id="deviceInfo">
+               
+            </div>
+        </div>
+    </div>
+
+    
+
+<!-- ${base!}/assets/wrapper -->
+
+
+<script>
+var defalutVal='' ;
+$(function () {
+    $("#borrowDepart").val("");
+	 //鼠标划入淡入淡出
+	  $(".chevron-second-left").hover(function () {
+            $(this).addClass('bgc-secondchevron-left');
+            $(".chevcron-secondicon-left").css({"opacity": "1","border-left": "3px solid #fff",
+    "border-bottom": "3px solid #fff"});
+        }, function () {
+            $(this).removeClass('bgc-secondchevron-left');
+            $(".chevcron-secondicon-left").css({"opacity": "0.2","border-left": "3px solid #333",
+    "border-bottom": "3px solid #333"});
+        })
+        $(".chevron-second-right").hover(function () {
+            $(this).addClass('bgc-secondchevron-right');
+            $(".chevcron-secondicon-right").css({"opacity": "1","border-left": "3px solid #fff",
+    "border-bottom": "3px solid #fff"});
+        }, function () {
+            $(this).removeClass('bgc-secondchevron-right');
+            $(".chevcron-secondicon-right").css({"opacity": "0.2","border-left": "3px solid #333",
+    "border-bottom": "3px solid #333"});
+        })
+
+    
+    $(".chevron-second-left").on("click",function(){
+    	var  currentPageNo =$("#pageNo").val();
+    	if(Number(currentPageNo)==1){
+    		return ;
+    	}else{
+    		var nextNo =Number(currentPageNo)-1;
+        	var unitId=$("#borrowDepart").val();
+        	$("#pageNo").val(nextNo);
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+    	}
+    	
+    })
+    
+      $(".chevron-second-right").on("click",function(){
+    	var  currentPageNo =$("#pageNo").val();
+    	var maxNo =$("#pageNo  option:last").val();
+    	if(Number(currentPageNo)==maxNo){
+    		return ;
+    	}else{
+    		var nextNo =Number(currentPageNo)+1;
+        	var unitId=$("#borrowDepart").val();
+        	$("#pageNo").val(nextNo);
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+    	}
+    })
+   
+    
+	 
+	 getUnitList() ;
+	 showRightTime();
+	 loadPageData();
+	 initAllSelect();
+	 
+	 $('.depart li').on('click', function() {
+		var deparText = $(this).text();
+		$("#DJName").text(deparText);
+		var unitId = $(this).next().val();
+		$("#borrowDepart").val(unitId);
+		 	//改变科室代码 重新赋值
+			   $("#pageNo").val(1);
+			   $("#assettype").val(""),
+				$("#deviceState").val(""),
+			   ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+
+	 });
+});
+
+
+
+
+var initAllSelect=function(){
+	$("#pageNo").on("change",function(){
+		  	var unitId=$("#borrowDepart").val();
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+			
+	})
+	$("#assettype").on("change",function(){
+		 	$("#pageNo").val(1);
+		  	var unitId=$("#borrowDepart").val();
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+			
+	})
+	$("#deviceState").on("change",function(){
+			$("#pageNo").val(1);
+		  	var unitId=$("#borrowDepart").val();
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+			
+	})
+}
+
+
+
+//加载单位下拉列表最新
+var getUnitList =function(id){
+	if(!id){
+		id="borrowDepart" ;
+	}
+	$.ajax({
+		type:"post",
+		url:"${base}/platform/sys/unit/getUnitJsonList",
+		async:false,
+		success:function(data){
+			if(data){
+				
+				 var str="";
+				for(var i=0;i<data.length;i++){
+					var obj =  data[i] ;
+					str+="<li style='display:inline;text-align:center;'><a href='javascript:void(0);'>"+obj.name+"</a></li>";
+					str+="<input type='hidden' value="+obj.id+">";
+					if(i==0){
+						$("#DJName").text(obj.name);
+					}
+				}
+				$(".depart").append(str); 
+			}
+		},
+		error:function(data){
+			
+		}
+	});
+
+}
+//加载数据
+function loadPageData(){
+	
+	ajaxLoadPageData("",0);
+	/*******初始化方法*******/
+		setInterval(taskFlash,1000*60*1);
+}
+ function taskFlash(){
+	 	var unitId=$("#borrowDepart").val();
+		ajaxLoadPageData(unitId==""?defalutVal:unitId,1); 
+		
+ }
+
+
+//加载该单位下数据
+function ajaxLoadPageData(unitId,flag){
+   var unitHourLine=echarts.init(document.getElementById("unitHourLine"));
+	$.ajax({
+		type:"post",
+		url:"${base}/platform/account/getPageDataNew",
+		async:false,
+		data:{unitId:unitId,
+				"pageNo":$("#pageNo  option:selected").val()==null?1:$("#pageNo  option:selected").val(),
+				"assettype":$("#assettype  option:selected").val(),
+				"deviceState":$("#deviceState  option:selected").val()
+			
+			},
+		success:function(data){
+			
+			//========接入设备数量========================
+			$("#deviceNum").html(data.collectNum+"台") ;
+			//========运行台数,关机台数,离线台数 数据填充=========
+			var  pon ="0%";
+			var  pof ="0%";
+			var  oli ="0%";
+			if(data.collectNum!=0){//分母为0
+				pon = (data.powerOnNum/data.collectNum*100).toFixed(2)*100/100  +"%" ;
+				pof = (data.powerOffNum/data.collectNum*100).toFixed(2)*100/100  +"%";
+			    oli = (data.outLineNum/data.collectNum*100).toFixed(2)*100/100  +"%";
+			}	
+			$("#powerOnPencent").html(pon);
+			$("#powerOnPencent").css("width",pon);
+			$("#powerOffPencent").html(pof);
+			$("#powerOffPencent").css("width",pof);
+			$("#outLinePencent").html(oli);
+			$("#outLinePencent").css("width",oli);
+			//==========开机台数========================
+			var unitLineData = data.lineListByUnit ;
+				var lineData = JSON.parse(unitLineData) ;
+			 	var cData=[] ;
+			var pData=[] ;
+			
+			
+			if(lineData.powerOnData){
+				pData = lineData.powerOnData.split(",") ;
+			}
+			
+			if(lineData.collectStrData){
+				cData = lineData.collectStrData.split(",") ;
+			}
+			unitHourLine.setOption(getUnitLineOption(pData,cData)) ;
+			 var list = data.dataList ;
+			 addDeviceInfo(list,data.currentNum);
+			/****确定页码***/
+			if(flag==0)addPageNo(data.totalPage);
+			
+			
+		},
+		error:function(data){
+			
+		}
+		
+		
+	}) ;
+	window.onresize = function () {
+		unitHourLine.resize();
+		}
+	var  currentPageNo =$("#pageNo").val();
+	if(Number(currentPageNo)==1){
+         $(".chevron-second-left").css("display","none");
+	}else {
+		  $(".chevron-second-left").css("display","block");
+	}
+	 var maxNo =$("#pageNo  option:last").val();
+     if(Number(currentPageNo)==maxNo){
+     	 $(".chevron-second-right").css("display","none");
+     }else {
+     	 $(".chevron-second-right").css("display","");
+     }
+} 
+//开机台数
+function getUnitLineOption(powerOnData,collectStrData){
+	option = {
+			
+			 tooltip: {
+	                trigger: 'axis'
+	            },
+	            legend: {
+	               /*  x:'right',
+	                top:'middle',
+	                right:0,
+	                padding:0,
+	                orient: 'vertical', */
+	                itemWidth: 18,
+//	                align:'middle',
+/* roundRect */
+	                data:[{name:'开机台数',icon:'roundRect',textStyle:{color:'#fff'}}]
+	            },
+	            grid: {
+	                top:'30%',
+	                left: '3%',
+	                right: '5%',
+	                bottom: '10%',
+	                containLabel: true
+	            },
+	            // toolbox: {
+	            //     feature: {
+	            //         saveAsImage: {}
+	            //     }
+	            // },
+	            xAxis: {
+	                type: 'category',
+	                boundaryGap: true,
+	                data : ['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
+	                splitLine: {show: true},
+	                axisLabel:{
+	                    show: true,
+	                    textStyle: {
+	                        color: '#fff'
+	                    }
+	                },
+	                axisLine:{
+	                    lineStyle:{
+	                        color:'#fff',
+	                        // width:8,
+	                    }
+	                }
+
+	            },
+	            yAxis: {
+	                type: 'value',
+	                axisLabel:{
+	                    show: true,
+	                    textStyle: {
+	                        color: '#fff'
+	                    }
+	                },
+	                axisLine:{
+	                    lineStyle:{
+	                        color:'#fff',
+	                        // width:8,
+	                    }
+	                }
+	            },
+	            series : [
+	  			       
+	  			        {
+	  			            name:'开机台数',
+	  			            type:'bar',
+	  			            stack: '广告',
+	  			            barWidth : 15,
+	  			            data:powerOnData
+	  			        }
+	  			    ],
+	  			color: ['#6DB8FF']
+			
+		};
+	
+	
+	return option ;
+	}
+/*********填充页码***********/
+var addPageNo=function (totalPage){
+var pageStr="";
+if(totalPage==0){
+	pageStr+="<option value='1'>1</option>" ;
+}
+for(var i=1;i<=totalPage;i++){
+	pageStr+="<option value='"+i+"'>"+i+"</option>" ;
+}
+$("#pageNo").html(pageStr);
+}	
+//设备数据  {deviceCode:{deviceVersion:ddd,deviceName:eee}}	
+var deviceVersionAndName={} ;	
+/*********填充设备信息***********/
+var addDeviceInfo =function(list,currentNum){
+	var rows =(currentNum+6/7)>=3?3:(currentNum+6/7); 
+	$("#deviceInfo").html("");
+	for(var i=0;i<rows;i++){
+		$("#deviceInfo").append($("#temeplate").html());
+		$("#deviceInfo").children("div")[i].id="info"+i;
+	}
+	$.each(list,function(index,device){
+		if(index<7){
+			$("#info0").append($("#temeplate1").html());
+			$("#info0").children("div").children("div")[index].id="content"+index
+		}else if(index<14){
+			$("#info1").append($("#temeplate1").html());
+			$("#info1").children("div").children("div")[index-7].id="content"+index
+		}else if(index<21){
+			$("#info2").append($("#temeplate1").html());
+			$("#info2").children("div").children("div")[index-14].id="content"+index
+		}
+	
+	$("#content"+index).find("div[class='text-center']").eq(0).find("div").eq(0).text(device.devicename);
+	$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(0).text(device.devicecode);
+	$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(1).text(device.deviceversion);
+	$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(2).text(device.current+"A");
+	$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(3).text(device.voltage+"V");
+	$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(4).text(device.ipLocation);
+
+	$("#content"+index+" .text-center").eq(1).children('span').eq(1).html(device.duration+"分钟");
+
+	
+
+	
+	
+	deviceVersionAndName[device.devicecode] = {"name":device.devicename,"version":device.deviceversion};
+	/*******判断仪器设备在线开关机*******/
+	var classDom=	$("#content"+index).find("div[class='home-device-body']").eq(0).children("div").eq(0);
+	
+	//var classDom =$("#content"+index).children("div").eq(1).children("a").eq(0).children("div").eq(0);
+	$("#content"+index).attr("onclick","openDetail('"+device.devicecode+"','"+device.assettype+"')")
+	if(device.assettype==1||device.assettype==0||device.assettype==null){//设备
+		if(device.state==0){//在线
+			if(device.powerState==0) {
+				classDom.attr('class',"access-device-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("正常运行");
+
+			}else {
+				classDom.attr('class',"shutdown-device-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("关机状态");
+
+			}
+		}else{
+			classDom.attr('class',"offline-device-bgc");
+			$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("离线状态");
+
+			//$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("离线状态");
+		}
+	}else if(device.assettype==2){//仪器
+		if(device.state==0){//在线
+			if(device.powerState==0) {
+				classDom.attr('class',"access-instrument-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("正常运行");
+
+
+			}else {
+				classDom.attr('class',"shutdown-instrument-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("关机状态");
+
+			}
+		}else{
+			classDom.attr('class',"offline-instrument-bgc");
+			$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("离线状态");
+
+		}
+	}else if(device.assettype==3){//工量具
+		if(device.state==0){//在线
+			if(device.powerState==0) {
+				classDom.attr('class',"access-tool-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("开机状态");
+
+			}else {
+				classDom.attr('class',"shutdown-tool-bgc");
+				$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("关机状态");
+
+			}
+		}else{
+			classDom.attr('class',"offline-tool-bgc");
+			$("#content"+index).find("div[class='second-device-text']").eq(0).find("span").eq(5).html("离线状态");
+
+		}
+	}
+	//离线
+
+
+
+})
+
+
+
+}
+ 
+function openDetail(code,type){
+	//alert("详情页")
+	openModule("${base}/platform/account/getDataDetailNew?deviceCode="+code+"&deviceType="+type);
+}   
+</script>
+	<div id="temeplate" style="display: none;">
+		   <div style="display: flex;margin: 0px 10px 15px;"></div>
+     </div>
+     <div id="temeplate1" style="display: none;">
+     	          <div class="flex-justify-center second-device-bgc">
+                        <div class="home-device-box">
+                            <div class="text-center" style="padding-bottom:10px;">
+                                <div class="second-device-header">函数/任意波发生器asdasdasdasdasdasdasdasd</div>
+                            </div>
+                            <div class="home-device-body">
+                                <div class="access-device-bgc">
+                                </div>
+                                <div class="second-device-text">
+                                    <span>w705028</span>
+                                    <span>HP3312DA</span>
+                                    <span>
+                                    68
+                                    <i>A</i>
+                                </span>
+                                    <span>
+                                    360
+                                    <i>v</i>
+                                </span>
+                                    <span>
+                                    59
+                                    <i>kw-h</i>
+                                </span>
+                                    <span class="access-text">正常运行</span>
+                                </div>
+                            </div>
+                            <div class="text-center second-footer-text">
+                                <span>本月时长：</span>
+                                <span>720小时</span>
+                            </div>
+                        </div>
+                    </div>
+     </div>
+
+<%}%>

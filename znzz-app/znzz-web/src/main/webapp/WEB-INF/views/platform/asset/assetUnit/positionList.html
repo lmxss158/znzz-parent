@@ -1,0 +1,171 @@
+<% layout("/layouts/platform.html"){ %>
+<section class="content-header">
+    <h1>
+        位置变更
+    </h1>
+
+    <ol class="breadcrumb pull-left">
+        <li class="active">设备位置变更</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- 查询搜索框 -->
+    <div class="row">
+        <div style="padding: 15px 15px -10px auto;">
+            <div class="box">
+                <div class="box-body" style="padding: 0 15px auto;">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <label for="assetCode" class="col-sm-1 control-label">资产：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="assetCode" placeholder="统一编号/资产名称/资产型号">
+                            </div>
+                            <label for="position" class="col-sm-1 control-label">位置：</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="position" placeholder="位置">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="borrowDepart" class="col-sm-1 control-label">责任单位:</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="chargeDepart" id="borrowDepart" style="width: 100%;"
+                                       placeholder="请选择">
+                            </div>
+
+                            <label class="col-sm-1 control-label" >责任人：</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="chargeMan" id="chargePerson" style="width: 100%;"
+                                       placeholder="请选择">
+                            </div>
+                            <div class="col-sm-3">
+                                <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..."
+                                        style="width:80px">搜索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-body">
+                    <table id="assetUnitPositionTable" class="table table-bordered table-striped table-hover"
+                           style="table-layout:fixed">
+
+                        <thead>
+                        <tr>
+                            <th>统一编号</th>
+                            <th>资产名称</th>
+                            <th>资产型号</th>
+                            <th>责任单位</th>
+                            <th>责任人</th>
+                            <th>位置</th>
+                            <th style="width:100px;">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="unitIdHiden" type="hidden" value="${@shiro.getPrincipalProperty('unitid')}">
+</section>
+<!-- /.content -->
+<div class="control-sidebar-bg"></div>
+
+
+<script>
+
+    var datatable;
+    var unitId = $("#unitIdHiden").val(); //用户单位全局变量
+    function initAssetUnitPositionDatatable() {
+        datatable = $('#assetUnitPositionTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/assetUnit/positionList",
+                "type": "post",
+                "data": function (d) {
+                    d.assetCode = $("#assetCode").val();
+                    d.useDepart = $("#borrowDepart").val();
+                    d.position = $("#position").val();
+                    d.chargeMan = $("#chargePerson").val();
+                }
+            },
+            /*  "order": [[10, "desc"]], */
+            "columns": [
+                {"data": "assetcode"},
+                {"data": "assetname"},
+                {"data": "deviceversion"},
+                {"data": "chargedepartname"},
+                {"data": "chargemanname"},
+                {"data": "position"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var str = '<button type="button" class="btn btn-xs btn-primary" onclick="openDetail(' + row.id + ',0);" data-toggle="modal" data-target="#myModal"> 位置变更</button>&nbsp;&nbsp;' +
+                            '<button type="button" class="btn btn-xs btn-primary" onclick="openRecordDetail(' + row.id + ');" data-toggle="modal" data-target="#myModal"> 查看</button>';
+                        return str;
+                    },
+                    "targets": 6
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data) {
+                            str = subStrCustomNew(data, 6);
+                        }
+                        return str;
+                    },
+                    "targets": [0, 1, 2, 3, 4, 5]
+                }
+            ]
+        });
+
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+
+    $(function () {
+        initAssetUnitPositionDatatable();
+        loadUnitAndUser();
+    });
+
+    //弹审批页
+    function openDetail(id, type) {
+        openModule("${base}/assetUnit/operate?id=" + id + "&type=" + type);
+    }
+
+    //位置变更详情记录
+    function openRecordDetail(id) {
+        openModule("${base}/assetUnit/doPositionView?id=" + id);
+    }
+
+</script>
+
+
+<%}%>

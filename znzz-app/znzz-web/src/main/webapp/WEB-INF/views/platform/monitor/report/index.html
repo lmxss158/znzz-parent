@@ -1,0 +1,249 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<style >
+
+</style>
+         <section class="content-header">
+            <h1>
+                各部门统计图
+                <!--<small>Control panel</small>-->
+            </h1>
+
+            <ol class="breadcrumb pull-left">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">各部门统计图</li>
+            </ol>
+        </section>
+        <!-- Main content -->
+        <section class="content" >
+            <!-- Small boxes (Stat box) -->
+            
+            <div class="box" style="border-top: 0;">
+                <div class="box-body chart-responsive">
+                    <div class="col-sm-12">
+                        <div>
+                            <label for="borrowDepart" class="col-sm-1 control-label">当前单位：</label>
+                               <div class="col-sm-2">
+                                   <select name="borrowDepart" id="borrowDepart" class="form-control select1"
+                                           data-placeholder="请选择" style="width: 100%;" data-allow-clear="true" data-tags="true" >
+                                       <option value="">全部</option>
+                                   </select>
+                               <input type="button" onclick="getTargetUnitDataPage();" value="查询" style="background-color: orange;">
+                               </div>
+                             
+                        </div>
+                        
+                        <label for="borrowDepart" class="col-sm-2 control-label">接入台数： <span id="deviceNum">1</span></label>
+                             <div>
+                             <label for="borrowDepart" class="col-sm-2 control-label" style="float: left;">开机数量：<span id="powerOnNum">1</span> </label>
+                             <label for="borrowDepart" class="col-sm-2 control-label" style="float: left;top: 19px;right: 268px">关机数量：<span id="powerOffNum">1</span> </label>
+                             <label for="borrowDepart" class="col-sm-2 control-label" style="float: left;top: 37px;right: 537px">离线数量： <span id="outLineNum">1</span> </label>
+                             <div>
+                     </div>
+                     
+                     
+                     </div>
+                     <div id="unitHourLine" style="width: 500px;height:200px;float: right;top: -33px"></div>
+                     </div>
+                     </div>
+            </div>
+            
+            <div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					
+					<div class="box-body">
+					<div id="resultDataPage">
+					</div>
+					
+					<div id="tempData" style="display: none;">
+					<div >
+					<a href="${base}/platform/home/getDataDetail?deviceCode=@deviceCode@">
+						 统一编码:   <span>@deviceCode2@</span>&nbsp;&nbsp;
+						资产名称:	<span>@deviceName@</span>&nbsp;&nbsp;
+						型号规格:	<span>@deviceVersion@</span>&nbsp;&nbsp;
+						电流:	<span>@current@ A</span>&nbsp;&nbsp;
+						电压:	<span>@voltage@ V</span>&nbsp;&nbsp;
+						功率:	<span>@power@ W</span>&nbsp;&nbsp;
+						在线离线:	<span>@state@</span>&nbsp;&nbsp;
+						开关机状态:<span>@powerState@</span>&nbsp;&nbsp;
+						使用时长:	<span>@duration@分钟</span>&nbsp;&nbsp;
+						</a>
+						</div>
+					</div>
+					
+					
+					</div>
+						
+				</div>
+			</div>
+		</div>
+            
+            
+        </section>
+	<script language="JavaScript">
+	
+	var tempResultDataPage=$("#tempData").html() ;
+	
+		$(function(){
+			loadUnitAndUser();
+			loadPageData();
+		})
+		//加载数据
+		function loadPageData(){
+			var unitId= '${@shiro.getPrincipalProperty('unitid')}' ;
+			setValueSelect(null,unitId,null,null);
+			ajaxLoadPageData(unitId);
+		}
+		
+		//查询对应单位数据
+		function getTargetUnitDataPage(){
+			
+			var unitId=$("#borrowDepart option:selected").val();
+			ajaxLoadPageData(unitId);
+			
+		}
+		//展示对应设备详细数据
+		function showDetail(deviceCode){
+			alert(deviceCode);
+		}
+		
+		
+		//加载该单位下数据
+		function ajaxLoadPageData(unitId){
+			
+	        var unitHourLine=echarts.init(document.getElementById("unitHourLine"));
+
+			
+			
+			$.ajax({
+				type:"post",
+				url:"${base}/platform/home/getPageData",
+				data:{unitId:unitId},
+				success:function(data){
+					$("#deviceNum").html(data.collectNum) ;
+					$("#powerOnNum").html(data.powerOnNum);
+					$("#powerOffNum").html(data.powerOffNum);
+					$("#outLineNum").html(data.outLineNum);
+					var unitLineData = data.lineListByUnit ;
+					var lineData = JSON.parse(unitLineData) ;
+					var cData=[] ;
+					var pData=[] ;
+					
+					
+					if(lineData.powerOnData){
+						pData = lineData.powerOnData.split(",") ;
+					}
+					
+					if(lineData.collectStrData){
+						cData = lineData.collectStrData.split(",") ;
+					}
+					
+					unitHourLine.setOption(getUnitLineOption(pData,cData)) ;
+					var list = data.dataList ;
+					var str="" ;
+					for(var i=0;i<list.length;i++){
+						var temp =tempResultDataPage ;
+						var t = list[i] ;
+						temp=temp.replace("@deviceCode@",t.deviceCode);
+						temp=temp.replace("@deviceCode2@",t.deviceCode);
+						temp=temp.replace("@deviceName@",t.deviceName);
+						temp=temp.replace("@deviceVersion@",t.deviceVersion);
+						temp=temp.replace("@current@",t.current);
+						temp=temp.replace("@voltage@",t.voltage);
+						temp=temp.replace("@power@",t.power);
+						temp=temp.replace("@state@",t.state);
+						temp=temp.replace("@powerState@",t.powerState);
+						temp=temp.replace("@duration@",t.duration);
+						str+=temp ;
+					}
+					
+					$("#resultDataPage").html(str);
+					
+				},
+				error:function(data){
+					
+				}
+				
+				
+			}) ;
+		} 
+		
+		
+		function getUnitLineOption(powerOnData,collectStrData){
+			option = {
+					 title : {
+	        	        text: "",
+	        	        //subtext: '纯属虚构',
+	        	        x:'left'
+	                 }, 
+				    tooltip : {
+				        trigger: 'axis',
+				        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+				            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+				        },
+				        formatter: '{c}台'
+				    },
+				     legend: {
+				        data:['运行台数','监控台数'],
+				        x:"right"
+				    },
+				    grid: {
+				        left: '3%',
+				        right: '4%',
+				        bottom: '3%',
+				        containLabel: true
+				    },
+				    xAxis : [
+				        {
+				            type : 'category',
+				            splitLine:{
+					        	show:true 
+					        },
+					    //  隐藏坐标轴
+					        axisLine: {
+					            show: false
+					        },
+				            data : ['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00']
+				        }
+				    ],
+				    yAxis : [
+				        {
+				            type : 'value',
+				            axisLine: {
+					            show: false
+					        },
+					     // 去除坐标轴上的刻度线
+					        axisTick: {
+					             show: false
+					        } ,
+					        
+					        axisLabel: {
+					            formatter: ''
+					        }
+				        }
+				    ],
+				    series : [
+				        {
+				            name:'监控台数',
+				            type:'line',
+				            data:collectStrData
+				        },
+				        {
+				            name:'运行台数',
+				            type:'line',
+				            stack: '广告',
+				            data:powerOnData
+				        }
+				    ],
+				    color: ['#C0504D',' #4F81BD']
+				};
+			
+			
+			return option ;
+		}
+		
+		
+    </script>
+<%}%>

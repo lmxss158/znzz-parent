@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>综合监控</title>
+     <link rel="shortcut icon" href="${base!}/favicon.ico" type="image/x-icon" />
+   <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
+   <link rel="stylesheet" href="${base!}/assets/plugins/select2/select2.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="${base!}/assets/plugins/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+<link rel="stylesheet" href="${base!}/assets/plugins/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+  <link rel="stylesheet" href="${base!}/assets/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+   <link rel="stylesheet" href="${base!}/assets/dist/css/skins/_all-skins.min.css">
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="${base!}/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="${base!}/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="${base!}/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.css">
+    <link rel="stylesheet" href="${base!}/assets/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="${base!}/assets/dist/css/index.css">
+    <!--<link rel="stylesheet" href="./gateway-management.css">-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>-->
+    <!--<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
+    <![endif]-->
+<!-- ./wrapper -->
+
+
+<!-- jQuery 3 -->
+<script src="${base!}/assets/plugins/jQuery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="${base!}/assets/plugins/jQueryUI/jquery-ui.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+<!-- Bootstrap 3.3.7 -->
+<script src="${base!}/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="${base!}/assets/plugins/select2/select2.full.min.js"></script>
+
+<!-- Sparkline -->
+<script src="${base!}/assets/plugins/jQuery/jquery.sparkline.min.js"></script>
+
+
+<!-- jQuery Knob Chart -->
+<script src="${base!}/assets/plugins/jQuery/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="${base!}/assets/plugins/moment/min/moment.min.js"></script>
+<script src="${base!}/assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- datepicker -->
+<script src="${base!}/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="${base!}/assets/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="${base!}/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- Slimscroll -->
+<script src="${base!}/assets/plugins/jQuery/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="${base!}/assets/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="${base!}/assets/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+
+<script src="${base!}/assets/plugins/iCheck/icheck.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="${base!}/assets/dist/js/demo.js"></script>
+<script src="${base!}/assets/dist/js/echarts.min.js"></script>
+<script src="${base!}/assets/dist/js/warning.js"></script>
+<!--<script src="./gateway-management.js"></script>-->
+    <!-- Google Font -->
+    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">-->
+    <style type="text/css">
+        .content-bgc{
+            background-image: url('${base!}/assets/dist/img/home-bgc.png');
+            background-repeat: no-repeat;
+            -webkit-background-size: cover;
+            background-size: cover;
+        }
+       .dropdown-select select{
+        border:0 !important;
+        text-indent: 0.01px;
+        text-overflow: '';
+        color: #fff;
+        outline: none;
+       }
+        select::-ms-expand { display: none; }
+         #select option{
+            color: #ffffff;
+            border: 0;
+            outline: none;
+            -moz-appearance:none; /* Firefox */
+            -webkit-appearance:none; /* Safari 和 Chrome */
+            appearance:none;
+        }
+        .access-device-bgc{
+            width: 73px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/access-device.png');
+            background-repeat: no-repeat;
+            background-size: 73px 80px;
+        }
+        .shutdown-device-bgc{
+            width: 73px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/show-down-device.png');
+            background-repeat: no-repeat;
+            background-size: 73px 80px;
+        }
+        .offline-device-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/off-line-device.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .access-instrument-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/access-instrument.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .shutdown-instrument-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/shut-down-instrument.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .offline-instrument-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/off-line-instrument.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .access-tool-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/access-tool.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .shutdown-tool-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/shut-down-tool.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .offline-tool-bgc{
+            width: 65px;
+            height: 80px;
+            background-image: url('${base!}/assets/dist/img/off-line-tool.png');
+            background-repeat: no-repeat;
+            background-size: 65px 80px;
+        }
+        .access-text{
+            color: #77990c;
+        }
+        .shut-text{
+            color: #666666;
+        }
+        .offline-text{
+            color: #e2b621;
+        }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+       <header class="main-header">
+        <!-- Logo -->
+        <a href="${base!}/platform/home" class="logo" style="background-color: rgb(31,38,40);">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <!-- <span class="logo-mini"><b>仪器设备管理系统</b></span> -->
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>仪器设备管理系统</b></span>
+            
+        </a>
+        <a href="${base!}/platform/home" class="logo" style="background-color:  rgb(31,38,40);">
+            <span style="width: 100%;display: inline-block;" class="text-left">
+                <img src="${base!}/assets/dist/img/icon-header.png" width="23" height="19" >
+                
+                <i style="font-style: normal;font-size: 14px;color: #cc6633;">后台管理</i>
+            </span>
+            
+            <span ><b></b></span>
+            
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" style="background-color:  rgb(31,38,40);margin-left:430px;">
+            <!-- Sidebar toggle button-->
+            <!-- <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a> -->
+            <%
+		      var unit=@shiro.getPrincipalProperty('unit');
+		      var nickName=@shiro.getPrincipalProperty('nickName');
+			  var username=@shiro.getPrincipalProperty('username') ;
+	        %>
+            <div class="navbar-custom-menu" style="position: relative;">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
+                    <li>
+                        <span class="label" style="line-height: 50px;" id="timeDay"></span>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li>
+                       <span class="label" style="line-height: 50px;" id="timeHour"></span>
+                    </li>
+                    <!-- Tasks: style can be found in dropdown.less -->
+                    <li>
+                        <span class="label" style="line-height: 50px;">${unit.name}</span>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="${base!}/assets/dist/img//user2-160x160.jpg" class="user-image" alt="User Image">
+                            <span class="hidden-xs">${(@nickName==""||@nickName==null)?username:nickName}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="${base!}/assets/dist/img//user2-160x160.jpg" class="img-circle" alt="User Image">
+
+                                <p>
+                                   ${@shiro.getPrincipalProperty('unitid')} <small>${@shiro.getPrincipalProperty('email')}</small>
+                                </p>
+                            </li>
+                            <!-- Menu Body -->
+                            <!-- <li class="user-body">
+                                <div class="row">
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Followers</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Sales</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Friends</a>
+                                    </div>
+                                </div>
+                                /.row
+                            </li> -->
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+									<!-- <div class="pull-left">
+										<a href="${base!}/platform/sys/user/pass" id="left" class="btn btn-default btn-flat">${msg['index.user.password']}</a>
+										<a href="${base!}/platform/sys/user/pass" data-target="#homeDetail" data-toggle="modal" class="btn btn-default btn-flat">${msg['index.user.password']}</a>
+									</div>-->
+									<div class="pull-left" style="padding-left: 6px">
+									<button type="button" class="btn btn-default btn-flat" data-toggle="modal" data-target="#myModal">切换主题</button>
+									</div> 
+									<div class="pull-right">
+										<a href="${base!}/platform/login/logout" class="btn btn-default btn-flat">退出系统</a>
+									</div>
+								</li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="content-wrapper content-bgc" style="padding-top:0px;margin-top:50px;margin-left: 0;width: 100%;height: 100%;">
+        <div style="padding: 10px 25px 10px 0">
+            <ol style="list-style: none; display: flex;justify-content: flex-end;margin: 0;">
+                 <li>
+                    <a href="${base!}/platform/home" style="color: #fff;">
+                        <i class="fa fa-dashboard">&nbsp&nbsp首页</i>
+                    </a>
+                </li>
+                <li style="color: #ffffff;">&nbsp&nbsp>&nbsp&nbsp</li>
+                <li class="active" style="color: #fff;">
+                   <a href="${base!}/platform/account" style="color: #fff;">
+                        &nbsp&nbsp监控台
+                    </a>
+                </li>
+                <li style="color: #ffffff;">&nbsp&nbsp>&nbsp&nbsp</li>
+                <li class="active" style="color: #fff;">
+                   实时状况
+                </li>
+            </ol>
+        </div>
+        <!-- <section class="content-header">
+            <ol class="breadcrumb pull-left">
+                <li ><a href="#" style="color: #fff;"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active" style="color: #fff;">首页</li>
+            </ol>
+        </section> -->
+        <div style="margin-right: auto;margin-left: auto;padding: 0 11px;display: flex;">
+            <div class="col-sm-2" style="height: 120px; margin-bottom:5px;">
+            
+            <div class="text-center home-box" style="padding: 0 10px;line-height:120px;">
+                   <!-- Single button -->
+                    <div class="btn-group" style="width:100%;">
+                        <button type="button" id="DJName" class="btn btn-primary dropdown-toggle depart-name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:100%;">
+                   		   
+                        </button>
+                        <input type="hidden" name="borrowDepart" id="borrowDepart" value=""/>
+                        <ul class="dropdown-menu depart" style="background:rgba(0, 0, 0,.7);border:0;width:100%;max-height:200px;overflow-y:auto">
+	                        
+                        </ul>
+                    </div>
+                
+                
+                </div>
+            
+            </div>
+            <div class="col-sm-2" style="height: 120px; margin-bottom:5px;">
+                <div class="home-box" style="display: flex;flex-direction: row;justify-content: center;align-items: center;">
+                    <!--<div class="home-box-header">设备管理</div>-->
+                    <div>
+                        <img src="${base!}/assets/dist/img/access-device.png" width="73", height="80">
+                    </div>
+                    <div style="padding-left: 10px;">
+                        <div class="text-center" style="color: #fff;font-size: 16px;">接入设备</div>
+                        <div class="text-center" style="position: relative;color: #cc6633;padding-top: 5px;font-size: 18px;" id="deviceNum"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="height: 120px; margin-bottom:5px;">
+                <div class="text-center home-box">
+                    <!--<div class="home-box-header">进度条信息</div>-->
+                    <div class="no-padding" style="margin: 0px auto;">
+                        <div class="flex-center" style="padding: 10px 15px;">
+                            <span class="" style="color: #fff;padding-right: 5px;">运行台数</span>
+                            <div class="progress progress-xs progress-striped active" style="width: 321 px;margin-bottom: 0;flex:1;">
+                                <div class="progress-bar progress-bar-danger" style="width: " id="powerOnPencent" ></div>
+                            </div>
+                            <span class="badge bg-red" style="margin-left: 5px;" id="powerOnNum"></span>
+                        </div>
+                        <div class="flex-center" style="padding: 10px 15px;">
+                            <span class="" style="color: #fff;padding-right: 5px;">关机台数</span>
+                            <div class="progress progress-xs progress-striped active" style="width: 21 px;margin-bottom: 0;flex:1;">
+                                <div class="progress-bar progress-bar-yellow" style="width: " id="powerOffPencent"></div>
+                            </div>
+                            <span class="badge bg-yellow" style="margin-left: 5px;" id="powerOffNum"></span>
+                        </div>
+                        <div class="flex-center" style="padding: 10px 15px;">
+                            <span class="" style="color: #fff;padding-right: 5px;">离线台数</span>
+                            <div class="progress progress-xs progress-striped active" style="width: 21 px;margin-bottom: 0;flex:1;">
+                                <div class="progress-bar progress-bar-primary" style="width: " id="outLinePencent"></div>
+                            </div>
+                            <span class="badge bg-blue" style="margin-left: 5px;"  id="outLineNum"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5" style="height: 120px; margin-bottom:5px;">
+                <div class="text-center home-box">
+                    <!--<div class="home-box-header">功能辐射曲线</div>-->
+                    <div id="unitHourLine" style="width: 100%;height: 120px;"></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin:15px 25px 20px;border-radius:3px;display: flex;justify-content:space-between;background-color:rgba(255,255,255,0.2);padding:10px 0;">
+            <div style="color:#fff;display:flex;padding-left:100px;height:100%;">
+                <div style="padding: 0 10px;display:flex;align-items:center;">
+                    <span style="padding-right:5px;">●</span>
+                    图例
+                </div>
+                <div style="padding: 0 10px;display:flex;align-items:center;">
+                    <img src="${base!}/assets/dist/img/shebei.png" alt="" widht="19" height="20" style="padding-right:5px;">
+                    设备
+                </div>
+                <div style="padding: 0 10px;display:flex;align-items:center;">
+                        <img src="${base!}/assets/dist/img/yiqi.png" alt="" widht="19" height="20" style="padding-right:5px;">
+                    仪器
+                </div>
+                <div style="padding: 0 10px;display:flex;align-items:center;">
+                        <img src="${base!}/assets/dist/img/glj.png" alt="" widht="19" height="20" style="padding-right:5px;">
+                    工量具
+                </div>
+                <div style="display:flex;align-items:center;padding:0 10px;">
+                    <span style="width:10px;height:2px;background-color:#77990c;margin-right:5px;"></span>
+                    开机
+                </div>
+                <div style="display:flex;align-items:center;padding:0 10px;">
+                    <span style="width:10px;height:2px;background-color:#666;margin-right:5px;"></span>
+                    关机
+                </div>
+                <div style="display:flex;align-items:center;padding:0 10px;">
+                        <span style="width:10px;height:2px;background-color:#e2b621;margin-right:5px;"></span>
+                    离线
+                </div>
+            </div>
+            <div style="padding-right: 100px;">
+                <span style="color: #fff;padding-right: 10px;">筛选</span>
+                <select name="assettype" id="assettype" style="margin-right:5px;">
+                    <option value="">全部</option>
+                    <option value="1">设备</option>
+                    <option value="2">仪器</option>
+                    <option value="3">工量具</option>
+                </select>
+                <select name="deviceState" id="deviceState" style="margin-right:5px;">
+                    <option value="">全部</option>
+                    <option value="0">开机</option>
+                    <option value="1">关机</option>
+                    <option value="2">离线</option>
+                </select>  
+                 <span style="color:#fff;padding-left:30px;">页数</span>
+                <select name="pageNo" id="pageNo">
+                   
+                </select>
+            </div>
+        </div>
+     
+   			<div style="position:relative;">
+			<div class="chevron-box chevron-box-left chevron-left-fade" style="display:none">
+				<div class="chevron-icon-left"></div>
+			</div>
+			<div class="chevron-box chevron-box-right chevron-right-fade" style="display:none">
+				<div class="chevcron-icon-right"></div>
+			</div>
+			<div id="deviceInfo">
+     		</div> </div>
+</div>
+</div>
+
+<script>
+	var defalutVal='${@shiro.getPrincipalProperty('unitid')}' ;
+    $(function () {
+    	 //鼠标划入淡入淡出
+
+        $(".chevron-box-left").hover(function() {
+        		 $(this).addClass('bgc-chevron-left');
+                 $(".chevron-icon-left").css({"opacity":"1"});
+        },function() {
+            $(this).removeClass('bgc-chevron-left');
+            $(".chevron-icon-left").css({"opacity":"0.2"});
+        })
+        $(".chevron-box-left").on("click",function(){
+        	var  currentPageNo =$("#pageNo").val();
+        	if(Number(currentPageNo)==1){
+        		return ;
+        	}else{
+        		var nextNo =Number(currentPageNo)-1;
+            	var unitId=$("#borrowDepart").val();
+            	$("#pageNo").val(nextNo);
+    			ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+        	}
+        	
+        })
+        
+          $(".chevron-box-right").on("click",function(){
+        	var  currentPageNo =$("#pageNo").val();
+        	var maxNo =$("#pageNo  option:last").val();
+        	if(Number(currentPageNo)==maxNo){
+        		return ;
+        	}else{
+        		var nextNo =Number(currentPageNo)+1;
+            	var unitId=$("#borrowDepart").val();
+            	$("#pageNo").val(nextNo);
+    			ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+        	}
+        	
+        })
+       
+        $(".chevron-box-right").hover(function() {
+        	 $(this).addClass('bgc-chevron-right');
+             $(".chevcron-icon-right").css({"opacity":"1"});
+           
+        },function() {
+            $(this).removeClass('bgc-chevron-right');
+            $(".chevcron-icon-right").css({"opacity":"0.2"});
+        })
+    
+    	 
+    	 getUnitList() ;
+    	 showRightTime();
+    	 loadPageData();
+    	 initAllSelect();
+    	 
+    	 $('.depart li').on('click', function() {
+    		var deparText = $(this).text();
+    		$(".depart-name").text(deparText);
+    		var unitId = $(this).next().val();
+    		$("#borrowDepart").val(unitId);
+  		 	//改变科室代码 重新赋值
+  			   $("#pageNo").val(1);
+  			   $("#assettype").val(""),
+  				$("#deviceState").val(""),
+  			   ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+    	 });
+    });
+    
+    
+    
+    
+   var initAllSelect=function(){
+		$("#pageNo").on("change",function(){
+			  	var unitId=$("#borrowDepart").val();
+				ajaxLoadPageData(unitId==""?defalutVal:unitId,1);
+				
+		})
+		$("#assettype").on("change",function(){
+			 	$("#pageNo").val(1);
+			  	var unitId=$("#borrowDepart").val();
+				ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+				
+		})
+		$("#deviceState").on("change",function(){
+				$("#pageNo").val(1);
+			  	var unitId=$("#borrowDepart").val();
+				ajaxLoadPageData(unitId==""?defalutVal:unitId,0);
+				
+		})
+   }
+ 
+   
+  
+	//加载单位下拉列表最新
+	var getUnitList =function(id){
+		if(!id){
+			id="borrowDepart" ;
+		}
+		$.ajax({
+			type:"post",
+			url:"${base}/platform/sys/unit/getUnitJsonList",
+			async:false,
+			success:function(data){
+				if(data){
+					
+					 var str="";
+					for(var i=0;i<data.length;i++){
+						var obj =  data[i] ;
+						str+="<li style='display:inline;text-align:center;'><a href='javascript:void(0);'>"+obj.name+"</a></li>";
+						str+="<input type='hidden' value="+obj.id+">";
+						if(i==0){
+							$("#DJName").text(obj.name);
+						}
+					}
+					$(".depart").append(str); 
+				}
+			},
+			error:function(data){
+				
+			}
+		});
+	
+	}
+	//加载数据
+	function loadPageData(){
+		
+		ajaxLoadPageData("",0);
+		/*******初始化方法*******/
+			setInterval(taskFlash,1000*60*5);
+	}
+	 function taskFlash(){
+		 	var unitId=$("#borrowDepart").val();
+			ajaxLoadPageData(unitId==""?defalutVal:unitId,1); 
+			
+	 }
+	
+	//展示对应设备详细数据
+	function showDetail(deviceCode){
+		
+	}
+	//加载该单位下数据
+	function ajaxLoadPageData(unitId,flag){
+       var unitHourLine=echarts.init(document.getElementById("unitHourLine"));
+		$.ajax({
+			type:"post",
+			url:"${base}/platform/account/getPageData",
+			async:false,
+			data:{unitId:unitId,
+					"pageNo":$("#pageNo  option:selected").val()==null?1:$("#pageNo  option:selected").val(),
+					"assettype":$("#assettype  option:selected").val(),
+					"deviceState":$("#deviceState  option:selected").val()
+				
+				},
+			success:function(data){
+				
+				$("#deviceNum").html(data.collectNum) ;
+				
+				$("#powerOnNum").html(data.powerOnNum);
+				$("#powerOnPencent").css("width",data.powerOnNum/data.collectNum*100+"%");
+				
+				$("#powerOffNum").html(data.powerOffNum);
+				$("#powerOffPencent").css("width",data.powerOffNum/data.collectNum*100+"%");
+
+				$("#outLineNum").html(data.outLineNum);
+				$("#outLinePencent").css("width",data.outLineNum/data.collectNum*100+"%");
+
+				var unitLineData = data.lineListByUnit ;
+					var lineData = JSON.parse(unitLineData) ;
+				 	var cData=[] ;
+				var pData=[] ;
+				
+				
+				if(lineData.powerOnData){
+					pData = lineData.powerOnData.split(",") ;
+				}
+				
+				if(lineData.collectStrData){
+					cData = lineData.collectStrData.split(",") ;
+				}
+				unitHourLine.setOption(getUnitLineOption(pData,cData)) ;
+				 var list = data.dataList ;
+				 addDeviceInfo(list,data.currentNum);
+				/****确定页码***/
+				if(flag==0)addPageNo(data.totalPage);
+				
+				
+			},
+			error:function(data){
+				
+			}
+			
+			
+		}) ;
+		window.onresize = function () {
+			unitHourLine.resize();
+			}
+		var  currentPageNo =$("#pageNo").val();
+    	if(Number(currentPageNo)==1){
+             $(".chevron-box-left").css("display","none");
+    	}else {
+    		  $(".chevron-box-left").css("display","block");
+    	}
+    	 var maxNo =$("#pageNo  option:last").val();
+         if(Number(currentPageNo)==maxNo){
+         	 $(".chevron-box-right").css("display","none");
+         }else {
+         	 $(".chevron-box-right").css("display","");
+         }
+	} 
+	function getUnitLineOption(powerOnData,collectStrData){
+		option = {
+				
+				 tooltip: {
+		                trigger: 'axis'
+		            },
+		            legend: {
+		               /*  x:'right',
+		                top:'middle',
+		                right:0,
+		                padding:0,
+		                orient: 'vertical', */
+		                itemWidth: 18,
+//		                align:'middle',
+/* roundRect */
+		                data:[{name:'监控台数',icon:'roundRect',textStyle:{color:'#fff'}},{name:'运行台数',icon:'roundRect',textStyle:{color:'#fff'}}]
+		            },
+		            grid: {
+		                top:'30%',
+		                left: '3%',
+		                right: '5%',
+		                bottom: '10%',
+		                containLabel: true
+		            },
+		            // toolbox: {
+		            //     feature: {
+		            //         saveAsImage: {}
+		            //     }
+		            // },
+		            xAxis: {
+		                type: 'category',
+		                boundaryGap: true,
+		                data : ['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
+		                splitLine: {show: true},
+		                axisLabel:{
+		                    show: true,
+		                    textStyle: {
+		                        color: '#fff'
+		                    }
+		                },
+		                axisLine:{
+		                    lineStyle:{
+		                        color:'#fff',
+		                        // width:8,
+		                    }
+		                }
+
+		            },
+		            yAxis: {
+		                type: 'value',
+		                axisLabel:{
+		                    show: true,
+		                    textStyle: {
+		                        color: '#fff'
+		                    }
+		                },
+		                axisLine:{
+		                    lineStyle:{
+		                        color:'#fff',
+		                        // width:8,
+		                    }
+		                }
+		            },
+		            series : [
+		  			        {
+		  			            name:'监控台数',
+		  			            type:'line',
+		  			            data:collectStrData
+		  			        },
+		  			        {
+		  			            name:'运行台数',
+		  			            type:'line',
+		  			            stack: '广告',
+		  			            data:powerOnData
+		  			        }
+		  			    ],
+		  			color: ['#C0504D','#4F81BD']
+				
+			};
+		
+		
+		return option ;
+		}
+/*********填充页码***********/
+var addPageNo=function (totalPage){
+	var pageStr="";
+	if(totalPage==0){
+		pageStr+="<option value='1'>1</option>" ;
+	}
+	for(var i=1;i<=totalPage;i++){
+		pageStr+="<option value='"+i+"'>"+i+"</option>" ;
+	}
+	$("#pageNo").html(pageStr);
+}	
+//设备数据  {deviceCode:{deviceVersion:ddd,deviceName:eee}}	
+var deviceVersionAndName={} ;	
+/*********填充设备信息***********/
+var addDeviceInfo =function(list,currentNum){
+	var rows =(currentNum+5/6)>=3?3:(currentNum+5/6); 
+	$("#deviceInfo").html("");
+	for(var i=0;i<rows;i++){
+		$("#deviceInfo").append($("#temeplate").html());
+		$("#deviceInfo").children("div")[i].id="info"+i;
+	}
+	$.each(list,function(index,device){
+		if(index<6){
+			$("#info0").append($("#temeplate1").html());
+			$("#info0").children("div").children("div")[index].id="content"+index
+		}else if(index<12){
+			$("#info1").append($("#temeplate1").html());
+			$("#info1").children("div").children("div")[index-6].id="content"+index
+		}else if(index<18){
+			$("#info2").append($("#temeplate1").html());
+			$("#info2").children("div").children("div")[index-12].id="content"+index
+		}
+		
+		$("#content"+index).find("div[class='text-center']").eq(0).find("div").eq(0).text(device.devicecode);
+		$("#content"+index).find("div[class='text-center']").eq(0).find("div").eq(1).find("div").eq(0).text(device.devicename);
+		$("#content"+index).find("div[class='text-center']").eq(0).find("div").eq(1).find("div").eq(1).text(device.deviceversion);
+		deviceVersionAndName[device.devicecode] = {"name":device.devicename,"version":device.deviceversion};
+		/*******判断仪器设备在线开关机*******/
+		var classDom =$("#content"+index).children("div").eq(1).children("a").eq(0).children("div").eq(0);
+		$("#content"+index).children("div").eq(1).children("a").eq(0).attr("onclick","openDetail('"+device.devicecode+"')")
+		if(device.assettype==1||device.assettype==0||device.assettype==null){//设备
+			if(device.state==0){//在线
+				if(device.powerState==0) {
+					classDom.attr('class',"access-device-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("开机状态");
+
+				}else {
+					classDom.attr('class',"shutdown-device-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("关机状态");
+
+				}
+			}else{
+				classDom.attr('class',"offline-device-bgc");
+				$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("离线状态");
+			}
+		}else if(device.assettype==2){//仪器
+			if(device.state==0){//在线
+				if(device.powerState==0) {
+					classDom.attr('class',"access-instrument-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("开机状态");
+
+				}else {
+					classDom.attr('class',"shutdown-instrument-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("关机状态");
+
+				}
+			}else{
+				classDom.attr('class',"offline-instrument-bgc");
+				$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("离线状态");
+
+			}
+		}else if(device.assettype==3){//工量具
+			if(device.state==0){//在线
+				if(device.powerState==0) {
+					classDom.attr('class',"access-tool-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("开机状态");
+
+				}else {
+					classDom.attr('class',"shutdown-tool-bgc");
+					$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("关机状态");
+
+				}
+			}else{
+				classDom.attr('class',"offline-tool-bgc");
+				$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(3).html("离线状态");
+
+			}
+		}
+		//离线
+		$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(0).html(device.current+"<i>A</i>");
+		$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(1).html(device.voltage+"<i>V</i>");
+		$("#content"+index).children("div").eq(1).children("div").eq(0).children("span").eq(2).html(device.power+"<i>KW-H</i>");
+		
+		
+		$("#content"+index).children("div").eq(2).children("span").eq(1).html(device.duration+"分钟");
+
+
+	})
+	
+	
+	
+}
+
+//弹详情页
+function openDetail(code){
+	//alert("详情页")
+	 openModule("${base}/platform/account/getDataDetail?deviceCode="+code);
+}
+
+//显示系统时间
+function showRightTime(){
+	var str,colorhead,colorfoot;
+	var objD=new Date();
+	  var yy = objD.getYear();
+	   if(yy<1900) yy = yy+1900;
+	  var MM = objD.getMonth()+1;
+	   if(MM<10) MM = '0' + MM;
+	  var dd = objD.getDate();
+	   if(dd<10) dd = '0' + dd;
+	  var hh = objD.getHours();
+	   if(hh<10) hh = '0' + hh;
+	  var mm = objD.getMinutes();
+	   if(mm<10) mm = '0' + mm;
+	  var ss = objD.getSeconds();
+	   if(ss<10) ss = '0' + ss;
+	  var ww = objD.getDay();
+	   if ( ww==0 ) colorhead="<font color=\"#FF0000\">";
+	   if ( ww > 0 && ww < 6 ) colorhead="<font color=\"#373737\">";
+	   if ( ww==6 ) colorhead="<font color=\"#008000\">";
+	   if (ww==0) ww="星期日";
+	   if (ww==1) ww="星期一";
+	   if (ww==2) ww="星期二";
+	   if (ww==3) ww="星期三";
+	   if (ww==4) ww="星期四";
+	   if (ww==5) ww="星期五";
+	   if (ww==6) ww="星期六";
+	$("#timeDay").html(yy+"年"+MM+"月"+dd+"日 ") ;
+	$("#timeHour").html(hh+":"+mm+":"+ss +"&nbsp;"+ww) ;
+	//一秒刷新一次显示时间
+	var timeID=setTimeout(showRightTime,1000);
+}
+</script>
+	<div id="temeplate" style="display: none;">
+		  <div style="display: flex;margin: 0px 10px 10px;" >
+		     </div>
+     </div>
+     	<div id="temeplate1" style="display: none;">
+		   <div class="col-sm-2">
+		                <div style="background: rgba(93,95,96,.2);padding: 5px 10px;border-radius: 4px;">
+		                    <div class="text-center">
+		                        <div style="color:#fff;font-size: 24px;">#06668</div>
+		                        <div style="color: #ffffff;">
+		                            <div>脉冲信号源</div>
+		                            <div>DF-31</div>
+		                        </div>
+		                    </div>
+		                    <div style="display: flex;justify-content: center;align-items:center;padding-top: 5px;padding-bottom: 5px;">
+		                        <a href="javascript:void(0)" >
+		                        			<div class="access-device-bgc">
+		                        			</div>
+		                        </a>
+		                        <div style="display: flex;flex-direction: column;color: #ffffff;padding-left: 10px;line-height: 22px;">
+		                            <span>
+		                                68
+		                                <i>A</i>
+		                            </span>
+		                            <span>
+		                                360
+		                                <i>v</i>
+		                            </span>
+		                            <span>
+		                                59
+		                                <i>kw-h</i>
+		                            </span>
+		                            <span class="access-text" >正常运行</span>
+		                        </div>
+		                    </div>
+		                    <div class="text-center" style="color: #ffffff;">
+		                        <span>本月时长：</span>
+		                        <span>720小时</span>
+		                    </div>
+		                </div>
+		            </div>
+     </div>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+            <h1>周期检定 </h1>
+            <ol class="breadcrumb pull-left">
+                <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+			  <li class="active"><a href="${base}/cycle/examine#">资产管理</a></li>
+               <li class="active">周期检定</li>
+            </ol>
+</section>
+        
+<section class="content">
+			<input id="examineTemp" type="hidden"/>
+            <!-- Small boxes (Stat box) -->
+            <!-- 查询条件内容 -->
+            <div class="row">
+                <div style="padding: 15px 15px ;">
+                    <div class="box" >
+                        <!--<div class="box-header with-border">-->
+                        <!--<h3 class="box-title">Horizontal Form</h3>-->
+                        <!--</div>-->
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <div class="box-body" style="padding: 0 15px auto;">
+                        
+                            <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                                <div class="form-group">
+                                    <label for="projectNum" class="col-sm-2 control-label">统一编号：</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="assetCode"  id="assetCode" placeholder="请输入统一编号">
+                                    </div>
+                                    <label for="projectType" class="col-sm-2 control-label">是否过期：</label>
+                                    <div class="col-sm-3">
+                                         <select id="isOverdue" name="isOverdue" class="form-control select5" data-placeholder="请选择" style="width: 100%;">
+                                                 <option value="">全部</option>
+                                                <option value="0">是</option>
+                                                <option value="1">否</option> 
+                                         </select>
+                                    </div> 
+                                </div>
+                                <div class="form-group">
+                                    <label for="chargeDepart" class="col-sm-2 control-label">使用单位：</label>
+                                        <div class="col-sm-3">
+                                            <!-- <select name="borrowDepart" id="borrowDepart"  class="form-control select1"
+                                                    data-placeholder="请选择" data-allow-clear="true" data-tags="true">
+                                            </select> -->
+                                            <input type="text" name="borrowDepart" id="borrowDepart" placeholder="请选择" style="width:100%;">
+                                        </div>
+                                     <label class="col-sm-2 control-label">责任人：</label>
+                                        <div class="col-sm-3">
+                                            <!-- <select class="form-control select2" name="chargePerson" id="chargePerson" data-placeholder="请选择" style="width: 100%;"data-allow-clear="true" data-tags="true">
+                                               
+                                            </select> -->
+                                             <input type="text" name="chargePerson" id="chargePerson" placeholder="请选择" style="width:100%;">
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                	 <label class="col-sm-2 control-label">检定日期：</label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" class="form-control pull-right" name="examineDate" id="timeRange"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                	<label class="col-sm-2 control-label">到期检定日期：</label>
+                                    <div class="col-sm-3">
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" class="form-control pull-right" name="dueDate" id="timeRange2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="box-footer" style="height: 30px;">
+                                    <!-- <a href="${base}/cycle/examine" class="btn btn-default pull-left" style="width: 90px;">重置 / 刷新</a> -->
+                                    <button id="searchBtn" class="btn btn-primary pull-right" data-loading-text="搜索..." style="width:80px">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<!-- 批量检修 -->
+					<div class="box-header">
+						<a id="add" class="btn btn-md btn-success" href="javascript:document.getElementById('examineFile').click();" data-pjax><i class="fa fa-fw fa-plus"></i> 批量导入</a>
+						<!-- <button id="delete" class="btn btn-danger" onclick="delCheck()"><i class="glyphicon glyphicon-trash"></i> 删除</button> -->
+					</div>
+					 <input type="file" style="display:none;" id="examineFile" name="examineFile" onchange="submitImportFile();" />
+					<!-- /.box-header -->
+					<div class="box-body">
+					
+						<table id="unittable" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<!-- <th>
+                                        <input type="checkbox" class="minimal" checked="">
+                                    </th>  -->
+									 <th>序号</th> 
+									<th>统一编号</th>
+									<th>资产名称</th>
+									<th>使用单位</th>
+									<th>责任人</th>
+									<th>是否过期</th>
+									<th>启用日期</th>
+									<th>检定日期</th>
+									<th>到期检定日期</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+	
+
+ <!-- 检定记录 -->
+<div class="modal fade bs-example-modal-lg" id="detailModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" style="margin: 250px auto;width: 62%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">检定记录</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body table-responsive no-padding">
+                        <table id="deviceDetailTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                           <colgroup>
+									<col>
+									<col style="width:12%">
+									<col  style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:17%">
+							</colgroup>
+                       <thead style="width: 100%;">
+	                            <tr>
+	                            	<th>序号</th>
+	                                <th>统一编号</th>
+	                                <th>资产名称</th>
+									<th>检定日期</th>
+									<th>到期检定日期</th>
+									<th>检定结论</th>
+									<th>检定人</th>
+	                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+    
+<!-- loading -->
+<div class="modal fade" id="loading"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+  <div class="modal-dialog" role="document" style="margin: 350px auto;width:60%;">
+    <div class="modal-content" style="background:transparent;">
+      <!-- <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div> -->
+      <div class="modal-body">
+      	<div class="loading-box">
+		    <div class="sk-fading-circle">
+		        <div class="sk-circle1 sk-circle"></div>
+		        <div class="sk-circle2 sk-circle"></div>
+		        <div class="sk-circle3 sk-circle"></div>
+		        <div class="sk-circle4 sk-circle"></div>
+		        <div class="sk-circle5 sk-circle"></div>
+		        <div class="sk-circle6 sk-circle"></div>
+		        <div class="sk-circle7 sk-circle"></div>
+		        <div class="sk-circle8 sk-circle"></div>
+		        <div class="sk-circle9 sk-circle"></div>
+		        <div class="sk-circle10 sk-circle"></div>
+		        <div class="sk-circle11 sk-circle"></div>
+		        <div class="sk-circle12 sk-circle"></div>
+		    </div>
+		    <div class="text-center"style="padding-bottom:5px;">正在导入中，请稍后...</div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>    
+    
+	<!-- 校验显示数据框 -->
+<div class="modal fade" id="checkExcel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 250px auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
+                    <button class="modal-title btn btn-danger"><span>错误提示</span></button>
+                </div>
+                <div class="modal-body" id="inputText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="reloadWindow();" class="btn btn-default pull-right" style="width: 70px;" data-dismiss="modal">确定</button>
+                    <!-- <button id="" type="button" class="btn btn-primary">确定</button> -->
+                </div>
+            </div>
+        </div>
+</div>
+
+<script>
+var datatable;
+var datatable1;
+var detailtable;
+function initDatatable() {
+    datatable = $('#unittable').DataTable({
+    	"destroy": true,
+    	"dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": false,
+        "ordering": true, 
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));           
+        },
+        "drawCallback": function (settings) {
+            sublime.closeLoadingbar($(".main-content"));           
+        },
+        "ajax": {
+            "url": "${base}/cycle/examine/data",
+            "type": "post",
+            "data": function (d) {        
+            	d.assetCode = $('#assetCode').val();
+                d.isOverdue=$('#isOverdue').val();
+                d.borrowDepart=$('#borrowDepart').val();
+                d.chargePerson=$('#chargePerson').val();
+                d.examineDate=$('#timeRange').val();
+                d.dueDate=$('#timeRange2').val();
+            }
+        },
+        "order": [[8, "desc"]],
+        "columns": [
+				{"data": null,"width":"30px"}, 
+                {"data": "assetcode", "bSortable": true},
+                {"data": "assetname", "bSortable": true},
+                {"data": "borrowdepart", "bSortable": true}, 
+                {"data": "chargeperson", "bSortable": true},
+                {"data": "isoverdue", "bSortable": true},
+                {"data": "enabletime", "bSortable": true},
+                {"data": "examinedate", "bSortable": true},
+                {"data": "duedate", "bSortable": true}
+                //{"data": "isoverdue", "bSortable": true}	//根据是否过期字段，判断操作这一列显示不同操作
+               
+        ],
+        
+        "columnDefs": [	
+				{
+					"searchable": false,
+					"orderable": false,
+					"targets": 0
+				},
+               {
+        		"render": function(data, type, row){
+        			return   data==0?"<span class='label bg-red'>是</span>":"<span class='label bg-green'>否</span>";
+        			//return listDict('isOverdue',data);
+        		},
+        		"targets": 5
+        	
+        	},
+        		{
+        		"render":function(data, type, row){
+        			if(data!=''&&data!=null){return data.split(" ")[0]}else{return ""};
+        		},
+        		"targets":[6,7,8]
+        	},
+        		{
+        		"render": function(data, type, row){
+        			return   data==''||data==null?"--":data;
+        		},
+        		"targets": [2,3,4]
+        	},
+            	{
+                "render": function (data, type, row) {
+                	/* return     (data==0?('&nbsp;&nbsp;<a class="btn btn-xs btn-danger" href="${base}/cycle/examine/over/' + row.id + '" data-pjax><i class="glyphicon glyphicon-trash"></i> 过期</a>'):
+                		   ('<a class="btn btn-xs btn-primary" data-toggle="modal" href="${base}/cycle/examine/test/' + row.id + '" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 修改</a>'+
+     		               '&nbsp;&nbsp;<a class="btn btn-xs btn-success"  href="${base}/cycle/examine/test/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 检定</a>')
+		            	   
+		               )+ '&nbsp;&nbsp;<button id="toExamineDetail" class="btn btn-xs btn-primary search-detail" onclick="getExamineDetail(\''+row.assetcode+'\')">检定记录</button>';; */
+                	  return '<a class="btn btn-xs btn-primary"  href="${base}/cycle/examine/update/' + row.id + '" data-pjax><i class="glyphicon glyphicon-sunglasses"></i> 修改</a>'+
+		               '&nbsp;&nbsp;<a class="btn btn-xs btn-success"  href="${base}/cycle/examine/test/' + row.id + '" data-pjax><i class="glyphicon glyphicon-edit"></i> 检定</a>'+
+		               '&nbsp;&nbsp;<button id="toExamineDetail" class="btn btn-xs btn-primary search-detail" onclick="getExamineDetail(\''+row.assetcode+'\')">检定记录</button>';
+                  
+                },
+                "targets": 9
+            }
+            	
+        ]
+        
+    });
+    /* 点击选中 */
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+    
+}
+function datas(){
+	datatable1 = $("#unittable").treetable({
+        expandable: true,
+        onNodeExpand : function(){
+            var node = this;
+            var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+            datatable1.treetable("loadBranch", node, rows);
+            $.post("${base}/platform/sys/unit/child/"+node.id,{}, function(data){
+            	datatable1.treetable("unloadBranch", node);
+            	datatable1.treetable("loadBranch", node, data);
+            });
+        }
+    });
+}
+
+$(function () {
+    initDatatable();
+    loadUnitAndUser();
+    //detailtable=null;	//初始化，去掉的话详情框有问题
+    //startSelect('isOverdue');	//读取数字字典
+    datatable.on('draw.dt',function() {
+    	datatable.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function(cell, i) {
+            //i 从0开始，所以这里先加1
+
+            i = i+1;
+            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+            var page = datatable.page.info();
+            //当前第几页，从0开始
+
+            var pageno = page.page;
+            //每页数据
+
+            var length = page.length;
+            //行号等于 页数*每页数据长度+行号
+
+            var columnIndex = (i+pageno*length);
+            cell.innerHTML = columnIndex;
+        });
+    });
+    
+});
+
+ function getExamineDetail(assetCode){
+	 $("#examineTemp").val(assetCode);
+	initDetailtable(assetCode);
+	$("#detailModal").modal('show');
+} 
+
+ function initDetailtable(assetCode){
+	 detailtable=null;
+	if(detailtable){
+		detailtable.ajax.reload();
+	}else{
+		detailtable = $('#deviceDetailTable').DataTable({
+	        "dom": '<"toolbar">frtip',
+	        "searching": false,
+	        "processing": false,
+	        "serverSide": false,
+	        "select": false,
+	        "ordering": true, 
+	        "destroy":true,
+	        "language": {
+	            "url": "${base}/assets/plugins/datatables/cn.json"
+	        },
+	        
+	        "preDrawCallback": function () {
+	            sublime.showLoadingbar($(".main-content"));           
+	        },
+	        "drawCallback": function (settings) {
+	            sublime.closeLoadingbar($(".main-content"));           
+	        },
+	         
+	        "ajax": {
+	            "url": "${base}/cycle/examine/record/"+assetCode,
+	            "type": "post",
+	            "async":"false",
+	             /* "data": function (d) { 
+	            	d.assetCode = $("#examineTemp").val();
+	            }  */ 
+	        },
+	          "columns": [
+				{"data": null,"width":"30px"}, 
+                {"data": "assetcode"},
+                {"data": "assetname"},
+                {"data": "examinedate"},
+                {"data": "duedate"},
+                {"data": "conclusion"},
+                {"data": "examineperson"}
+        		],
+        		"order": [[4, "desc"]],
+        		"columnDefs": [	
+								{
+									"searchable": false,
+									"orderable": false,
+									"targets": 0
+								},
+								{
+									"render":function(data, type, row){
+										if(data!=''&&data!=null){return data.split(" ")[0]}else{return "--"};
+								},
+									"targets":[3,4]
+								},
+        		           		{
+        							"render": function(data, type, row){
+        							 return   data==''||data==null?"--":data;
+        						},
+        		           			 "targets": [2,6]
+        		           		},
+        		           		
+        		           		{
+        		           			"render": function(data, type, row){
+        		           				if(data=='0'){return '合格'}else if(data=='1'){return '不合格'}else if(data=='2'){return '无法确定'}else{return '--'}
+        		           			},
+        		           			"targets":5
+        		           		}
+        		           		
+        		           ]
+	    });
+		
+		 detailtable.on('draw.dt',function() {
+		    	detailtable.column(0, {
+		            search: 'applied',
+		            order: 'applied'
+		        }).nodes().each(function(cell, i) {
+		            //i 从0开始，所以这里先加1
+
+		            i = i+1;
+		            //服务器模式下获取分页信息，使用 DT 提供的 API 直接获取分页信息
+
+		            var page = detailtable.page.info();
+		            //当前第几页，从0开始
+
+		            var pageno = page.page;
+		            //每页数据
+
+		            var length = page.length;
+		            //行号等于 页数*每页数据长度+行号
+
+		            var columnIndex = (i+pageno*length);
+		            cell.innerHTML = columnIndex;
+		        });
+		    });
+		
+	}
+ }
+	 
+</script>
+<script>
+    $(function () {
+        var locale = {
+            format: 'YYYY/MM/DD',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+        $('#timeRange').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            //"timePicker":true,
+            //"timePicker24Hour": true
+            //"timePickerSeconds":true
+        });
+        $("#timeRange").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange").val('')
+        })
+         $('#timeRange2').daterangepicker({
+//            language: 'zh-CN',
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            //"timePicker":true,
+            //"timePicker24Hour": true
+            //"timePickerSeconds":true
+        });
+        $("#timeRange2").on('apply.daterangepicker', function(ev, picker) {
+            $("#timeRange2").val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+        });
+        
+        $("#timeRange2").on('cancel.daterangepicker', function (ev, picker) {
+            $("#timeRange2").val('')
+        })
+    });
+    
+    
+        function submitImportFile(){
+        	if($("#examineFile").val()!=null){
+        		if(!/.(xls|xlsx)$/.test($("#examineFile").val())){
+        			Toast.error("文件类型必须是.xls,.xlsx中的一种");	
+        			return false;
+        		}
+        	}
+        		$('#loading').modal('show');
+        		$.ajaxFileUpload({  
+        		url:"${base}/cycle/examine/importfile",
+                type:'POST',
+                secureuri : false,  
+                fileElementId : 'examineFile',
+                dataType : 'JSON', 
+                success : function (data, status){
+                	$("#employeeFile").val('');
+                	$('#loading').modal('hide');
+                	var obj = $.parseJSON(data);
+                	if(obj.code == 0){
+               			loading(false);
+                		Toast.success("导入成功")
+               			$("#ladda-btn").button("reset");
+                		setTimeout(function(){
+                			location.reload();
+                		},1000);
+                	}else {
+                		var obj = $.parseJSON(data);
+                    	loading(false);
+                		//Toast.error(obj.msg)
+                		showCheckExcel(obj.msg);
+                	}
+                },
+                error: function(data, status, e){
+                	$('#loading').modal('hide');
+                	alert(error)
+                }
+            });
+        }
+        function showCheckExcel(msg){
+        	var excel = $("#checkExcel");
+        	excel.modal("show");
+        	excel.find("#inputText").html('').append(msg);
+        	//excel.find("#inputText").val()=msg;
+       }   
+</script>
+<%}%>
+

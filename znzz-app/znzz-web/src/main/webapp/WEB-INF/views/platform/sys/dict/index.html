@@ -1,0 +1,186 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-header">
+		<h1>数据字典</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> 系统</a></li>
+			<li><a href="#">系统管理</a></li>
+			<li class="active">数据字典</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<a id="add" class="btn btn-primary btn-flat" href="${base}/platform/sys/dict/add" data-pjax><i class="fa fa-fw fa-plus"></i> 新建字典</a>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table id="dicttable" class="table table-bordered table-striped mg-t datatable">
+							<thead>
+								<tr>
+									<th >
+                            			&nbsp&nbsp&nbsp&nbsp名称
+                        			</th>
+                        			<th >代码</th>
+                        			<th >操作</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+<a class="exit-offscreen"></a>
+<!-- 排序 -->
+<div id="dialogSort" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除字典</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复； <br/>
+                        <br/>确定要删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 详情 -->
+<!-- <div id="dialogUnitDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div> -->
+<script>
+var datatable;
+var datatable1;
+function initDatatable() {
+    datatable = $('.datatable').DataTable({
+        "dom": '<"toolbar">frtip',
+        "searching": false,
+        "processing": false,
+        "serverSide": true,
+        "select": true,
+        "ordering": false, 
+        "bDestroy":true,
+        "retrieve": true,//保证只有一个table实例
+        "language": {
+            "url": "${base}/assets/plugins/datatables/cn.json"
+        },
+        "preDrawCallback": function () {
+            sublime.showLoadingbar($(".main-content"));
+        },
+        "drawCallback": function () {
+            sublime.closeLoadingbar($(".main-content"));
+            datas();
+        },
+        "createdRow": function( row, data, dataIndex ) {        	
+        		 $(row).attr("data-tt-id",data.id)
+        		 $(row).attr("data-tt-parent-id",data.parentId);
+        		 $(row).attr("data-tt-branch",data.hasChildren);
+          },
+        "ajax": {
+            "url": "${base}/platform/sys/dict/data",
+            "type": "post",
+            "data": function (d) {
+            }
+        },
+//        "order": [[0, "desc"]],
+        "columns": [
+                {"data": "name", "bSortable": true},
+                {"data": "code", "bSortable": true},              
+        ],
+        "columnDefs": [
+                  
+            	{
+                "render": function (data, type, row) {
+                    return '<div class="btn-group"><button type="button" class="btn btn-default btn-flat btn-xs">操作</button>'+
+							'<button type="button" class="btn btn-default btn-flat dropdown-toggle btn-xs" data-toggle="dropdown">'+
+							'<span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>'+
+							'</button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="${base}/platform/sys/dict/edit/' + row.id + '" data-pjax data-toggle="modal">修改</a></li>' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>'+
+                            '<li class="divider"></li>' +
+                            '<li><a href="${base}/platform/sys/dict/add?pid=' + row.id + '" data-pjax>添加子级别</a></li>' + 
+                            '</ul></div>';
+                            
+                },
+                "targets": 2
+            }
+        ]
+    });
+    datatable.on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+    $("#searchBtn").on('click', function () {
+        datatable.ajax.reload();
+    }); 
+}
+
+  function datas(){
+	 $(".datatable").treetable('destroy') ;//先清除原有绑定treetable,防止datatable翻页时选择子级列表箭头消失
+	datatable1 = $('.datatable').treetable({
+        expandable: true,
+        onNodeExpand : function(){
+            var node = this;
+            var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+            datatable1.treetable("loadBranch", node, rows);
+            //alert(node+"============="+rows);
+            $.post("${base}/platform/sys/dict/child/"+node.id,{}, function(data){
+            	datatable1.treetable("unloadBranch", node);
+            	datatable1.treetable("loadBranch", node, data);
+            });
+        }
+    });
+}  
+
+    $(function () {
+    	initDatatable();
+    });
+
+    function del(id){
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/dict/delete/"+id,{},function(data){
+                //重置按钮状态，关闭提示框
+                dialog.modal("hide");
+                if(data.code==0){
+                    Toast.success(data.msg);
+                    datatable.ajax.reload(null,false);
+                    //从表格中移除此行
+                }else{
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+            },"json");
+        });
+    }
+</script>
+<%}%>

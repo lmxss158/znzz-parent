@@ -1,0 +1,176 @@
+<%
+layout("/layouts/platform.html"){
+%>
+	<section class="content-header">
+		<h1>日志管理</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> 系统</a></li>
+			<li><a href="#">系统管理</a></li>
+			<li class="active">日志管理</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 清空日志</button>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+					<input id="unitid" type="hidden">
+						<table style="table-layout:fixed;word-wrap:break-word;" class="table table-bordered table-striped mg-t datatable">
+							<thead>
+								<tr>
+									<th>日志类型</th>
+					                <th>日志内容</th>
+					                <th>执行类</th>
+					                <th>操作人</th>
+					                <th>操作时间</th>
+					                <th>操作IP</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                       	 删除后无法恢复，确定删除吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    var remarkShowLength = 35;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/log/data",
+                "type": "post",
+                "data": function (d) {
+                }
+            },
+            "createdRow": function( row, data, dataIndex ) {
+            	   if(data.msg.length > remarkShowLength){//只有超长，才有td点击事件
+            	      $(row).children('td').eq(1).attr('onclick','javascript:changeShowRemarks(this);');
+            	   }
+            	   $(row).children('td').eq(1).attr('content',data.msg);
+            	},
+            "order": [[4, "desc"]],
+            "columns": [
+                {"data": "tag", "bSortable": true},
+                {"data": "msg", "bSortable": false, "width": "20%"},
+                {"data": "src", "bSortable": false,"width": "35%"},
+                {"data": "username", "bSortable": true},
+                {"data": "opAt", "bSortable": true},
+                {"data": "ip", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 4
+                },
+                {
+                    "type": "date",
+                    "targets": 1,
+                    "render": function (data, type, full, meta) {
+                       if (full.msg.length > remarkShowLength) {
+           		 			return getPartialRemarksHtml(full.msg);//显示部分信息
+           					} else {
+                          	  return full.msg;//显示原始全部信息            }         
+           					}
+
+           			}
+        		}
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function getPartialRemarksHtml(msg){
+        return msg.substr(0,remarkShowLength) + '&nbsp;&nbsp;<a href="javascript:void(0);" ><b>...</b></a>';
+  	}
+  //全部备注信息
+    function getTotalRemarksHtml(msg){
+          return msg + '&nbsp;&nbsp;<a href="javascript:void(0);" >收起</a>';
+    }
+  //切换显示备注信息，显示部分或者全部
+    function changeShowRemarks(obj){//obj是td
+       var content = $(obj).attr("content");
+       if(content != null && content != ''){
+          if($(obj).attr("isDetail") == 'true'){//当前显示的是详细备注，切换到显示部分
+             //$(obj).removeAttr('isDetail');//remove也可以
+             $(obj).attr('isDetail',false);
+             $(obj).html(getPartialRemarksHtml(content));
+          }else{//当前显示的是部分备注信息，切换到显示全部
+             $(obj).attr('isDetail',true);
+             $(obj).html(getTotalRemarksHtml(content));
+          }
+       }
+    }
+    function delCheck() {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/log/delete", {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    $(function () {
+        initDatatable();
+    });
+</script>
+
+<%}%>

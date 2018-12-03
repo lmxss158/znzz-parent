@@ -1,0 +1,348 @@
+<% layout("/layouts/platform.html"){ %>
+
+<section class="content-header">
+    <h1> 设备履历</h1>
+    <ol class="breadcrumb pull-left">
+        <!--<li><a href="${base}/platform/home"><i class="fa fa-dashboard"></i>首页</a></li>-->
+        <li class="active"><a href="${base}/instrument/monitor/switchingFlow#">设备动态管理</a></li>
+        <li class="active">设备履历</li>
+    </ol>
+</section>
+
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <!-- 查询条件内容 -->
+    <div class="row">
+        <div style="padding: 15px 15px;">
+            <div class="box">
+                <div class="box-body" style="padding: 0 15px auto;">
+                    <div role="form" class="form-horizontal parsley-form" data-parsley-validate>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label for="deviceCode" class="col-sm-3 control-label"
+                                       style="padding-left: 0; padding-right: 0;">设备：</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="deviceCode" id="deviceCode"
+                                           placeholder="统一编号/设备名称/设备型号">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="borrowDepart" class="col-sm-3 control-label"
+                                       style="padding-left: 0; padding-right: 0;">使用单位：</label>
+                                <div class="col-sm-9">
+                                    <!-- <select name="borrowDepart" id="borrowDepart" class="form-control select1"
+                                            data-placeholder="请选择" data-allow-clear="true" data-tags="true">
+                                        <option value="">全部</option>
+                                        <option>生产部</option>
+                                        <option>事业部</option>
+                                        <option>人事部</option>
+                                    </select> -->
+
+                                    <input type="text" name="borrowDepart" id="borrowDepart" style="width: 100%;"
+                                           placeholder="请选择">
+
+                                </div>
+                            </div>
+
+
+                            <!--  <label for="outField" class="col-sm-1 control-label">外场：</label>
+                             <div class="col-sm-3">
+                                 <select id="outField" name="outField" class="form-control">
+                                     <option value="">请选择</option>
+                                     <option value="0">否</option>
+                                     <option value="1">是</option>
+                                 </select>
+                             </div> -->
+                        </div>
+                        <!-- <label for="borrowDepart" class="col-sm-2 control-label">使用单位：</label>
+                          <div class="col-sm-2">
+                              <select name="borrowDepart" id="borrowDepart" style="width: 228px;">
+                                  <option value="">请选择</option>
+                                  <option>科室1</option>
+                                  <option>科室2</option>
+                              </select>
+                          </div -->
+                        <div class="form-group">
+
+                            <div class="col-sm-6">
+                                <label class="col-sm-3 control-label" style="padding-left: 0px; padding-right: 0;">责任人：</label>
+                                <div class="col-sm-9">
+                                    <!--  <select class="form-control select2" name="chargePerson" id="chargePerson" data-placeholder="请选择" style="width: 100%;"data-allow-clear="true" data-tags="true">
+
+                                     </select> -->
+
+                                    <input type="text" name="chargePerson" id="chargePerson" style="width: 100%;"
+                                           placeholder="请选择">
+                                </div>
+                            </div>
+                            <!--  <label for="chargePerson" class="col-sm-2 control-label">责任人：</label>
+                             <div class="col-sm-2">
+                                 <input type="text" class="form-control"  name="chargePerson" id="chargePerson"   placeholder="请输入责任人">
+                             </div> -->
+                            <div class="col-sm-6">
+                                <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">开机时间：</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control pull-right" name="powerOnTime"
+                                               id="powerOnTime"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-3 control-label" style="padding-left: 0; padding-right: 0;">关机时间：</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control pull-right" name="powerOffTime"
+                                               id="powerOffTime"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer" style="height: 30px;">
+                            <button class="btn btn-primary pull-right" id="searchBtn" data-loading-text="搜索..."
+                                    style="width:80px">搜索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-body">
+
+                    <table id="deviceTable" class="table table-bordered table-striped table-hover"
+                           style="table-layout:fixed">
+                        <colgroup>
+                            <col style="width:10%">
+                            <col style="width:8%">
+                            <col style="width:8%">
+                            <col style="width:11%">
+                            <col style="width:11%">
+                            <col style="width:10%">
+                            <col style="width:12%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+                        </colgroup>
+
+                        <thead>
+                        <tr>
+                            <th>统一编号</th>
+                            <th>设备名称</th>
+                            <th>设备型号</th>
+                            <th>开机时间</th>
+                            <th style="width: 143px;">关机时间</th>
+                            <th>离线时间</th>
+                            <th>使用时长</th>
+                            <th>位置</th>
+                            <!-- 	<th>外场</th> -->
+                            <th>使用单位</th>
+                            <th>责任人</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- 详情 -->
+<div id="dialogGatewayDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:5px;">
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var datatable;
+    var datatable1;
+
+    function initDatatable() {
+        datatable = $('#deviceTable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": false,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function (settings) {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+
+            "ajax": {
+                "url": "${base}/instrument/monitor/switchingFlow/list",
+                "type": "post",
+                "data": function (d) {
+                    d.deviceCode = $("#deviceCode").val();
+                    d.borrowDepart = $("#borrowDepart").val();
+                    d.outField = $("#outField").val();
+                    d.chargePerson = $("#chargePerson").val();
+                    d.powerOnTime = $("#powerOnTime").val();
+                    d.powerOffTime = $("#powerOffTime").val();
+                }
+            },
+            "order": [[3, "desc"]],
+            "columns": [
+                {"data": "devicecode"},
+                {"data": "devicename"},
+                {"data": "deviceversion"},
+                {"data": "powerontime"},
+                {"data": "powerofftime"},
+                {"data": "outlinetime"},
+                {"data": "usertime"},
+                {"data": "locationinfo"},
+                /*  {"data": "outfield"}, */
+                {"data": "name"},
+                {"data": "chargeperson"}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return data == null ? "--" : data;
+                    },
+                    "targets": [4, 5]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data && data.length != 0) {
+                            str = subStrCustomNew(data, 5);
+                        }
+                        return str;
+                    },
+                    "targets": [1, 2, 7, 8, 9]
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str = "--";
+                        if (data != null) {
+                            str = Math.floor(data / 60) + " 小时 " + (data % 60) + " 分钟 ";
+                        }
+                        return str;
+                    },
+                    "targets": [6]
+                }
+
+            ]
+
+
+        });
+
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+
+    function datas() {
+        datatable1 = $("#unittable").treetable({
+            expandable: true,
+            onNodeExpand: function () {
+                var node = this;
+                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + node.id + "\" data-tt-branch=\"false\"><td colspan='5'><img src=\"" + base + "/assets/img/loading.gif\"/>loading</td></tr>";
+                datatable1.treetable("loadBranch", node, rows);
+                //alert(node+"============="+rows);
+                $.post("${base}/platform/sys/unit/child/" + node.id, {}, function (data) {
+                    datatable1.treetable("unloadBranch", node);
+                    datatable1.treetable("loadBranch", node, data);
+                });
+            }
+        });
+    }
+
+    $(function () {
+        initDatatable();
+        loadUnitAndUser();
+        initTime();
+    });
+
+
+    //初始化时间
+    function initTime() {
+        var locale = {
+            format: 'YYYY/MM/DD HH:mm:ss',
+            separator: ' - ',
+            applyLabel: '确认',
+            cancelLabel: '清除',
+            fromLabel: '开始时间',
+            toLabel: '结束时间',
+            customRangeLabel: '自定义',
+            weekLabel: "W",
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            firstDay: 1
+        }
+
+        $('#powerOnTime').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker": true,
+            "timePickerSeconds": true
+        });
+        $("#powerOnTime").on('apply.daterangepicker', function (ev, picker) {
+            $("#powerOnTime").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+
+        $("#powerOnTime").on('cancel.daterangepicker', function (ev, picker) {
+            $("#powerOnTime").val('')
+        })
+        $('#powerOffTime').daterangepicker({
+            "autoUpdateInput": false,
+            "locale": locale,
+            "ranges": {
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "opens": "left",
+            "timePicker": true,
+            "timePickerSeconds": true
+        });
+        $("#powerOffTime").on('apply.daterangepicker', function (ev, picker) {
+            $("#powerOffTime").val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+        });
+
+        $("#powerOffTime").on('cancel.daterangepicker', function (ev, picker) {
+            $("#powerOffTime").val('')
+        })
+
+
+    }
+
+
+</script>
+
+<%}%>
+

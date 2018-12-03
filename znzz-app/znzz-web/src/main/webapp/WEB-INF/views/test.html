@@ -1,0 +1,59 @@
+<script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
+<html>
+<body>
+	<br><br><br>
+	<input type="button"  onclick="connect()" value="链接数据库耗时"/><span id="time1"></span>
+	<br><br><br>
+	<input type="button" onclick="queryObj()" value="数据库查询耗时"/> <span id="time2"></span>
+	<br><br><br>
+	<input type="button" onclick="insertObj()" value="数据库插入耗时"/> <span id="time3"></span>
+		<br><br><br>
+	<input type="button" onclick="deleteObj()" value="数据库删除耗时"/> <span id="time4"></span>
+	
+</body>
+<script type="text/javascript">
+function connect(){
+	$.ajax({
+		type:"post",
+		url:"${base}/test/connect",
+		success:function(data){
+		$("#time1").text("---------------"+data.time+"毫秒---------");
+		}
+	})
+			
+}
+function queryObj(){
+
+	$.ajax({
+		type:"post",
+		url:"${base}/test/query",
+		success:function(data){
+		$("#time2").text("---------------"+data.time+"毫秒---------");
+		}
+	})
+			
+}
+function insertObj(){
+
+	$.ajax({
+		type:"post",
+		url:"${base}/test/insert",
+		success:function(data){
+		$("#time3").text("---------------"+data.time+"毫秒---------");
+		}
+	})
+}
+	function deleteObj(){
+
+		$.ajax({
+			type:"post",
+			url:"${base}/test/delete",
+			success:function(data){
+			$("#time4").text("---------------"+data.time+"毫秒---------");
+			}
+		})
+						
+}
+
+</script>
+</html>

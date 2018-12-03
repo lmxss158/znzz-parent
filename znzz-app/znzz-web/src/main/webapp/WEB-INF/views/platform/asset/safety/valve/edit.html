@@ -1,0 +1,236 @@
+<% layout("/layouts/platform.html"){ %>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">修改安全阀设备年检记录</h4>
+    </div>
+
+    <!--新增框-->
+    <form id="editSafetyValveForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/asset/safety/valve/editDo" method="post">
+        <input id="id" name="id" type="hidden" value="${obj.id!}">
+        <div class="modal-body">
+            <div class="text-right">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="checkNo" class="control-label">检测号:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="checkNo" name="checkNo" value="${obj.checkNo!}" maxlength="30" class="form-control"
+                                           placeholder="请输入检测号" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="safetyValveCode" class="control-label">统一编号:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="safetyValveCode" name="ValveCode"  value="${obj.safetyValveCode!}" maxlength="30" class="form-control"
+                                           placeholder="请输入统一编号" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="chargePerson" class="control-label">负责人 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="chargePerson" name="chargePerson" value="${obj.chargePerson!}" maxlength="30" class="form-control"
+                                           placeholder="请输入负责人" disabled/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="telephone" class="control-label">联系电话:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="telephone" name="telephone" value="${obj.telephone!}" maxlength="30" class="form-control"
+                                           placeholder="请输入联系电话" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="floorNo" class="control-label">楼号:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="floorNo" name="floorNo" value="${obj.floorNo!}" maxlength="30" class="form-control"
+                                           placeholder="请输入楼号" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="roomNo" class="control-label">房间号:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="roomNo" name="roomNo" value="${obj.roomNo!}" maxlength="30" class="form-control"
+                                           placeholder="请输入房间号" disabled/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="medium" class="control-label">介质 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <input type="text" class="form-control" id="medium" name="medium" value="${obj.medium!}" placeholder="请输入介质"  disabled/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="attribute" class="control-label">属性 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="attribute" name="attribute" value="${obj.attribute!}" maxlength="30" class="form-control"
+                                           placeholder="请输入属性"  disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="caliber" class="control-label">口径 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="caliber" name="caliber"  value="${obj.caliber!}" maxlength="30" class="form-control"
+                                           placeholder="请输入口径" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="setPressure" class="control-label">整定压力 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-sm-13">
+                                        <input type="text" class="form-control" id="setPressure" name="setPressure" value="${obj.setPressure!}" placeholder="请输入整定压力"  disabled/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="annualInspectionDate" class="control-label"
+                                           style="vertical-align: top;">年检日期 : </label>
+                                </div>
+                                <div class="col-sm-8" style="padding-right: 42px; width: 380px;">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" name="annualInspectionDate" id="annualInspectionDate" class="form-control pull-right"
+                                               value="${@date.formatDate(obj.annualInspectionDate)}" placeholder="请输入年检日期" disabled/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="annualInspectionDate" class="control-label"
+                                           style="vertical-align: top;">下次年检日期 : </label>
+                                </div>
+                                <div class="col-sm-8" style="padding-right: 42px; width: 380px;">
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" name="nextAnnualInspectionDate" id="nextAnnualInspectionDate" class="form-control pull-right"
+                                               value="${@date.formatDate(obj.nextAnnualInspectionDate)}" placeholder="请输入下次年检日期" disabled/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <label for="daysNotice" class="control-label">提前提醒天数 :</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="daysNotice" name="daysNotice" maxlength="30" class="form-control"
+                                           value="${obj.daysNotice!}" placeholder="请输入提前提醒天数" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer" style="text-align: center;">
+            <a id="goback" href="${base}/asset/safety/valve" data-pjax>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width:80px">关闭</button>
+            </a>
+            <button class="btn btn-primary" data-loading-text="正在提交..." style="width:80px">确定</button>
+        </div>
+    </form>
+</div>
+
+<script language="JavaScript">
+
+    $(document).ready(function () {
+        myForm.init();
+
+        $('#editSafetyValveForm').ajaxForm({
+            dataType: 'json',
+
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 500);
+                } else {
+                    if("没有权限"!=data.msg){
+                        Toast.error(data.msg);
+                    }
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+
+    $(function () {
+        $('.collapse').collapse({
+            toggle: false
+        });
+        //去除首尾空格
+        autoDeleteSpace('input');
+
+        setDate("annualInspectionDate","nextAnnualInspectionDate");
+
+    });
+</script>
+
+<%}%>
+
+
